@@ -1,0 +1,331 @@
+dataset,item_id,model,mae,rmse,smape,mase,error
+chronos_m1_yearly,0:target,chronos:amazon/chronos-t5-tiny,333960.625,430089.5,0.3635951578617096,10.921462059020996,
+chronos_m1_yearly,0:target,seasonal_naive,413550.65625,510277.96875,0.48565909266471863,13.524282455444336,
+chronos_m1_yearly,0:target,arma,403367.34375,513383.59375,0.46686187386512756,13.191259384155273,
+chronos_m1_yearly,0:target,prophet,406946.625,481123.5,0.4820605516433716,13.308311462402344,
+chronos_m1_yearly,0:target,deepar,,,,,"Invalid frequency: YE-DEC, failed to parse with error message: ValueError(""for Period, please use 'Y-DEC' instead of 'YE-DEC'"")"
+chronos_m1_yearly,1:target,chronos:amazon/chronos-t5-tiny,277845.5,307937.875,0.6418631076812744,12.05508041381836,
+chronos_m1_yearly,1:target,seasonal_naive,179532.171875,199510.34375,0.36443260312080383,7.789490222930908,
+chronos_m1_yearly,1:target,arma,236554.484375,263153.84375,0.5171793699264526,10.263558387756348,
+chronos_m1_yearly,1:target,prophet,72121.2890625,91374.953125,0.12785635888576508,3.1291778087615967,
+chronos_m1_yearly,1:target,deepar,,,,,"Invalid frequency: YE-DEC, failed to parse with error message: ValueError(""for Period, please use 'Y-DEC' instead of 'YE-DEC'"")"
+chronos_m1_yearly,2:target,chronos:amazon/chronos-t5-tiny,181537.4375,195735.59375,0.36440274119377136,9.875704765319824,
+chronos_m1_yearly,2:target,seasonal_naive,212431.0,226516.046875,0.44213223457336426,11.556325912475586,
+chronos_m1_yearly,2:target,arma,235554.109375,250832.546875,0.5036099553108215,12.814231872558594,
+chronos_m1_yearly,2:target,prophet,141084.046875,149127.140625,0.27324044704437256,7.67502498626709,
+chronos_m1_yearly,2:target,deepar,,,,,"Invalid frequency: YE-DEC, failed to parse with error message: ValueError(""for Period, please use 'Y-DEC' instead of 'YE-DEC'"")"
+chronos_m1_yearly,3:target,chronos:amazon/chronos-t5-tiny,142071.6875,159157.296875,0.34645435214042664,4.5558695793151855,
+chronos_m1_yearly,3:target,seasonal_naive,118996.6640625,135015.671875,0.2801836431026459,3.815913677215576,
+chronos_m1_yearly,3:target,arma,174002.46875,187768.28125,0.44486334919929504,5.579806804656982,
+chronos_m1_yearly,3:target,prophet,78826.8828125,93507.4140625,0.17641717195510864,2.527773141860962,
+chronos_m1_yearly,3:target,deepar,,,,,"Invalid frequency: YE-DEC, failed to parse with error message: ValueError(""for Period, please use 'Y-DEC' instead of 'YE-DEC'"")"
+chronos_m1_yearly,4:target,chronos:amazon/chronos-t5-tiny,17016060.0,18187906.0,0.6290687918663025,13.958969116210938,
+chronos_m1_yearly,4:target,seasonal_naive,16073016.0,17212028.0,0.5831403732299805,13.185351371765137,
+chronos_m1_yearly,4:target,arma,16783968.0,18381676.0,0.6168668270111084,13.768574714660645,
+chronos_m1_yearly,4:target,prophet,11292256.0,12380590.0,0.37320268154144287,9.26349925994873,
+chronos_m1_yearly,4:target,deepar,,,,,"Invalid frequency: YE-DEC, failed to parse with error message: ValueError(""for Period, please use 'Y-DEC' instead of 'YE-DEC'"")"
+chronos_m1_yearly,5:target,chronos:amazon/chronos-t5-tiny,6676.85546875,7496.7490234375,0.3296426832675934,6.733585834503174,
+chronos_m1_yearly,5:target,seasonal_naive,7705.31640625,8584.2626953125,0.392566442489624,7.770785331726074,
+chronos_m1_yearly,5:target,arma,5272.42529296875,6015.125,0.24931524693965912,5.317222595214844,
+chronos_m1_yearly,5:target,prophet,7141.82568359375,7689.56689453125,0.36044928431510925,7.2025065422058105,
+chronos_m1_yearly,5:target,deepar,,,,,"Invalid frequency: YE-DEC, failed to parse with error message: ValueError(""for Period, please use 'Y-DEC' instead of 'YE-DEC'"")"
+chronos_m1_yearly,6:target,chronos:amazon/chronos-t5-tiny,600655.5,654161.0625,0.48921191692352295,10.490272521972656,
+chronos_m1_yearly,6:target,seasonal_naive,635595.6875,685335.625,0.5267888903617859,11.100492477416992,
+chronos_m1_yearly,6:target,arma,363977.0,379797.21875,0.27345162630081177,6.356751918792725,
+chronos_m1_yearly,6:target,prophet,496514.875,520749.6875,0.39143767952919006,8.671486854553223,
+chronos_m1_yearly,6:target,deepar,,,,,"Invalid frequency: YE-DEC, failed to parse with error message: ValueError(""for Period, please use 'Y-DEC' instead of 'YE-DEC'"")"
+chronos_m1_yearly,7:target,chronos:amazon/chronos-t5-tiny,407954.59375,503286.5,0.4679676592350006,11.489187240600586,
+chronos_m1_yearly,7:target,seasonal_naive,367259.34375,455058.46875,0.4081735610961914,10.343090057373047,
+chronos_m1_yearly,7:target,arma,313906.375,412014.84375,0.3319369852542877,8.840516090393066,
+chronos_m1_yearly,7:target,prophet,308034.65625,384649.3125,0.32771340012550354,8.675150871276855,
+chronos_m1_yearly,7:target,deepar,,,,,"Invalid frequency: YE-DEC, failed to parse with error message: ValueError(""for Period, please use 'Y-DEC' instead of 'YE-DEC'"")"
+chronos_m1_yearly,8:target,chronos:amazon/chronos-t5-tiny,374278.0,456742.625,0.31965383887290955,8.153072357177734,
+chronos_m1_yearly,8:target,seasonal_naive,424977.65625,486460.375,0.3749091327190399,9.257486343383789,
+chronos_m1_yearly,8:target,arma,558315.4375,651501.6875,0.5333762168884277,12.1620454788208,
+chronos_m1_yearly,8:target,prophet,310072.46875,350713.28125,0.25820624828338623,6.754453182220459,
+chronos_m1_yearly,8:target,deepar,,,,,"Invalid frequency: YE-DEC, failed to parse with error message: ValueError(""for Period, please use 'Y-DEC' instead of 'YE-DEC'"")"
+chronos_m1_yearly,9:target,chronos:amazon/chronos-t5-tiny,2.175220489501953,2.6792166233062744,0.03913417086005211,0.8131141662597656,
+chronos_m1_yearly,9:target,seasonal_naive,2.3416664600372314,2.7237255573272705,0.04236077144742012,0.8753329515457153,
+chronos_m1_yearly,9:target,arma,3.29370379447937,3.7065179347991943,0.06037689745426178,1.23121178150177,
+chronos_m1_yearly,9:target,prophet,3.8809597492218018,4.8949785232543945,0.06787040084600449,1.4507325887680054,
+chronos_m1_yearly,9:target,deepar,,,,,"Invalid frequency: YE-DEC, failed to parse with error message: ValueError(""for Period, please use 'Y-DEC' instead of 'YE-DEC'"")"
+chronos_m1_yearly,10:target,chronos:amazon/chronos-t5-tiny,816.0045776367188,1081.0230712890625,0.08865854144096375,2.369351387023926,
+chronos_m1_yearly,10:target,seasonal_naive,876.8302612304688,1059.43310546875,0.09717894345521927,2.5459647178649902,
+chronos_m1_yearly,10:target,arma,1042.4168701171875,1333.1510009765625,0.11711547523736954,3.0267622470855713,
+chronos_m1_yearly,10:target,prophet,1099.7431640625,1453.02490234375,0.11436154693365097,3.1932148933410645,
+chronos_m1_yearly,10:target,deepar,,,,,"Invalid frequency: YE-DEC, failed to parse with error message: ValueError(""for Period, please use 'Y-DEC' instead of 'YE-DEC'"")"
+chronos_m1_yearly,11:target,chronos:amazon/chronos-t5-tiny,660876.25,824025.5,0.26385509967803955,10.152939796447754,
+chronos_m1_yearly,11:target,seasonal_naive,903185.0,1075592.375,0.3888120949268341,13.87549114227295,
+chronos_m1_yearly,11:target,arma,812362.75,1003800.0625,0.3394470512866974,12.480203628540039,
+chronos_m1_yearly,11:target,prophet,1128341.875,1229595.75,0.5258854031562805,17.33454132080078,
+chronos_m1_yearly,11:target,deepar,,,,,"Invalid frequency: YE-DEC, failed to parse with error message: ValueError(""for Period, please use 'Y-DEC' instead of 'YE-DEC'"")"
+chronos_m1_yearly,12:target,chronos:amazon/chronos-t5-tiny,11493.4580078125,13885.2470703125,0.19464974105358124,7.7627644538879395,
+chronos_m1_yearly,12:target,seasonal_naive,15262.0830078125,18264.08203125,0.26226428151130676,10.308120727539062,
+chronos_m1_yearly,12:target,arma,15195.3046875,18248.9609375,0.26089218258857727,10.263018608093262,
+chronos_m1_yearly,12:target,prophet,20885.9296875,25295.68359375,0.38736438751220703,14.106507301330566,
+chronos_m1_yearly,12:target,deepar,,,,,"Invalid frequency: YE-DEC, failed to parse with error message: ValueError(""for Period, please use 'Y-DEC' instead of 'YE-DEC'"")"
+chronos_m1_yearly,13:target,chronos:amazon/chronos-t5-tiny,102388.9453125,115542.1015625,0.1335972398519516,1.9554390907287598,
+chronos_m1_yearly,13:target,seasonal_naive,119970.5,155516.109375,0.15581543743610382,2.2912142276763916,
+chronos_m1_yearly,13:target,arma,106508.7265625,117425.890625,0.14230933785438538,2.0341193675994873,
+chronos_m1_yearly,13:target,prophet,276747.53125,354896.4375,0.30469587445259094,5.285365104675293,
+chronos_m1_yearly,13:target,deepar,,,,,"Invalid frequency: YE-DEC, failed to parse with error message: ValueError(""for Period, please use 'Y-DEC' instead of 'YE-DEC'"")"
+chronos_m1_yearly,14:target,chronos:amazon/chronos-t5-tiny,513.4404907226562,589.068359375,0.390100359916687,9.767977714538574,
+chronos_m1_yearly,14:target,seasonal_naive,477.5,538.7030029296875,0.3567599356174469,9.08422565460205,
+chronos_m1_yearly,14:target,arma,656.1465454101562,741.7791137695312,0.5353073477745056,12.48289680480957,
+chronos_m1_yearly,14:target,prophet,348.4879455566406,392.7036437988281,0.24683578312397003,6.629828453063965,
+chronos_m1_yearly,14:target,deepar,,,,,"Invalid frequency: YE-DEC, failed to parse with error message: ValueError(""for Period, please use 'Y-DEC' instead of 'YE-DEC'"")"
+chronos_m1_yearly,15:target,chronos:amazon/chronos-t5-tiny,0.3546689450740814,0.40903931856155396,0.03993817791342735,1.964924931526184,
+chronos_m1_yearly,15:target,seasonal_naive,0.44166693091392517,0.47189363837242126,0.050011854618787766,2.4469082355499268,
+chronos_m1_yearly,15:target,arma,0.389843612909317,0.44462135434150696,0.04400762543082237,2.1597983837127686,
+chronos_m1_yearly,15:target,prophet,0.24945847690105438,0.2847447395324707,0.026932507753372192,1.3820414543151855,
+chronos_m1_yearly,15:target,deepar,,,,,"Invalid frequency: YE-DEC, failed to parse with error message: ValueError(""for Period, please use 'Y-DEC' instead of 'YE-DEC'"")"
+chronos_m1_yearly,16:target,chronos:amazon/chronos-t5-tiny,31618.033203125,38353.9921875,0.3825799226760864,3.4955313205718994,
+chronos_m1_yearly,16:target,seasonal_naive,23036.783203125,28277.833984375,0.25906434655189514,2.5468313694000244,
+chronos_m1_yearly,16:target,arma,39613.62890625,46646.6484375,0.512294590473175,4.379484176635742,
+chronos_m1_yearly,16:target,prophet,16253.6376953125,18581.130859375,0.1753360480070114,1.7969207763671875,
+chronos_m1_yearly,16:target,deepar,,,,,"Invalid frequency: YE-DEC, failed to parse with error message: ValueError(""for Period, please use 'Y-DEC' instead of 'YE-DEC'"")"
+chronos_m1_yearly,17:target,chronos:amazon/chronos-t5-tiny,310073.96875,370789.96875,0.36943402886390686,5.598297595977783,
+chronos_m1_yearly,17:target,seasonal_naive,280390.15625,333655.375,0.3262726068496704,5.06236457824707,
+chronos_m1_yearly,17:target,arma,341833.78125,400944.71875,0.41811028122901917,6.1717119216918945,
+chronos_m1_yearly,17:target,prophet,243769.453125,276023.125,0.27883288264274597,4.401188373565674,
+chronos_m1_yearly,17:target,deepar,,,,,"Invalid frequency: YE-DEC, failed to parse with error message: ValueError(""for Period, please use 'Y-DEC' instead of 'YE-DEC'"")"
+chronos_m1_yearly,18:target,chronos:amazon/chronos-t5-tiny,3313.251953125,3718.5498046875,0.38157474994659424,8.47541618347168,
+chronos_m1_yearly,18:target,seasonal_naive,3184.524658203125,3504.778564453125,0.363640159368515,8.146126747131348,
+chronos_m1_yearly,18:target,arma,3516.640869140625,3847.246337890625,0.410845547914505,8.995692253112793,
+chronos_m1_yearly,18:target,prophet,1966.5894775390625,2170.43798828125,0.2074340432882309,5.030605792999268,
+chronos_m1_yearly,18:target,deepar,,,,,"Invalid frequency: YE-DEC, failed to parse with error message: ValueError(""for Period, please use 'Y-DEC' instead of 'YE-DEC'"")"
+chronos_m1_yearly,19:target,chronos:amazon/chronos-t5-tiny,2246.756591796875,3075.56787109375,0.15229903161525726,0.8362913727760315,
+chronos_m1_yearly,19:target,seasonal_naive,3223.838623046875,4468.22314453125,0.21547238528728485,1.1999824047088623,
+chronos_m1_yearly,19:target,arma,2552.155029296875,3282.461669921875,0.1741449236869812,0.9499672651290894,
+chronos_m1_yearly,19:target,prophet,10412.494140625,11337.3056640625,0.5241038799285889,3.8757553100585938,
+chronos_m1_yearly,19:target,deepar,,,,,"Invalid frequency: YE-DEC, failed to parse with error message: ValueError(""for Period, please use 'Y-DEC' instead of 'YE-DEC'"")"
+chronos_m4_hourly,0:target,chronos:amazon/chronos-t5-tiny,14.253307342529297,19.890823364257812,0.019891150295734406,0.33639058470726013,
+chronos_m4_hourly,0:target,seasonal_naive,35.04166793823242,39.722999572753906,0.05262880399823189,0.827014148235321,
+chronos_m4_hourly,0:target,arma,64.97675323486328,81.60712432861328,0.09566310793161392,1.5335084199905396,
+chronos_m4_hourly,0:target,prophet,26.730682373046875,33.221675872802734,0.039214879274368286,0.630867600440979,
+chronos_m4_hourly,0:target,deepar,,,,,Trainer was configured with `enable_checkpointing=False` but found `ModelCheckpoint` in callbacks list.
+chronos_m4_hourly,1:target,chronos:amazon/chronos-t5-tiny,172.8608856201172,184.71029663085938,0.07163285464048386,1.0469565391540527,
+chronos_m4_hourly,1:target,seasonal_naive,323.0208435058594,336.5826110839844,0.12495601922273636,1.9564217329025269,
+chronos_m4_hourly,1:target,arma,465.9740295410156,547.183349609375,0.1836211234331131,2.822237968444824,
+chronos_m4_hourly,1:target,prophet,475.88671875,493.50787353515625,0.17809025943279266,2.8822755813598633,
+chronos_m4_hourly,1:target,deepar,,,,,Trainer was configured with `enable_checkpointing=False` but found `ModelCheckpoint` in callbacks list.
+chronos_m4_hourly,2:target,chronos:amazon/chronos-t5-tiny,76.46987915039062,96.46017456054688,0.05428776144981384,0.9693344831466675,
+chronos_m4_hourly,2:target,seasonal_naive,130.2916717529297,148.53590393066406,0.09583506733179092,1.6515811681747437,
+chronos_m4_hourly,2:target,arma,234.73687744140625,271.10052490234375,0.17585547268390656,2.975531578063965,
+chronos_m4_hourly,2:target,prophet,220.5903778076172,247.40415954589844,0.16982035338878632,2.796210289001465,
+chronos_m4_hourly,2:target,deepar,,,,,Trainer was configured with `enable_checkpointing=False` but found `ModelCheckpoint` in callbacks list.
+chronos_m4_hourly,3:target,chronos:amazon/chronos-t5-tiny,454.35595703125,529.6640625,0.0959509015083313,1.7543903589248657,
+chronos_m4_hourly,3:target,seasonal_naive,379.6041564941406,464.838134765625,0.07399830967187881,1.4657536745071411,
+chronos_m4_hourly,3:target,arma,610.568603515625,730.2852783203125,0.12439735978841782,2.357569456100464,
+chronos_m4_hourly,3:target,prophet,312.6837158203125,380.710693359375,0.06281866878271103,1.2073558568954468,
+chronos_m4_hourly,3:target,deepar,,,,,Trainer was configured with `enable_checkpointing=False` but found `ModelCheckpoint` in callbacks list.
+chronos_m4_hourly,4:target,chronos:amazon/chronos-t5-tiny,225.2100372314453,256.55767822265625,0.08015810698270798,1.1232752799987793,
+chronos_m4_hourly,4:target,seasonal_naive,252.6666717529297,371.32965087890625,0.07669556140899658,1.2602201700210571,
+chronos_m4_hourly,4:target,arma,551.0945434570312,649.0177612304688,0.24807368218898773,2.7486822605133057,
+chronos_m4_hourly,4:target,prophet,239.01246643066406,264.6012268066406,0.08903678506612778,1.1921173334121704,
+chronos_m4_hourly,4:target,deepar,,,,,Trainer was configured with `enable_checkpointing=False` but found `ModelCheckpoint` in callbacks list.
+chronos_m4_hourly,5:target,chronos:amazon/chronos-t5-tiny,188.75694274902344,238.88497924804688,0.028529753908514977,0.8867001533508301,
+chronos_m4_hourly,5:target,seasonal_naive,207.9791717529297,270.4535827636719,0.03215497359633446,0.9769980311393738,
+chronos_m4_hourly,5:target,arma,573.91162109375,640.92431640625,0.09158718585968018,2.695993661880493,
+chronos_m4_hourly,5:target,prophet,211.25811767578125,252.52572631835938,0.03230595588684082,0.992401123046875,
+chronos_m4_hourly,5:target,deepar,,,,,Trainer was configured with `enable_checkpointing=False` but found `ModelCheckpoint` in callbacks list.
+chronos_m4_hourly,6:target,chronos:amazon/chronos-t5-tiny,1065.8509521484375,1435.5374755859375,0.024756571277976036,0.5472391247749329,
+chronos_m4_hourly,6:target,seasonal_naive,926.5208129882812,1131.163330078125,0.022425733506679535,0.4757029116153717,
+chronos_m4_hourly,6:target,arma,5822.14013671875,6968.1630859375,0.1498863697052002,2.989257335662842,
+chronos_m4_hourly,6:target,prophet,2107.72021484375,2698.120361328125,0.04739229381084442,1.082165241241455,
+chronos_m4_hourly,6:target,deepar,,,,,Trainer was configured with `enable_checkpointing=False` but found `ModelCheckpoint` in callbacks list.
+chronos_m4_hourly,7:target,chronos:amazon/chronos-t5-tiny,1114.3436279296875,1470.890869140625,0.03341398760676384,0.6861534118652344,
+chronos_m4_hourly,7:target,seasonal_naive,1440.9583740234375,1605.4241943359375,0.04515993222594261,0.8872653841972351,
+chronos_m4_hourly,7:target,arma,3701.135986328125,4477.84033203125,0.12040678411722183,2.2789623737335205,
+chronos_m4_hourly,7:target,prophet,1223.0062255859375,1563.208984375,0.03792128339409828,0.7530620694160461,
+chronos_m4_hourly,7:target,deepar,,,,,Trainer was configured with `enable_checkpointing=False` but found `ModelCheckpoint` in callbacks list.
+chronos_m4_hourly,8:target,chronos:amazon/chronos-t5-tiny,1353.6676025390625,1412.5322265625,0.038679081946611404,0.7313215732574463,
+chronos_m4_hourly,8:target,seasonal_naive,1454.125,1595.675048828125,0.04170535132288933,0.7855938673019409,
+chronos_m4_hourly,8:target,arma,4804.5869140625,5543.94140625,0.14277388155460358,2.5956876277923584,
+chronos_m4_hourly,8:target,prophet,3195.924072265625,3329.68359375,0.0905211940407753,1.7266042232513428,
+chronos_m4_hourly,8:target,deepar,,,,,Trainer was configured with `enable_checkpointing=False` but found `ModelCheckpoint` in callbacks list.
+chronos_m4_hourly,9:target,chronos:amazon/chronos-t5-tiny,9.794791221618652,12.145209312438965,0.021428043022751808,0.9304776191711426,
+chronos_m4_hourly,9:target,seasonal_naive,11.916666984558105,13.854902267456055,0.026568179950118065,1.132049798965454,
+chronos_m4_hourly,9:target,arma,28.673452377319336,32.45818328857422,0.06428239494562149,2.7238972187042236,
+chronos_m4_hourly,9:target,prophet,14.220694541931152,17.51861572265625,0.031227966770529747,1.3509259223937988,
+chronos_m4_hourly,9:target,deepar,,,,,Trainer was configured with `enable_checkpointing=False` but found `ModelCheckpoint` in callbacks list.
+chronos_m4_hourly,10:target,chronos:amazon/chronos-t5-tiny,2109.051025390625,2493.495849609375,0.0627257451415062,1.2837175130844116,
+chronos_m4_hourly,10:target,seasonal_naive,766.625,989.0431518554688,0.022151721641421318,0.46662214398384094,
+chronos_m4_hourly,10:target,arma,4752.0126953125,5480.1318359375,0.14855538308620453,2.8924107551574707,
+chronos_m4_hourly,10:target,prophet,4707.38134765625,5255.26025390625,0.14546231925487518,2.8652448654174805,
+chronos_m4_hourly,10:target,deepar,,,,,Trainer was configured with `enable_checkpointing=False` but found `ModelCheckpoint` in callbacks list.
+chronos_m4_hourly,11:target,chronos:amazon/chronos-t5-tiny,237.6103515625,279.22930908203125,0.026786819100379944,0.4548841416835785,
+chronos_m4_hourly,11:target,seasonal_naive,326.1666564941406,400.1758117675781,0.03755591809749603,0.6244173645973206,
+chronos_m4_hourly,11:target,arma,1086.8751220703125,1327.9542236328125,0.12852905690670013,2.0807268619537354,
+chronos_m4_hourly,11:target,prophet,380.4478454589844,442.30908203125,0.04241986200213432,0.7283339500427246,
+chronos_m4_hourly,11:target,deepar,,,,,Trainer was configured with `enable_checkpointing=False` but found `ModelCheckpoint` in callbacks list.
+chronos_m4_hourly,12:target,chronos:amazon/chronos-t5-tiny,37.377315521240234,50.69917297363281,0.056432317942380905,0.9246529340744019,
+chronos_m4_hourly,12:target,seasonal_naive,39.08333206176758,58.86035919189453,0.061176422983407974,0.9668569564819336,
+chronos_m4_hourly,12:target,arma,96.45501708984375,113.85942077636719,0.15484966337680817,2.3861374855041504,
+chronos_m4_hourly,12:target,prophet,54.71000671386719,69.07613372802734,0.0851517915725708,1.3534350395202637,
+chronos_m4_hourly,12:target,deepar,,,,,Trainer was configured with `enable_checkpointing=False` but found `ModelCheckpoint` in callbacks list.
+chronos_m4_hourly,13:target,chronos:amazon/chronos-t5-tiny,6.601823329925537,7.8613739013671875,0.03627398610115051,0.7484207153320312,
+chronos_m4_hourly,13:target,seasonal_naive,10.020833015441895,11.400840759277344,0.053136736154556274,1.1360193490982056,
+chronos_m4_hourly,13:target,arma,28.132139205932617,31.410171508789062,0.15079957246780396,3.189221143722534,
+chronos_m4_hourly,13:target,prophet,12.345555305480957,14.805397033691406,0.06356921046972275,1.399563193321228,
+chronos_m4_hourly,13:target,deepar,,,,,Trainer was configured with `enable_checkpointing=False` but found `ModelCheckpoint` in callbacks list.
+chronos_m4_hourly,14:target,chronos:amazon/chronos-t5-tiny,876.4201049804688,1151.99072265625,0.05743901804089546,0.9890273213386536,
+chronos_m4_hourly,14:target,seasonal_naive,831.3541870117188,933.067626953125,0.054940033704042435,0.9381710886955261,
+chronos_m4_hourly,14:target,arma,1958.966796875,2346.306640625,0.13556142151355743,2.210665464401245,
+chronos_m4_hourly,14:target,prophet,830.9241333007812,1086.255859375,0.054845407605171204,0.9376857280731201,
+chronos_m4_hourly,14:target,deepar,,,,,Trainer was configured with `enable_checkpointing=False` but found `ModelCheckpoint` in callbacks list.
+chronos_m4_hourly,15:target,chronos:amazon/chronos-t5-tiny,64.39810943603516,90.0382308959961,0.05162334442138672,0.9074126482009888,
+chronos_m4_hourly,15:target,seasonal_naive,56.70833206176758,84.40576934814453,0.043087247759103775,0.7990585565567017,
+chronos_m4_hourly,15:target,arma,101.96465301513672,122.3887710571289,0.08537027984857559,1.4367505311965942,
+chronos_m4_hourly,15:target,prophet,75.16046142578125,92.25151824951172,0.061103951185941696,1.0590614080429077,
+chronos_m4_hourly,15:target,deepar,,,,,Trainer was configured with `enable_checkpointing=False` but found `ModelCheckpoint` in callbacks list.
+chronos_m4_hourly,16:target,chronos:amazon/chronos-t5-tiny,872.1244506835938,1332.630859375,0.016288818791508675,0.7015318274497986,
+chronos_m4_hourly,16:target,seasonal_naive,837.5208129882812,1497.75634765625,0.015277932398021221,0.6736968755722046,
+chronos_m4_hourly,16:target,arma,5955.24365234375,7433.35693359375,0.1147531047463417,4.790363311767578,
+chronos_m4_hourly,16:target,prophet,1302.1641845703125,1505.835693359375,0.02528771199285984,1.0474532842636108,
+chronos_m4_hourly,16:target,deepar,,,,,Trainer was configured with `enable_checkpointing=False` but found `ModelCheckpoint` in callbacks list.
+chronos_m4_hourly,17:target,chronos:amazon/chronos-t5-tiny,903.8937377929688,1154.3201904296875,0.02780233323574066,0.6400702595710754,
+chronos_m4_hourly,17:target,seasonal_naive,1084.9375,1347.9556884765625,0.033682458102703094,0.7682719826698303,
+chronos_m4_hourly,17:target,arma,2581.63623046875,2955.84521484375,0.08411171287298203,1.828122615814209,
+chronos_m4_hourly,17:target,prophet,1381.2611083984375,1628.1331787109375,0.04682372137904167,0.9781062602996826,
+chronos_m4_hourly,17:target,deepar,,,,,Trainer was configured with `enable_checkpointing=False` but found `ModelCheckpoint` in callbacks list.
+chronos_m4_hourly,18:target,chronos:amazon/chronos-t5-tiny,72.53201293945312,90.17975616455078,0.031320277601480484,0.6259225010871887,
+chronos_m4_hourly,18:target,seasonal_naive,51.14583206176758,107.01275634765625,0.018964119255542755,0.4413682520389557,
+chronos_m4_hourly,18:target,arma,139.81173706054688,171.18817138671875,0.06307964026927948,1.2065198421478271,
+chronos_m4_hourly,18:target,prophet,102.74846649169922,116.5625991821289,0.04563717916607857,0.8866785168647766,
+chronos_m4_hourly,18:target,deepar,,,,,Trainer was configured with `enable_checkpointing=False` but found `ModelCheckpoint` in callbacks list.
+chronos_m4_hourly,19:target,chronos:amazon/chronos-t5-tiny,331.904052734375,396.1671142578125,0.04802320897579193,0.7931839227676392,
+chronos_m4_hourly,19:target,seasonal_naive,300.8958435058594,407.02239990234375,0.04208815097808838,0.7190805673599243,
+chronos_m4_hourly,19:target,arma,552.3768920898438,662.4009399414062,0.0857258141040802,1.320069670677185,
+chronos_m4_hourly,19:target,prophet,349.7974548339844,415.1006164550781,0.054443974047899246,0.8359455466270447,
+chronos_m4_hourly,19:target,deepar,,,,,Trainer was configured with `enable_checkpointing=False` but found `ModelCheckpoint` in callbacks list.
+chronos_weather,0:target,chronos:amazon/chronos-t5-tiny,0.6717482805252075,1.4374274015426636,1.7778700590133667,0.23895852267742157,
+chronos_weather,0:target,seasonal_naive,0.5866667032241821,1.5414278507232666,0.6000000238418579,0.2086927741765976,
+chronos_weather,0:target,arma,1.6095623970031738,1.757007360458374,1.697478175163269,0.572563648223877,
+chronos_weather,0:target,prophet,1.2072727680206299,1.5407031774520874,1.730883240699768,0.4294586777687073,
+chronos_weather,0:target,deepar,,,,,Trainer was configured with `enable_checkpointing=False` but found `ModelCheckpoint` in callbacks list.
+chronos_weather,1:target,chronos:amazon/chronos-t5-tiny,0.692122757434845,1.740089774131775,1.9187092781066895,0.22152207791805267,
+chronos_weather,1:target,seasonal_naive,0.5666667222976685,1.78175950050354,0.4000000059604645,0.1813683807849884,
+chronos_weather,1:target,arma,1.573493480682373,1.9045124053955078,1.7743523120880127,0.5036152005195618,
+chronos_weather,1:target,prophet,1.2639251947402954,1.8040995597839355,1.794528603553772,0.4045342206954956,
+chronos_weather,1:target,deepar,,,,,Trainer was configured with `enable_checkpointing=False` but found `ModelCheckpoint` in callbacks list.
+chronos_weather,2:target,chronos:amazon/chronos-t5-tiny,2.037256956100464,3.658900737762451,1.813667893409729,0.42083820700645447,
+chronos_weather,2:target,seasonal_naive,2.2666666507720947,4.208562850952148,0.8999999761581421,0.4682275950908661,
+chronos_weather,2:target,arma,3.122694730758667,3.713804244995117,1.5742214918136597,0.6450581550598145,
+chronos_weather,2:target,prophet,2.97481107711792,3.7235915660858154,1.5844415426254272,0.6145097017288208,
+chronos_weather,2:target,deepar,,,,,Trainer was configured with `enable_checkpointing=False` but found `ModelCheckpoint` in callbacks list.
+chronos_weather,3:target,chronos:amazon/chronos-t5-tiny,0.41513973474502563,0.8147934079170227,1.8528187274932861,0.1565004587173462,
+chronos_weather,3:target,seasonal_naive,0.23333331942558289,0.7201851606369019,0.8400000333786011,0.08796260505914688,
+chronos_weather,3:target,arma,1.7939238548278809,1.8049728870391846,1.857037901878357,0.6762781143188477,
+chronos_weather,3:target,prophet,1.2978436946868896,1.365249752998352,1.8086998462677002,0.48926451802253723,
+chronos_weather,3:target,deepar,,,,,Trainer was configured with `enable_checkpointing=False` but found `ModelCheckpoint` in callbacks list.
+chronos_weather,4:target,chronos:amazon/chronos-t5-tiny,2.1003222465515137,5.292387962341309,1.9638837575912476,0.48417383432388306,
+chronos_weather,4:target,seasonal_naive,2.0046427249908447,5.345864295959473,0.5333333611488342,0.462117463350296,
+chronos_weather,4:target,arma,3.1595375537872314,4.953161716461182,1.6835523843765259,0.7283479571342468,
+chronos_weather,4:target,prophet,3.7425713539123535,5.077165603637695,1.6769874095916748,0.8627510070800781,
+chronos_weather,4:target,deepar,,,,,Trainer was configured with `enable_checkpointing=False` but found `ModelCheckpoint` in callbacks list.
+chronos_weather,5:target,chronos:amazon/chronos-t5-tiny,0.5744596719741821,1.68647038936615,1.633725643157959,0.21964150667190552,
+chronos_weather,5:target,seasonal_naive,0.54666668176651,1.705676794052124,0.7333333492279053,0.20901501178741455,
+chronos_weather,5:target,arma,1.564686894416809,1.8951590061187744,1.6744921207427979,0.5982494354248047,
+chronos_weather,5:target,prophet,1.0584337711334229,1.7019495964050293,1.6104787588119507,0.4046863317489624,
+chronos_weather,5:target,deepar,,,,,Trainer was configured with `enable_checkpointing=False` but found `ModelCheckpoint` in callbacks list.
+chronos_weather,6:target,chronos:amazon/chronos-t5-tiny,0.8291984796524048,1.5980509519577026,1.5782322883605957,0.29476433992385864,
+chronos_weather,6:target,seasonal_naive,0.7247791290283203,1.7407087087631226,1.1138144731521606,0.25764521956443787,
+chronos_weather,6:target,arma,1.6604942083358765,1.8962054252624512,1.5460883378982544,0.5902742147445679,
+chronos_weather,6:target,prophet,1.4523018598556519,1.7623114585876465,1.5327956676483154,0.5162657499313354,
+chronos_weather,6:target,deepar,,,,,Trainer was configured with `enable_checkpointing=False` but found `ModelCheckpoint` in callbacks list.
+chronos_weather,7:target,chronos:amazon/chronos-t5-tiny,0.48574209213256836,0.7018476128578186,1.494562029838562,0.17308394610881805,
+chronos_weather,7:target,seasonal_naive,0.2266666740179062,0.5291502475738525,1.0666667222976685,0.08076788485050201,
+chronos_weather,7:target,arma,1.5190391540527344,1.5496857166290283,1.7178980112075806,0.5412775278091431,
+chronos_weather,7:target,prophet,1.1475765705108643,1.405516505241394,1.8639068603515625,0.4089146852493286,
+chronos_weather,7:target,deepar,,,,,Trainer was configured with `enable_checkpointing=False` but found `ModelCheckpoint` in callbacks list.
+chronos_weather,8:target,chronos:amazon/chronos-t5-tiny,0.5164337754249573,0.6972101926803589,1.8340777158737183,0.1971111297607422,
+chronos_weather,8:target,seasonal_naive,0.1666666716337204,0.40824830532073975,0.3333333432674408,0.0636129155755043,
+chronos_weather,8:target,arma,1.8695231676101685,1.9079058170318604,1.7821691036224365,0.713554859161377,
+chronos_weather,8:target,prophet,1.3939121961593628,1.4475582838058472,1.739444613456726,0.5320248603820801,
+chronos_weather,8:target,deepar,,,,,Trainer was configured with `enable_checkpointing=False` but found `ModelCheckpoint` in callbacks list.
+chronos_weather,9:target,chronos:amazon/chronos-t5-tiny,0.5893664956092834,0.8522108197212219,1.768561840057373,0.1534692496061325,
+chronos_weather,9:target,seasonal_naive,0.2599230408668518,0.719454824924469,0.4000000059604645,0.06768317520618439,
+chronos_weather,9:target,arma,2.2125930786132812,2.311789035797119,1.7612215280532837,0.5761525630950928,
+chronos_weather,9:target,prophet,1.4454574584960938,1.57746422290802,1.7481569051742554,0.37639275193214417,
+chronos_weather,9:target,deepar,,,,,Trainer was configured with `enable_checkpointing=False` but found `ModelCheckpoint` in callbacks list.
+chronos_weather,10:target,chronos:amazon/chronos-t5-tiny,3.5428426265716553,7.310415744781494,1.8560937643051147,0.6664676070213318,
+chronos_weather,10:target,seasonal_naive,4.355832099914551,7.637113094329834,1.2128441333770752,0.8194044232368469,
+chronos_weather,10:target,arma,4.592766761779785,6.58068323135376,1.612152338027954,0.8639757633209229,
+chronos_weather,10:target,prophet,5.413412570953369,6.767005443572998,1.6170580387115479,1.0183528661727905,
+chronos_weather,10:target,deepar,,,,,Trainer was configured with `enable_checkpointing=False` but found `ModelCheckpoint` in callbacks list.
+chronos_weather,11:target,chronos:amazon/chronos-t5-tiny,1.1410346031188965,2.087822198867798,1.908564805984497,0.3877098262310028,
+chronos_weather,11:target,seasonal_naive,0.9233333468437195,2.078861713409424,0.6000000238418579,0.31373757123947144,
+chronos_weather,11:target,arma,1.799691915512085,2.017595052719116,1.620045781135559,0.6115136742591858,
+chronos_weather,11:target,prophet,1.731892466545105,1.9969143867492676,1.6142796277999878,0.5884762406349182,
+chronos_weather,11:target,deepar,,,,,Trainer was configured with `enable_checkpointing=False` but found `ModelCheckpoint` in callbacks list.
+chronos_weather,12:target,chronos:amazon/chronos-t5-tiny,0.7625566124916077,1.9490891695022583,1.9147554636001587,0.2943054735660553,
+chronos_weather,12:target,seasonal_naive,0.7046598792076111,2.0952374935150146,0.5333333611488342,0.2719604969024658,
+chronos_weather,12:target,arma,1.4298396110534668,2.057114839553833,1.6852160692214966,0.5518405437469482,
+chronos_weather,12:target,prophet,1.1275514364242554,1.9915239810943604,1.741313099861145,0.4351736903190613,
+chronos_weather,12:target,deepar,,,,,Trainer was configured with `enable_checkpointing=False` but found `ModelCheckpoint` in callbacks list.
+chronos_weather,13:target,chronos:amazon/chronos-t5-tiny,0.2737422585487366,0.4549916982650757,1.908770203590393,0.07146456092596054,
+chronos_weather,13:target,seasonal_naive,0.04000000283122063,0.1549193412065506,0.20000000298023224,0.010442606173455715,
+chronos_weather,13:target,arma,2.1740622520446777,2.1819651126861572,1.9430320262908936,0.5675718784332275,
+chronos_weather,13:target,prophet,1.0511291027069092,1.2280155420303345,1.874907374382019,0.27441316843032837,
+chronos_weather,13:target,deepar,,,,,Trainer was configured with `enable_checkpointing=False` but found `ModelCheckpoint` in callbacks list.
+chronos_weather,14:target,chronos:amazon/chronos-t5-tiny,0.6802977919578552,1.071631908416748,1.9364186525344849,0.14716865122318268,
+chronos_weather,14:target,seasonal_naive,0.04000000283122063,0.18618986010551453,0.13333334028720856,0.008653189986944199,
+chronos_weather,14:target,arma,2.510745048522949,2.5225846767425537,1.9532519578933716,0.5431488156318665,
+chronos_weather,14:target,prophet,1.2080109119415283,1.222592830657959,1.9265801906585693,0.26132869720458984,
+chronos_weather,14:target,deepar,,,,,Trainer was configured with `enable_checkpointing=False` but found `ModelCheckpoint` in callbacks list.
+chronos_weather,15:target,chronos:amazon/chronos-t5-tiny,0.41592809557914734,1.2013342380523682,1.864830493927002,0.18981997668743134,
+chronos_weather,15:target,seasonal_naive,0.35999998450279236,1.2187424898147583,0.5333333611488342,0.16429567337036133,
+chronos_weather,15:target,arma,1.3603109121322632,1.4743664264678955,1.8102420568466187,0.6208144426345825,
+chronos_weather,15:target,prophet,1.0201550722122192,1.280562400817871,1.7832863330841064,0.4655751883983612,
+chronos_weather,15:target,deepar,,,,,Trainer was configured with `enable_checkpointing=False` but found `ModelCheckpoint` in callbacks list.
+chronos_weather,16:target,chronos:amazon/chronos-t5-tiny,1.0748082399368286,2.215090751647949,1.8926976919174194,0.2978020906448364,
+chronos_weather,16:target,seasonal_naive,0.949999988079071,2.3449947834014893,0.6000000238418579,0.263220876455307,
+chronos_weather,16:target,arma,2.2410740852355957,2.458693027496338,1.6840529441833496,0.6209447383880615,
+chronos_weather,16:target,prophet,2.078537940979004,2.4169929027557373,1.6897788047790527,0.5759100914001465,
+chronos_weather,16:target,deepar,,,,,Trainer was configured with `enable_checkpointing=False` but found `ModelCheckpoint` in callbacks list.
+chronos_weather,17:target,chronos:amazon/chronos-t5-tiny,0.6257076859474182,1.0031793117523193,1.8928685188293457,0.11898201704025269,
+chronos_weather,17:target,seasonal_naive,0.2828078269958496,0.8965211510658264,0.2666666805744171,0.053777579218149185,
+chronos_weather,17:target,arma,2.80418062210083,2.901134729385376,1.8099915981292725,0.5332315564155579,
+chronos_weather,17:target,prophet,1.3208045959472656,1.5809907913208008,1.8572202920913696,0.25115880370140076,
+chronos_weather,17:target,deepar,,,,,Trainer was configured with `enable_checkpointing=False` but found `ModelCheckpoint` in callbacks list.
+chronos_weather,18:target,chronos:amazon/chronos-t5-tiny,2.3338239192962646,4.377632141113281,1.6289376020431519,0.519072413444519,
+chronos_weather,18:target,seasonal_naive,2.493332862854004,4.500370025634766,1.4990993738174438,0.5545492172241211,
+chronos_weather,18:target,arma,3.1603734493255615,3.9224491119384766,1.4610645771026611,0.7029076218605042,
+chronos_weather,18:target,prophet,3.3125815391540527,3.9377660751342773,1.4743345975875854,0.736760675907135,
+chronos_weather,18:target,deepar,,,,,Trainer was configured with `enable_checkpointing=False` but found `ModelCheckpoint` in callbacks list.
+chronos_weather,19:target,chronos:amazon/chronos-t5-tiny,0.4616970121860504,0.9694262146949768,1.9767000675201416,0.10699401050806046,
+chronos_weather,19:target,seasonal_naive,0.2133333384990692,0.8278486132621765,0.13333334028720856,0.049438025802373886,
+chronos_weather,19:target,arma,2.3803677558898926,2.428737163543701,1.8828903436660767,0.5516281723976135,
+chronos_weather,19:target,prophet,1.061745285987854,1.3905390501022339,1.9585716724395752,0.2460496425628662,
+chronos_weather,19:target,deepar,,,,,Trainer was configured with `enable_checkpointing=False` but found `ModelCheckpoint` in callbacks list.
+external_national_illness,OT,chronos:amazon/chronos-t5-tiny,81414.59375,102023.9921875,0.05467851832509041,0.9428843259811401,
+external_national_illness,OT,seasonal_naive,153627.328125,246659.078125,0.11638595908880234,1.779199481010437,
+external_national_illness,OT,arma,887030.8125,889488.75,0.8255660533905029,10.272942543029785,
+external_national_illness,OT,prophet,57983.5,73375.984375,0.03833499178290367,0.6715225577354431,
+external_national_illness,OT,deepar,,,,,Trainer was configured with `enable_checkpointing=False` but found `ModelCheckpoint` in callbacks list.
+external_psm,timestamp_(min),chronos:amazon/chronos-t5-tiny,305.453125,305.8009948730469,0.0023031914606690407,12.727213859558105,
+external_psm,timestamp_(min),seasonal_naive,24.0,24.0,0.00018119154265150428,1.0,
+external_psm,timestamp_(min),arma,271.3736877441406,312.7599792480469,0.0020513201598078012,11.307236671447754,
+external_psm,timestamp_(min),prophet,0.0,0.0,0.0,0.0,
+external_psm,timestamp_(min),deepar,,,,,Trainer was configured with `enable_checkpointing=False` but found `ModelCheckpoint` in callbacks list.
+external_psm,feature_0,chronos:amazon/chronos-t5-tiny,0.0014455890050157905,0.0014691852265968919,0.001861879019998014,0.5849927663803101,
+external_psm,feature_0,seasonal_naive,0.0004995837807655334,0.000575015670619905,0.0006442053127102554,0.20216873288154602,
+external_psm,feature_0,arma,0.0002695197763387114,0.0003291824250482023,0.00034743265132419765,0.10906773805618286,
+external_psm,feature_0,prophet,0.016240177676081657,0.016242751851677895,0.020718920975923538,6.5719828605651855,
+external_psm,feature_0,deepar,,,,,Trainer was configured with `enable_checkpointing=False` but found `ModelCheckpoint` in callbacks list.
+external_psm,feature_1,chronos:amazon/chronos-t5-tiny,0.0005196109414100647,0.0006559764733538032,0.0005718258325941861,0.7069016695022583,
+external_psm,feature_1,seasonal_naive,0.00041036555194295943,0.0004541220550891012,0.0004515395557973534,0.5582793951034546,
+external_psm,feature_1,arma,0.0009937038412317634,0.0010786907514557242,0.0010938206687569618,1.3518785238265991,
+external_psm,feature_1,prophet,0.032909199595451355,0.03290994092822075,0.036871347576379776,44.77112579345703,
+external_psm,feature_1,deepar,,,,,Trainer was configured with `enable_checkpointing=False` but found `ModelCheckpoint` in callbacks list.
+external_psm,feature_2,chronos:amazon/chronos-t5-tiny,0.001894533634185791,0.0019965446554124355,0.0031183287501335144,0.9772585034370422,
+external_psm,feature_2,seasonal_naive,0.00043104341602884233,0.0005967702018097043,0.0007105109398253262,0.22234539687633514,
+external_psm,feature_2,arma,0.0003378515539225191,0.0004065810644533485,0.0005569237400777638,0.17427417635917664,
+external_psm,feature_2,prophet,0.00964308064430952,0.009649483487010002,0.01602453552186489,4.974196434020996,
+external_psm,feature_2,deepar,,,,,Trainer was configured with `enable_checkpointing=False` but found `ModelCheckpoint` in callbacks list.
+external_psm,feature_3,chronos:amazon/chronos-t5-tiny,0.0005966350436210632,0.0006379283731803298,0.0009036370902322233,0.9881354570388794,
+external_psm,feature_3,seasonal_naive,0.00010857234155992046,0.00011274706776021048,0.00016436791338492185,0.17981542646884918,
+external_psm,feature_3,arma,9.393443906446919e-05,0.00010866796219488606,0.0001422053755959496,0.15557241439819336,
+external_psm,feature_3,prophet,0.03699877858161926,0.03699878975749016,0.05762111023068428,61.27666473388672,
+external_psm,feature_3,deepar,,,,,Trainer was configured with `enable_checkpointing=False` but found `ModelCheckpoint` in callbacks list.
