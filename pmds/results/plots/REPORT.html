@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chronos Forecasting Benchmark Report</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            border-radius: 10px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        section {
+            background: white;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+        h3 {
+            color: #764ba2;
+            margin-top: 20px;
+            margin-bottom: 15px;
+        }
+        h4 {
+            color: #555;
+            margin-top: 15px;
+            margin-bottom: 10px;
+        }
+        .dataset-card, .model-card {
+            background: #f9f9f9;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+        .dataset-card h3 {
+            color: #667eea;
+            margin-top: 0;
+        }
+        .model-card h3 {
+            color: #764ba2;
+            margin-top: 0;
+        }
+        .metric {
+            background: #f9f9f9;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+        .metric-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .metric-name {
+            font-weight: bold;
+            color: #667eea;
+            font-size: 1.1em;
+        }
+        .direction {
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+        .direction.lower {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+        .direction.higher {
+            background-color: #fff3e0;
+            color: #e65100;
+        }
+        ul, ol {
+            margin-left: 20px;
+            margin-bottom: 10px;
+        }
+        li {
+            margin-bottom: 5px;
+        }
+        .strength {
+            color: #2e7d32;
+        }
+        .weakness {
+            color: #c62828;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #667eea;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f5f5f5;
+        }
+        .domain {
+            display: inline-block;
+            background-color: #e3f2fd;
+            color: #1976d2;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            margin: 5px 0;
+        }
+        .characteristics {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .hr-text {
+            text-align: center;
+            margin: 30px 0;
+            color: #999;
+        }
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📊 Chronos Forecasting Benchmark</h1>
+            <p>Comprehensive Report on Datasets, Metrics, and Models</p>
+        </header>
+
+        <!-- Datasets Section -->
+        <section>
+            <h2>📊 Datasets Overview</h2>
+            <p>This benchmark evaluates models across diverse time series datasets spanning multiple domains and frequencies.</p>
+
+            <div class="dataset-card">
+                <h3>Chronos M1 Yearly</h3>
+                <div class="domain">Finance/Economics</div>
+                <p><strong>Monash M1 Competition yearly dataset</strong></p>
+                
+                <h4>Key Characteristics:</h4>
+                <ul class="characteristics">
+                    <li>Yearly frequency data</li>
+                    <li>20 different time series</li>
+                    <li>6-step ahead forecasting horizon</li>
+                    <li>Low seasonality (1)</li>
+                    <li>Long-term trends and patterns</li>
+                </ul>
+                <p><strong>Use Case:</strong> Annual business and economic forecasting</p>
+            </div>
+
+            <div class="dataset-card">
+                <h3>Chronos M4 Hourly</h3>
+                <div class="domain">Energy/Traffic</div>
+                <p><strong>M4 Competition hourly dataset</strong></p>
+                
+                <h4>Key Characteristics:</h4>
+                <ul class="characteristics">
+                    <li>Hourly frequency data</li>
+                    <li>20 different time series</li>
+                    <li>48-step ahead forecasting horizon (2 days)</li>
+                    <li>Strong hourly seasonality (24)</li>
+                    <li>Repeating daily patterns</li>
+                </ul>
+                <p><strong>Use Case:</strong> Short-term operational forecasting (energy demand, traffic)</p>
+            </div>
+
+            <div class="dataset-card">
+                <h3>Chronos Weather</h3>
+                <div class="domain">Meteorology</div>
+                <p><strong>Monash weather dataset</strong></p>
+                
+                <h4>Key Characteristics:</h4>
+                <ul class="characteristics">
+                    <li>Daily frequency data</li>
+                    <li>20 different weather stations</li>
+                    <li>30-day forecasting horizon</li>
+                    <li>Weekly seasonality (7)</li>
+                    <li>Temporal weather patterns</li>
+                </ul>
+                <p><strong>Use Case:</strong> Weather forecasting for multiple locations</p>
+            </div>
+
+            <div class="dataset-card">
+                <h3>National Illness</h3>
+                <div class="domain">Healthcare</div>
+                <p><strong>National illness dataset from Time-Series-Library</strong></p>
+                
+                <h4>Key Characteristics:</h4>
+                <ul class="characteristics">
+                    <li>Weekly frequency data</li>
+                    <li>1 single target variable (OT)</li>
+                    <li>24-week forecasting horizon (~6 months)</li>
+                    <li>Yearly seasonality (52 weeks)</li>
+                    <li>Epidemic patterns</li>
+                </ul>
+                <p><strong>Use Case:</strong> Disease tracking and epidemiological forecasting</p>
+            </div>
+
+            <div class="dataset-card">
+                <h3>Traffic</h3>
+                <div class="domain">Transportation</div>
+                <p><strong>Traffic flow dataset from Time-Series-Library</strong></p>
+                
+                <h4>Key Characteristics:</h4>
+                <ul class="characteristics">
+                    <li>Hourly frequency data</li>
+                    <li>5 different traffic sensors</li>
+                    <li>24-hour ahead forecasting</li>
+                    <li>Daily seasonality (24)</li>
+                    <li>Vehicle flow patterns</li>
+                </ul>
+                <p><strong>Use Case:</strong> Traffic management and congestion prediction</p>
+            </div>
+
+            <div class="dataset-card">
+                <h3>PSM (Power Supply Monitoring)</h3>
+                <div class="domain">Manufacturing/Energy</div>
+                <p><strong>Power Supply Monitoring dataset</strong></p>
+                
+                <h4>Key Characteristics:</h4>
+                <ul class="characteristics">
+                    <li>Hourly frequency data</li>
+                    <li>5 different power metrics</li>
+                    <li>24-hour ahead forecasting</li>
+                    <li>Daily seasonality (24)</li>
+                    <li>Equipment monitoring data</li>
+                </ul>
+                <p><strong>Use Case:</strong> Industrial equipment performance monitoring</p>
+            </div>
+        </section>
+
+        <!-- Metrics Section -->
+        <section>
+            <h2>📈 Evaluation Metrics</h2>
+            <p>Five complementary metrics are used to evaluate forecast accuracy and quality.</p>
+
+            <div class="metric">
+                <div class="metric-header">
+                    <span class="metric-name">Mean Absolute Error (MAE)</span>
+                    <span class="direction lower">↓ Lower is Better</span>
+                </div>
+                <p><strong>Formula:</strong> <code>mean(|actual - predicted|)</code></p>
+                <p><strong>Unit:</strong> Same unit as target variable</p>
+                <p>Average magnitude of errors. Simple and interpretable.</p>
+                <p><strong>📌 Interpretation:</strong> Penalizes all errors equally, not sensitive to outliers</p>
+            </div>
+
+            <div class="metric">
+                <div class="metric-header">
+                    <span class="metric-name">Root Mean Squared Error (RMSE)</span>
+                    <span class="direction lower">↓ Lower is Better</span>
+                </div>
+                <p><strong>Formula:</strong> <code>sqrt(mean((actual - predicted)²))</code></p>
+                <p><strong>Unit:</strong> Same unit as target variable</p>
+                <p>Square root of average squared errors. Penalizes large errors more heavily.</p>
+                <p><strong>📌 Interpretation:</strong> More sensitive to outliers and large errors than MAE</p>
+            </div>
+
+            <div class="metric">
+                <div class="metric-header">
+                    <span class="metric-name">Symmetric Mean Absolute Percentage Error (SMAPE)</span>
+                    <span class="direction lower">↓ Lower is Better</span>
+                </div>
+                <p><strong>Formula:</strong> <code>mean(2 * |actual - predicted| / (|actual| + |predicted|)) * 100</code></p>
+                <p><strong>Unit:</strong> Percentage (%)</p>
+                <p>Scale-independent percentage error that is symmetric between actual and predicted.</p>
+                <p><strong>📌 Interpretation:</strong> Good for comparing across series with different scales. Range: 0-200%</p>
+            </div>
+
+            <div class="metric">
+                <div class="metric-header">
+                    <span class="metric-name">Mean Absolute Scaled Error (MASE)</span>
+                    <span class="direction lower">↓ Lower is Better</span>
+                </div>
+                <p><strong>Formula:</strong> <code>mean(|actual - predicted|) / mean(|actual[t] - actual[t-seasonality]|)</code></p>
+                <p><strong>Unit:</strong> Dimensionless ratio</p>
+                <p>Scales errors relative to naive seasonal forecast. MASE=1 means same as naive.</p>
+                <p><strong>📌 Interpretation:</strong> MASE < 1 means better than naive baseline, > 1 means worse</p>
+            </div>
+
+            <div class="metric">
+                <div class="metric-header">
+                    <span class="metric-name">Weighted Quantile Loss (WQL)</span>
+                    <span class="direction lower">↓ Lower is Better</span>
+                </div>
+                <p><strong>Formula:</strong> <code>Weighted sum of quantile losses across [0.1, 0.2, ..., 0.9]</code></p>
+                <p><strong>Unit:</strong> Same unit as target variable</p>
+                <p>Loss function for probabilistic forecasts across multiple quantiles.</p>
+                <p><strong>📌 Interpretation:</strong> Evaluates entire forecast distribution, not just point estimates</p>
+            </div>
+        </section>
+
+        <!-- Models Section -->
+        <section>
+            <h2>🤖 Forecasting Models</h2>
+            <p>Six different forecasting models spanning deep learning, baselines, and statistical methods.</p>
+
+            <div class="model-card">
+                <h3>Chronos T5 Tiny</h3>
+                <p><strong>Type:</strong> Deep Learning - Pretrained Transformer</p>
+                <p><strong>Parameters:</strong> ~8M</p>
+                <p>Tiny Chronos model - pretrained T5 transformer for time series forecasting</p>
+                
+                <h4>Features:</h4>
+                <ul>
+                    <li>Language model architecture (T5)</li>
+                    <li>Pretrained on large time series datasets</li>
+                    <li>Zero-shot forecasting capability</li>
+                    <li>Probabilistic forecasts (100 samples)</li>
+                    <li>CPU-friendly (8M parameters)</li>
+                    <li>Quantization support available</li>
+                </ul>
+                
+                <h4>Strengths:</h4>
+                <ul>
+                    <li class="strength">✅ Good performance across diverse datasets</li>
+                    <li class="strength">✅ Fast inference</li>
+                    <li class="strength">✅ Transfer learning from pretraining</li>
+                    <li class="strength">✅ Handles multiple time series naturally</li>
+                </ul>
+                
+                <h4>Weaknesses:</h4>
+                <ul>
+                    <li class="weakness">❌ Less powerful than larger Chronos variants</li>
+                    <li class="weakness">❌ Still heavier than traditional methods</li>
+                </ul>
+            </div>
+
+            <div class="model-card">
+                <h3>Seasonal Naive</h3>
+                <p><strong>Type:</strong> Baseline - Naive</p>
+                <p><strong>Parameters:</strong> ~0</p>
+                <p>Baseline model - predicts by repeating last known seasonal period</p>
+                
+                <h4>Features:</h4>
+                <ul>
+                    <li>No model training required</li>
+                    <li>Repeats values from same season</li>
+                    <li>Fast computation</li>
+                    <li>No parameters to tune</li>
+                    <li>Deterministic forecasts</li>
+                </ul>
+                
+                <h4>Strengths:</h4>
+                <ul>
+                    <li class="strength">✅ Excellent baseline for seasonal data</li>
+                    <li class="strength">✅ Very fast</li>
+                    <li class="strength">✅ Simple to understand</li>
+                    <li class="strength">✅ Often beats more complex methods on seasonal data</li>
+                </ul>
+                
+                <h4>Weaknesses:</h4>
+                <ul>
+                    <li class="weakness">❌ Cannot capture trends</li>
+                    <li class="weakness">❌ Ignores recent observations</li>
+                    <li class="weakness">❌ Poor for data without clear seasonality</li>
+                </ul>
+            </div>
+
+            <div class="model-card">
+                <h3>AR(2)</h3>
+                <p><strong>Type:</strong> Statistical - Autoregressive</p>
+                <p><strong>Parameters:</strong> ~2</p>
+                <p>Autoregressive model of order 2 - predicts based on last 2 observations</p>
+                
+                <h4>Features:</h4>
+                <ul>
+                    <li>Depends on previous 2 time steps</li>
+                    <li>No differencing (stationary data)</li>
+                    <li>Linear constant trend</li>
+                    <li>Statsmodels implementation</li>
+                </ul>
+                
+                <h4>Strengths:</h4>
+                <ul>
+                    <li class="strength">✅ Captures short-term dependencies</li>
+                    <li class="strength">✅ Fast and lightweight</li>
+                    <li class="strength">✅ Interpretable coefficients</li>
+                </ul>
+                
+                <h4>Weaknesses:</h4>
+                <ul>
+                    <li class="weakness">❌ Only uses 2 previous values</li>
+                    <li class="weakness">❌ No seasonality modeling</li>
+                    <li class="weakness">❌ Requires stationary data</li>
+                </ul>
+            </div>
+
+            <div class="model-card">
+                <h3>MA(2)</h3>
+                <p><strong>Type:</strong> Statistical - Moving Average</p>
+                <p><strong>Parameters:</strong> ~2</p>
+                <p>Moving Average model of order 2 - models forecast errors of last 2 steps</p>
+                
+                <h4>Features:</h4>
+                <ul>
+                    <li>Models residual errors from last 2 steps</li>
+                    <li>No differencing</li>
+                    <li>Linear constant trend</li>
+                    <li>Statsmodels implementation</li>
+                </ul>
+                
+                <h4>Strengths:</h4>
+                <ul>
+                    <li class="strength">✅ Good for irregular shocks</li>
+                    <li class="strength">✅ Can smooth noise</li>
+                    <li class="strength">✅ Lightweight</li>
+                </ul>
+                
+                <h4>Weaknesses:</h4>
+                <ul>
+                    <li class="weakness">❌ Purely reactive to past errors</li>
+                    <li class="weakness">❌ No seasonality</li>
+                    <li class="weakness">❌ Only 2 lagged errors</li>
+                </ul>
+            </div>
+
+            <div class="model-card">
+                <h3>ARMA(2,2)</h3>
+                <p><strong>Type:</strong> Statistical - Mixed</p>
+                <p><strong>Parameters:</strong> ~4</p>
+                <p>AutoRegressive-Moving-Average model combining AR(2) and MA(2)</p>
+                
+                <h4>Features:</h4>
+                <ul>
+                    <li>2 autoregressive terms + 2 moving average terms</li>
+                    <li>Combines AR and MA benefits</li>
+                    <li>No differencing</li>
+                    <li>Linear constant trend</li>
+                </ul>
+                
+                <h4>Strengths:</h4>
+                <ul>
+                    <li class="strength">✅ Flexible modeling of dependencies</li>
+                    <li class="strength">✅ Combines memory and error correction</li>
+                    <li class="strength">✅ Better than pure AR or MA</li>
+                </ul>
+                
+                <h4>Weaknesses:</h4>
+                <ul>
+                    <li class="weakness">❌ More parameters to estimate</li>
+                    <li class="weakness">❌ No seasonality</li>
+                    <li class="weakness">❌ Can be harder to fit</li>
+                </ul>
+            </div>
+
+            <div class="model-card">
+                <h3>ARIMA(2,1,2)</h3>
+                <p><strong>Type:</strong> Statistical - Integrated</p>
+                <p><strong>Parameters:</strong> ~4</p>
+                <p>AutoRegressive Integrated Moving-Average - includes 1-step differencing for non-stationary data</p>
+                
+                <h4>Features:</h4>
+                <ul>
+                    <li>2 AR terms + 2 MA terms</li>
+                    <li>1 differencing step (I=1)</li>
+                    <li>Handles non-stationary trends</li>
+                    <li>No trend component</li>
+                </ul>
+                
+                <h4>Strengths:</h4>
+                <ul>
+                    <li class="strength">✅ Handles trending data</li>
+                    <li class="strength">✅ Differencing removes trend automatically</li>
+                    <li class="strength">✅ Balanced AR and MA</li>
+                </ul>
+                
+                <h4>Weaknesses:</h4>
+                <ul>
+                    <li class="weakness">❌ Ignores seasonality</li>
+                    <li class="weakness">❌ Differencing loses information</li>
+                    <li class="weakness">❌ Limited to linear trends</li>
+                </ul>
+            </div>
+
+            <div class="model-card">
+                <h3>Prophet</h3>
+                <p><strong>Type:</strong> Statistical - Time Series Decomposition</p>
+                <p><strong>Parameters:</strong> ~~10-20</p>
+                <p>Facebook's Prophet - decomposes time series into trend, seasonality, and holidays</p>
+                
+                <h4>Features:</h4>
+                <ul>
+                    <li>Additive seasonality</li>
+                    <li>Linear trend model</li>
+                    <li>Automatic seasonality detection</li>
+                    <li>Holiday effects support</li>
+                    <li>Bayesian inference</li>
+                    <li>200 posterior samples for uncertainty</li>
+                </ul>
+                
+                <h4>Strengths:</h4>
+                <ul>
+                    <li class="strength">✅ Good at capturing multiple seasonalities</li>
+                    <li class="strength">✅ Robust to missing data</li>
+                    <li class="strength">✅ Good uncertainty estimates</li>
+                    <li class="strength">✅ Interpretable components</li>
+                </ul>
+                
+                <h4>Weaknesses:</h4>
+                <ul>
+                    <li class="weakness">❌ Slower than simpler methods</li>
+                    <li class="weakness">❌ Assumes linear trend</li>
+                    <li class="weakness">❌ May overfit on small datasets</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Summary Section -->
+        <section>
+            <h2>📋 Summary & Key Insights</h2>
+            
+            <h3>Model Categories</h3>
+            <table>
+                <tr>
+                    <th>Category</th>
+                    <th>Model</th>
+                    <th>Characteristics</th>
+                </tr>
+                <tr>
+                    <td><strong>Deep Learning</strong></td>
+                    <td>Chronos T5 Tiny</td>
+                    <td>Pretrained transformer model with zero-shot capabilities</td>
+                </tr>
+                <tr>
+                    <td><strong>Baseline</strong></td>
+                    <td>Seasonal Naive</td>
+                    <td>Simple repeating pattern baseline for benchmarking</td>
+                </tr>
+                <tr>
+                    <td rowspan="4"><strong>Statistical</strong></td>
+                    <td>AR(2)</td>
+                    <td>Autoregressive model - memory of last 2 values</td>
+                </tr>
+                <tr>
+                    <td>MA(2)</td>
+                    <td>Moving average - models forecast errors</td>
+                </tr>
+                <tr>
+                    <td>ARMA(2,2)</td>
+                    <td>Combined AR and MA</td>
+                </tr>
+                <tr>
+                    <td>ARIMA(2,1,2)</td>
+                    <td>Integrated - handles trends via differencing</td>
+                </tr>
+                <tr>
+                    <td><strong>Hybrid</strong></td>
+                    <td>Prophet</td>
+                    <td>Bayesian time series decomposition with trend & seasonality</td>
+                </tr>
+            </table>
+            
+            <h3>Key Insights</h3>
+            <ul>
+                <li><strong>Seasonal Naive</strong> provides essential baseline, particularly strong on seasonal data</li>
+                <li><strong>Chronos T5</strong> leverages deep learning and pretraining for superior cross-dataset performance</li>
+                <li><strong>Statistical Methods</strong> (ARIMA, Prophet) excel at interpretability and specific data patterns</li>
+                <li><strong>Metric Hierarchy</strong>: MASE=1 represents seasonal naive baseline performance</li>
+                <li><strong>Probabilistic vs Point</strong>: WQL evaluates entire forecast distributions; MAE/RMSE focus on point accuracy</li>
+                <li><strong>Scale Invariance</strong>: SMAPE enables fair comparison across datasets with different scales</li>
+            </ul>
+        </section>
+
+        <footer>
+            <p><em>Generated from PMDS Chronos Forecasting Benchmark</em></p>
+            <p>For detailed results, see the individual dataset plots and CSV summary files.</p>
+        </footer>
+    </div>
+</body>
+</html>

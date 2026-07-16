@@ -1,0 +1,250 @@
+{
+  "run": {
+    "name": "compare",
+    "output_dir": "pmds/results",
+    "log_dir": "pmds/results/logs",
+    "random_seed": 42,
+    "environment": {
+      "MPLCONFIGDIR": "/tmp/pmds-matplotlib"
+    },
+    "logging": {
+      "console_level": "INFO",
+      "file_level": "DEBUG",
+      "max_bytes": 10485760,
+      "backup_count": 5
+    }
+  },
+  "evaluation": {
+    "metrics": [
+      "mae",
+      "rmse",
+      "smape",
+      "mase",
+      "wql"
+    ],
+    "point_forecast": "median",
+    "quantiles": [
+      0.1,
+      0.2,
+      0.3,
+      0.4,
+      0.5,
+      0.6,
+      0.7,
+      0.8,
+      0.9
+    ]
+  },
+  "datasets": [
+    {
+      "name": "chronos_m1_yearly",
+      "enabled": true,
+      "family": "chronos",
+      "repo": "autogluon/chronos_datasets",
+      "hf_configs": ["monash_m1_yearly"],
+      "split": "train",
+      "prediction_length": 6,
+      "seasonality": 1,
+      "max_series": 20,
+      "fallback_frequency": "Y-DEC"
+    },
+    {
+      "name": "chronos_m4_hourly",
+      "enabled": true,
+      "family": "chronos",
+      "repo": "autogluon/chronos_datasets",
+      "hf_configs": ["m4_hourly"],
+      "split": "train",
+      "prediction_length": 48,
+      "seasonality": 24,
+      "max_series": 20,
+      "fallback_frequency": "h"
+    },
+    {
+      "name": "chronos_weather",
+      "enabled": true,
+      "family": "chronos",
+      "repo": "autogluon/chronos_datasets",
+      "hf_configs": ["monash_weather"],
+      "split": "train",
+      "prediction_length": 30,
+      "seasonality": 7,
+      "max_series": 20,
+      "fallback_frequency": "D"
+    },
+    {
+      "name": "external_national_illness",
+      "enabled": true,
+      "family": "external",
+      "repo": "thuml/Time-Series-Library",
+      "hf_configs": ["national_illness"],
+      "split": "train",
+      "prediction_length": 24,
+      "seasonality": 52,
+      "max_series": 1,
+      "fallback_frequency": "W",
+      "target_column": "OT",
+      "date_column": "date"
+    },
+    {
+      "name": "external_traffic",
+      "enabled": true,
+      "family": "external",
+      "repo": "thuml/Time-Series-Library",
+      "hf_configs": ["traffic"],
+      "split": "train",
+      "prediction_length": 24,
+      "seasonality": 24,
+      "max_series": 5,
+      "fallback_frequency": "h",
+      "date_column": "date"
+    },
+    {
+      "name": "external_psm",
+      "enabled": true,
+      "family": "external",
+      "repo": "thuml/Time-Series-Library",
+      "hf_configs": ["PSM-data"],
+      "split": "train",
+      "prediction_length": 24,
+      "seasonality": 24,
+      "max_series": 5,
+      "fallback_frequency": "h",
+      "exclude_columns": ["timestamp_(min)"]
+    }
+  ],
+  "models": [
+    {
+      "name": "chronos_t5_tiny",
+      "type": "chronos",
+      "enabled": true,
+      "params": {
+        "model_id": "amazon/chronos-t5-tiny",
+        "device": "cpu",
+        "torch_dtype": "float32",
+        "num_samples": 100,
+        "temperature": 1.0,
+        "top_k": 50,
+        "top_p": 1.0
+      }
+    },
+    {
+      "name": "seasonal_naive",
+      "type": "seasonal_naive",
+      "enabled": true,
+      "params": {
+        "use_dataset_seasonality": true,
+        "seasonality": 1
+      }
+    },
+    {
+      "name": "ar_2",
+      "type": "statsmodels_arima",
+      "enabled": true,
+      "params": {
+        "order": [2, 0, 0],
+        "seasonal_order": [0, 0, 0, 0],
+        "trend": "c",
+        "enforce_stationarity": false,
+        "enforce_invertibility": false,
+        "maxiter": 200
+      }
+    },
+    {
+      "name": "ma_2",
+      "type": "statsmodels_arima",
+      "enabled": true,
+      "params": {
+        "order": [0, 0, 2],
+        "seasonal_order": [0, 0, 0, 0],
+        "trend": "c",
+        "enforce_stationarity": false,
+        "enforce_invertibility": false,
+        "maxiter": 200
+      }
+    },
+    {
+      "name": "arma_2_2",
+      "type": "statsmodels_arima",
+      "enabled": true,
+      "params": {
+        "order": [2, 0, 2],
+        "seasonal_order": [0, 0, 0, 0],
+        "trend": "c",
+        "enforce_stationarity": false,
+        "enforce_invertibility": false,
+        "maxiter": 200
+      }
+    },
+    {
+      "name": "arima_2_1_2",
+      "type": "statsmodels_arima",
+      "enabled": true,
+      "params": {
+        "order": [2, 1, 2],
+        "seasonal_order": [0, 0, 0, 0],
+        "trend": null,
+        "enforce_stationarity": false,
+        "enforce_invertibility": false,
+        "maxiter": 200
+      }
+    },
+    {
+      "name": "sarima_1_0_1",
+      "type": "statsmodels_arima",
+      "enabled": false,
+      "params": {
+        "order": [1, 0, 1],
+        "seasonal_order": [1, 0, 1, "dataset_seasonality"],
+        "trend": "c",
+        "enforce_stationarity": false,
+        "enforce_invertibility": false,
+        "maxiter": 200
+      }
+    },
+    {
+      "name": "prophet",
+      "type": "prophet",
+      "enabled": true,
+      "params": {
+        "growth": "linear",
+        "seasonality_mode": "additive",
+        "yearly_seasonality": "auto",
+        "weekly_seasonality": "auto",
+        "daily_seasonality": "auto",
+        "changepoint_prior_scale": 0.05,
+        "seasonality_prior_scale": 10.0,
+        "interval_width": 0.8,
+        "uncertainty_samples": 200,
+        "mcmc_samples": 0
+      }
+    },
+    {
+      "name": "deepar",
+      "type": "deepar",
+      "enabled": false,
+      "params": {
+        "context_length_multiplier": 2.0,
+        "min_context_length": 8,
+        "hidden_size": 40,
+        "num_layers": 2,
+        "dropout_rate": 0.1,
+        "learning_rate": 0.001,
+        "weight_decay": 0.00000001,
+        "batch_size": 16,
+        "num_batches_per_epoch": 10,
+        "num_parallel_samples": 100,
+        "prediction_samples": 100,
+        "temporary_directory": "/tmp",
+        "trainer": {
+          "max_epochs": 5,
+          "accelerator": "auto",
+          "devices": 1,
+          "enable_checkpointing": true,
+          "logger": false,
+          "enable_progress_bar": false
+        }
+      }
+    }
+  ]
+}
