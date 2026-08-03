@@ -5,7 +5,13 @@
     "log_dir": "pmds/results/logs",
     "random_seed": 42,
     "environment": {
-      "MPLCONFIGDIR": "/tmp/pmds-matplotlib"
+      "MPLCONFIGDIR": "/tmp/pmds-matplotlib",
+      "HF_HOME": "/tmp/pmds-hf",
+      "HF_DATASETS_CACHE": "/tmp/pmds-hf/datasets",
+      "TRANSFORMERS_CACHE": "/tmp/pmds-hf/hub",
+      "HF_HUB_OFFLINE": "1",
+      "HF_DATASETS_OFFLINE": "1",
+      "TRANSFORMERS_OFFLINE": "1"
     },
     "logging": {
       "console_level": "INFO",
@@ -190,6 +196,35 @@
       }
     },
     {
+      "name": "auto_arima",
+      "type": "auto_arima",
+      "enabled": true,
+      "params": {
+        "information_criterion": "aic",
+        "min_p": 0,
+        "max_p": 2,
+        "min_d": 0,
+        "max_d": 1,
+        "min_q": 0,
+        "max_q": 2,
+        "min_P": 0,
+        "max_P": 0,
+        "min_D": 0,
+        "max_D": 0,
+        "min_Q": 0,
+        "max_Q": 0,
+        "max_order": 3,
+        "seasonal": false,
+        "use_dataset_seasonality": true,
+        "seasonality": 1,
+        "trend": "c",
+        "enforce_stationarity": false,
+        "enforce_invertibility": false,
+        "maxiter": 100,
+        "selection_max_samples": 5000
+      }
+    },
+    {
       "name": "sarima_1_0_1",
       "type": "statsmodels_arima",
       "enabled": false,
@@ -222,7 +257,7 @@
     {
       "name": "deepar",
       "type": "deepar",
-      "enabled": false,
+      "enabled": true,
       "params": {
         "context_length_multiplier": 2.0,
         "min_context_length": 8,
@@ -238,7 +273,7 @@
         "temporary_directory": "/tmp",
         "trainer": {
           "max_epochs": 5,
-          "accelerator": "auto",
+          "accelerator": "cpu",
           "devices": 1,
           "enable_checkpointing": true,
           "logger": false,

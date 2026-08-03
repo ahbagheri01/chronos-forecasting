@@ -276,6 +276,30 @@ MODEL_DESCRIPTIONS = {
             "Limited to linear trends"
         ]
     },
+    "auto_arima": {
+        "name": "AutoARIMA",
+        "type": "Statistical - Automatic Order Selection",
+        "family": "ARIMA",
+        "parameters": "Selected by AIC/BIC/AICc",
+        "description": "Statsmodels-based ARIMA grid search that selects the best order by information criterion",
+        "features": [
+            "Searches configured p/d/q ranges",
+            "Optional seasonal search",
+            "Uses a tail window for model selection on long series",
+            "Refits the selected order on the full context",
+            "Gaussian forecast intervals for quantiles"
+        ],
+        "strengths": [
+            "Reduces manual ARIMA order tuning",
+            "Keeps the benchmark dependency-light",
+            "Works with the same probabilistic metrics as fixed ARIMA models"
+        ],
+        "weaknesses": [
+            "Grid search can be slow on large search spaces",
+            "Information criteria may not select the best forecast model",
+            "Seasonal search should be used cautiously on long high-frequency series"
+        ]
+    },
     "prophet": {
         "name": "Prophet",
         "type": "Statistical - Time Series Decomposition",
@@ -300,6 +324,29 @@ MODEL_DESCRIPTIONS = {
             "Slower than simpler methods",
             "Assumes linear trend",
             "May overfit on small datasets"
+        ]
+    },
+    "deepar": {
+        "name": "DeepAR",
+        "type": "Deep Learning - Autoregressive RNN",
+        "family": "GluonTS",
+        "parameters": "Configurable",
+        "description": "GluonTS Torch DeepAR model trained independently for each forecast task",
+        "features": [
+            "Autoregressive recurrent neural network",
+            "Student-t probabilistic output distribution",
+            "Native sample-based quantile forecasts",
+            "Configurable context length and trainer settings"
+        ],
+        "strengths": [
+            "Produces probabilistic forecasts directly",
+            "Can model nonlinear temporal dynamics",
+            "Useful neural baseline alongside Chronos"
+        ],
+        "weaknesses": [
+            "Trains separately for every benchmark task",
+            "Slower than statistical baselines",
+            "Sensitive to trainer and context-length settings"
         ]
     }
 }
@@ -364,7 +411,8 @@ def create_markdown_report(output_path: Path):
     report += "### Model Categories\n\n"
     report += "1. **Deep Learning**: Chronos T5 - Pretrained transformer model\n"
     report += "2. **Baselines**: Seasonal Naive - Simple repeating pattern baseline\n"
-    report += "3. **Statistical**: AR/MA/ARMA/ARIMA/Prophet - Classical time series methods\n\n"
+    report += "3. **Statistical**: AR/MA/ARMA/ARIMA/AutoARIMA/Prophet - Classical time series methods\n"
+    report += "4. **Neural Baseline**: DeepAR - Task-specific probabilistic RNN\n\n"
     
     report += "### Key Insights\n\n"
     report += "- **Seasonal Naive** serves as an important baseline for seasonal data\n"
@@ -609,7 +657,7 @@ def create_html_report(output_path: Path):
         <!-- Models Section -->
         <section>
             <h2>🤖 Forecasting Models</h2>
-            <p>Six different forecasting models spanning deep learning, baselines, and statistical methods.</p>
+            <p>Forecasting models spanning pretrained deep learning, task-specific neural baselines, simple baselines, and statistical methods.</p>
 """
     
     for model_key, model_info in MODEL_DESCRIPTIONS.items():
@@ -670,7 +718,7 @@ def create_html_report(output_path: Path):
                     <td>Simple repeating pattern baseline for benchmarking</td>
                 </tr>
                 <tr>
-                    <td rowspan="4"><strong>Statistical</strong></td>
+                    <td rowspan="5"><strong>Statistical</strong></td>
                     <td>AR(2)</td>
                     <td>Autoregressive model - memory of last 2 values</td>
                 </tr>
@@ -687,9 +735,18 @@ def create_html_report(output_path: Path):
                     <td>Integrated - handles trends via differencing</td>
                 </tr>
                 <tr>
+                    <td>AutoARIMA</td>
+                    <td>Searches configured ARIMA orders by information criterion</td>
+                </tr>
+                <tr>
                     <td><strong>Hybrid</strong></td>
                     <td>Prophet</td>
                     <td>Bayesian time series decomposition with trend & seasonality</td>
+                </tr>
+                <tr>
+                    <td><strong>Neural Baseline</strong></td>
+                    <td>DeepAR</td>
+                    <td>Task-specific probabilistic recurrent neural network</td>
                 </tr>
             </table>
             

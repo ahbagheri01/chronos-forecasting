@@ -52,11 +52,12 @@ The current configuration includes:
 - `ma_2`: MA(2), represented by ARIMA order `(0, 0, 2)`.
 - `arma_2_2`: ARMA(2,2), represented by ARIMA order `(2, 0, 2)`.
 - `arima_2_1_2`: ARIMA order `(2, 1, 2)`.
+- `auto_arima`: statsmodels-based ARIMA order search using the configured information criterion.
 - `sarima_1_0_1`: configurable seasonal ARIMA example; disabled by default because it is slower.
 - `prophet`: Prophet with configurable priors and predictive uncertainty samples.
 - `deepar`: GluonTS Torch DeepAR trained independently for each forecast task.
 
-All statistical orders and fitting options are JSON hyperparameters. Additional ARIMA-family configurations can be added by copying a `statsmodels_arima` model entry and changing `order` or `seasonal_order`.
+All statistical orders and fitting options are JSON hyperparameters. Additional fixed ARIMA-family configurations can be added by copying a `statsmodels_arima` model entry and changing `order` or `seasonal_order`. AutoARIMA searches the configured order ranges and can use `selection_max_samples` to select an order on a tail window before refitting on the full context.
 
 ## Metrics
 
@@ -116,6 +117,7 @@ Quantile generation differs by model:
 
 - Chronos uses its native sampled quantile forecasts.
 - ARIMA-family models use the fitted forecast mean and standard error under a Gaussian approximation.
+- AutoARIMA uses the selected statsmodels ARIMA forecast mean and standard error under the same Gaussian approximation.
 - Prophet uses predictive samples.
 - DeepAR uses its native sample distribution.
 - Seasonal naive is deterministic, so all requested quantiles equal its point forecast. Its WQL is valid as a deterministic baseline but does not represent calibrated uncertainty.

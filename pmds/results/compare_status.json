@@ -4,41 +4,41 @@
     "status": "completed",
     "tasks": 20,
     "failed_model_tasks": 0,
-    "duration_seconds": 12.469550932999937
+    "duration_seconds": 22.91263292099984
   },
   {
     "dataset": "chronos_m4_hourly",
     "status": "completed",
     "tasks": 20,
     "failed_model_tasks": 0,
-    "duration_seconds": 59.31198899900005
+    "duration_seconds": 108.42552619300022
   },
   {
     "dataset": "chronos_weather",
     "status": "completed",
     "tasks": 20,
     "failed_model_tasks": 0,
-    "duration_seconds": 335.2920680020002
+    "duration_seconds": 479.5113328389998
   },
   {
     "dataset": "external_national_illness",
     "status": "completed",
     "tasks": 1,
     "failed_model_tasks": 0,
-    "duration_seconds": 4.970518163999714
+    "duration_seconds": 4.211738779999905
   },
   {
     "dataset": "external_traffic",
     "status": "completed",
     "tasks": 5,
     "failed_model_tasks": 0,
-    "duration_seconds": 228.01526206400013
+    "duration_seconds": 288.58054588699997
   },
   {
     "dataset": "external_psm",
     "status": "completed",
     "tasks": 5,
     "failed_model_tasks": 0,
-    "duration_seconds": 1138.014973274
+    "duration_seconds": 1372.923454917
   }
 ]
