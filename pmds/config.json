@@ -26,19 +26,33 @@
       "rmse",
       "smape",
       "mase",
-      "wql"
+      "wql",
+      "rain_occurrence_error",
+      "positive_mae"
     ],
     "point_forecast": "median",
+    "stochastic_repetitions": 3,
+    "forecast_context_multiplier": 3,
     "quantiles": [
+      0.05,
       0.1,
+      0.15,
       0.2,
+      0.25,
       0.3,
+      0.35,
       0.4,
+      0.45,
       0.5,
+      0.55,
       0.6,
+      0.65,
       0.7,
+      0.75,
       0.8,
-      0.9
+      0.85,
+      0.9,
+      0.95
     ]
   },
   "datasets": [
@@ -52,7 +66,10 @@
       "prediction_length": 6,
       "seasonality": 1,
       "max_series": 20,
-      "fallback_frequency": "Y-DEC"
+      "fallback_frequency": "Y-DEC",
+      "num_origins": 3,
+      "origin_stride": 6,
+      "selection_strategy": "evenly_spaced"
     },
     {
       "name": "chronos_m4_hourly",
@@ -64,7 +81,10 @@
       "prediction_length": 48,
       "seasonality": 24,
       "max_series": 20,
-      "fallback_frequency": "h"
+      "fallback_frequency": "h",
+      "num_origins": 3,
+      "origin_stride": 48,
+      "selection_strategy": "evenly_spaced"
     },
     {
       "name": "chronos_weather",
@@ -76,7 +96,14 @@
       "prediction_length": 30,
       "seasonality": 7,
       "max_series": 20,
-      "fallback_frequency": "D"
+      "fallback_frequency": "D",
+      "num_origins": 3,
+      "origin_stride": 30,
+      "selection_strategy": "evenly_spaced",
+      "filter_column": "subset",
+      "filter_values": ["rain"],
+      "zero_inflated": true,
+      "zero_threshold": 0.000001
     },
     {
       "name": "external_national_illness",
@@ -90,7 +117,9 @@
       "max_series": 1,
       "fallback_frequency": "W",
       "target_column": "OT",
-      "date_column": "date"
+      "date_column": "date",
+      "num_origins": 3,
+      "origin_stride": 24
     },
     {
       "name": "external_traffic",
@@ -103,7 +132,10 @@
       "seasonality": 24,
       "max_series": 5,
       "fallback_frequency": "h",
-      "date_column": "date"
+      "date_column": "date",
+      "num_origins": 3,
+      "origin_stride": 24,
+      "selection_strategy": "evenly_spaced"
     },
     {
       "name": "external_psm",
@@ -116,7 +148,13 @@
       "seasonality": 24,
       "max_series": 5,
       "fallback_frequency": "h",
-      "exclude_columns": ["timestamp_(min)"]
+      "date_column": "timestamp_(min)",
+      "timestamp_unit": "m",
+      "resample_frequency": "h",
+      "resample_method": "mean",
+      "num_origins": 3,
+      "origin_stride": 24,
+      "selection_strategy": "evenly_spaced"
     }
   ],
   "models": [
@@ -124,6 +162,7 @@
       "name": "chronos_t5_tiny",
       "type": "chronos",
       "enabled": true,
+      "stochastic": true,
       "params": {
         "model_id": "amazon/chronos-t5-tiny",
         "device": "cpu",
@@ -144,43 +183,12 @@
       }
     },
     {
-      "name": "ar_2",
-      "type": "statsmodels_arima",
+      "name": "weather_zero_baseline",
+      "type": "zero",
       "enabled": true,
-      "params": {
-        "order": [2, 0, 0],
-        "seasonal_order": [0, 0, 0, 0],
-        "trend": "c",
-        "enforce_stationarity": false,
-        "enforce_invertibility": false,
-        "maxiter": 200
-      }
-    },
-    {
-      "name": "ma_2",
-      "type": "statsmodels_arima",
-      "enabled": true,
-      "params": {
-        "order": [0, 0, 2],
-        "seasonal_order": [0, 0, 0, 0],
-        "trend": "c",
-        "enforce_stationarity": false,
-        "enforce_invertibility": false,
-        "maxiter": 200
-      }
-    },
-    {
-      "name": "arma_2_2",
-      "type": "statsmodels_arima",
-      "enabled": true,
-      "params": {
-        "order": [2, 0, 2],
-        "seasonal_order": [0, 0, 0, 0],
-        "trend": "c",
-        "enforce_stationarity": false,
-        "enforce_invertibility": false,
-        "maxiter": 200
-      }
+      "diagnostic": true,
+      "datasets": ["chronos_weather"],
+      "params": {}
     },
     {
       "name": "arima_2_1_2",
@@ -227,7 +235,7 @@
     {
       "name": "sarima_1_0_1",
       "type": "statsmodels_arima",
-      "enabled": false,
+      "enabled": true,
       "params": {
         "order": [1, 0, 1],
         "seasonal_order": [1, 0, 1, "dataset_seasonality"],
@@ -241,6 +249,7 @@
       "name": "prophet",
       "type": "prophet",
       "enabled": true,
+      "stochastic": true,
       "params": {
         "growth": "linear",
         "seasonality_mode": "additive",
@@ -258,6 +267,7 @@
       "name": "deepar",
       "type": "deepar",
       "enabled": true,
+      "stochastic": true,
       "params": {
         "context_length_multiplier": 2.0,
         "min_context_length": 8,
@@ -272,8 +282,8 @@
         "prediction_samples": 100,
         "temporary_directory": "/tmp",
         "trainer": {
-          "max_epochs": 5,
-          "accelerator": "cpu",
+          "max_epochs": 50,
+          "accelerator": "cuda:0",
           "devices": 1,
           "enable_checkpointing": true,
           "logger": false,

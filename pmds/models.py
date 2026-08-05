@@ -83,7 +83,11 @@ class ChronosRunner:
         else:
             quantile_values = quantiles[0].detach().cpu().numpy()
             mean_values = mean[0].detach().cpu().numpy().reshape(-1)
-        return ForecastOutput(mean_values.astype(np.float32), quantile_values.astype(np.float32))
+        return ForecastOutput(
+            mean_values.astype(np.float32),
+            quantile_values.astype(np.float32),
+            distribution=f"chronos_{pipeline.forecast_type.value}",
+        )
 
 
 def seasonal_naive_runner(params: Mapping[str, Any], quantiles: np.ndarray) -> Callable[[ForecastTask], ForecastOutput]:
@@ -96,7 +100,17 @@ def seasonal_naive_runner(params: Mapping[str, Any], quantiles: np.ndarray) -> C
         else:
             pattern = context[-period:]
             point = np.tile(pattern, math.ceil(task.prediction_length / period))[: task.prediction_length]
-        return ForecastOutput(point, repeated_quantiles(point, len(quantiles)))
+        return ForecastOutput(point, repeated_quantiles(point, len(quantiles)), distribution="degenerate")
+
+    return run
+
+
+def zero_runner(params: Mapping[str, Any], quantiles: np.ndarray) -> Callable[[ForecastTask], ForecastOutput]:
+    del params
+
+    def run(task: ForecastTask) -> ForecastOutput:
+        point = np.zeros(task.prediction_length, dtype=np.float32)
+        return ForecastOutput(point, repeated_quantiles(point, len(quantiles)), distribution="degenerate")
 
     return run
 
@@ -138,7 +152,7 @@ def statsmodels_arima_runner(
             forecast = fitted.get_forecast(steps=task.prediction_length)
         mean = np.asarray(forecast.predicted_mean, dtype=np.float32)
         std = np.asarray(forecast.se_mean, dtype=np.float32)
-        return ForecastOutput(mean, normal_quantiles(mean, std, quantiles))
+        return ForecastOutput(mean, normal_quantiles(mean, std, quantiles), distribution="gaussian")
 
     return run
 
@@ -263,7 +277,7 @@ def auto_arima_runner(params: Mapping[str, Any], quantiles: np.ndarray) -> Calla
         forecast = best_fit.get_forecast(steps=task.prediction_length)
         mean = np.asarray(forecast.predicted_mean, dtype=np.float32)
         std = np.asarray(forecast.se_mean, dtype=np.float32)
-        return ForecastOutput(mean, normal_quantiles(mean, std, quantiles))
+        return ForecastOutput(mean, normal_quantiles(mean, std, quantiles), distribution="gaussian")
 
     return run
 
@@ -295,7 +309,7 @@ def prophet_runner(params: Mapping[str, Any], quantiles: np.ndarray) -> Callable
         if samples.shape[0] != task.prediction_length:
             raise ValueError(f"Unexpected Prophet sample shape: {samples.shape}")
         quantile_values = np.quantile(samples, quantiles, axis=1).T.astype(np.float32)
-        return ForecastOutput(mean, quantile_values)
+        return ForecastOutput(mean, quantile_values, distribution="samples")
 
     return run
 
@@ -347,7 +361,7 @@ def deepar_runner(params: Mapping[str, Any], quantiles: np.ndarray) -> Callable[
             forecast = next(iter(predictor.predict(train_dataset, num_samples=int(params["prediction_samples"]))))
             mean = np.asarray(forecast.mean, dtype=np.float32)
             quantile_values = np.stack([forecast.quantile(float(q)) for q in quantiles], axis=-1).astype(np.float32)
-        return ForecastOutput(mean, quantile_values)
+        return ForecastOutput(mean, quantile_values, distribution="samples")
 
     return run
 
@@ -356,6 +370,7 @@ def build_model_runners(
     model_configs: Sequence[Mapping[str, Any]], quantiles: np.ndarray
 ) -> dict[str, Callable[[ForecastTask], ForecastOutput]]:
     builders: dict[str, Callable[[Mapping[str, Any], np.ndarray], Callable[[ForecastTask], ForecastOutput]]] = {
+        "zero": zero_runner,
         "seasonal_naive": seasonal_naive_runner,
         "statsmodels_arima": statsmodels_arima_runner,
         "auto_arima": auto_arima_runner,

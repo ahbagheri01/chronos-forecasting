@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import logging
 import logging.handlers
 import os
@@ -57,6 +58,12 @@ def seed_everything(seed: int) -> None:
     torch.manual_seed(seed)
     if torch.cuda.is_available():
         torch.cuda.manual_seed_all(seed)
+
+
+def stable_seed(base_seed: int, *parts: object) -> int:
+    payload = "|".join([str(base_seed), *(str(part) for part in parts)]).encode("utf-8")
+    digest = hashlib.sha256(payload).digest()
+    return int.from_bytes(digest[:4], byteorder="big", signed=False)
 
 
 def apply_environment(environment: Mapping[str, Any]) -> None:

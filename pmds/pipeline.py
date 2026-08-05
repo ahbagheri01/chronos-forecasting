@@ -16,8 +16,13 @@ import torch
 from pmds.datasets import load_dataset_tasks
 from pmds.metrics import compute_metrics, empty_metric_row, validate_output
 from pmds.models import build_model_runners
-from pmds.outputs import dataset_failure_rows, persist_results
-from pmds.runtime import apply_environment, seed_everything, setup_logging
+from pmds.outputs import (
+    context_rows_for_task,
+    dataset_failure_rows,
+    forecast_rows_for_result,
+    persist_results,
+)
+from pmds.runtime import apply_environment, seed_everything, setup_logging, stable_seed
 from pmds.schemas import DatasetSpec, ForecastOutput, ForecastResult, ForecastTask
 
 
@@ -29,9 +34,18 @@ def safe_predict(
     task: ForecastTask,
     runner: Callable[[ForecastTask], ForecastOutput],
     quantiles: np.ndarray,
+    repetition: int,
+    seed: int,
 ) -> ForecastResult:
     start = time.monotonic()
-    LOGGER.info("Model started | dataset=%s item=%s model=%s", task.dataset, task.item_id, model_name)
+    LOGGER.info(
+        "Model started | dataset=%s item=%s model=%s repetition=%d seed=%d",
+        task.dataset,
+        task.item_id,
+        model_name,
+        repetition,
+        seed,
+    )
     try:
         output = runner(task)
         crossing_count = validate_output(output, task, quantiles)
@@ -50,7 +64,15 @@ def safe_predict(
             model_name,
             duration,
         )
-        return ForecastResult(task.dataset, task.item_id, model_name, output, duration)
+        return ForecastResult(
+            task.dataset,
+            task.item_id,
+            model_name,
+            output,
+            duration,
+            repetition=repetition,
+            seed=seed,
+        )
     except Exception as exc:
         duration = time.monotonic() - start
         LOGGER.exception(
@@ -61,13 +83,15 @@ def safe_predict(
             duration,
         )
         return ForecastResult(
-            task.dataset,
-            task.item_id,
-            model_name,
-            None,
-            duration,
-            type(exc).__name__,
-            str(exc),
+            dataset=task.dataset,
+            item_id=task.item_id,
+            model=model_name,
+            output=None,
+            duration_seconds=duration,
+            error_type=type(exc).__name__,
+            error=str(exc),
+            repetition=repetition,
+            seed=seed,
         )
 
 
@@ -77,10 +101,13 @@ def run_experiment(config: Mapping[str, Any], config_path: Path) -> None:
     quantiles = np.asarray(evaluation_config["quantiles"], dtype=np.float32)
     metric_names = list(evaluation_config["metrics"])
     point_method = str(evaluation_config["point_forecast"])
+    stochastic_repetitions = int(evaluation_config.get("stochastic_repetitions", 1))
+    context_multiplier = int(evaluation_config.get("forecast_context_multiplier", 3))
+    base_seed = int(run_config["random_seed"])
 
     log_path = setup_logging(run_config)
     apply_environment(run_config.get("environment", {}))
-    seed_everything(int(run_config["random_seed"]))
+    seed_everything(base_seed)
     LOGGER.info("Experiment started | name=%s config=%s log=%s", run_config["name"], config_path, log_path)
     LOGGER.info(
         "Runtime | python=%s torch=%s torch_cuda=%s cuda_available=%s",
@@ -97,10 +124,15 @@ def run_experiment(config: Mapping[str, Any], config_path: Path) -> None:
     dataset_specs = [DatasetSpec.from_config(value) for value in config["datasets"] if value.get("enabled", True)]
     if not dataset_specs:
         raise ValueError("No datasets are enabled in config.json")
+    model_configs = {
+        str(value["name"]): value for value in config["models"] if value.get("enabled", True)
+    }
 
     rows: list[dict[str, Any]] = []
+    forecast_rows: list[dict[str, Any]] = []
+    context_rows: list[dict[str, Any]] = []
     statuses: list[dict[str, Any]] = []
-    detailed_path = summary_path = status_path = Path()
+    detailed_path = summary_path = status_path = forecast_path = context_path = Path()
 
     for dataset_index, spec in enumerate(dataset_specs, start=1):
         dataset_start = time.monotonic()
@@ -116,6 +148,7 @@ def run_experiment(config: Mapping[str, Any], config_path: Path) -> None:
                 raise RuntimeError(f"Dataset {spec.name} produced no forecast tasks")
             LOGGER.info("Dataset loaded | dataset=%s tasks=%d", spec.name, len(tasks))
             for task_index, task in enumerate(tasks, start=1):
+                context_rows.extend(context_rows_for_task(task, context_multiplier))
                 LOGGER.info(
                     "Task started | dataset=%s item=%s task=%d/%d context=%d horizon=%d frequency=%s",
                     spec.name,
@@ -127,26 +160,57 @@ def run_experiment(config: Mapping[str, Any], config_path: Path) -> None:
                     task.frequency,
                 )
                 for model_name, runner in runners.items():
-                    result = safe_predict(model_name, task, runner, quantiles)
-                    try:
-                        rows.append(compute_metrics(task, result, metric_names, quantiles, point_method))
-                    except Exception as exc:
-                        LOGGER.exception(
-                            "Metric computation failed | dataset=%s item=%s model=%s",
-                            task.dataset,
-                            task.item_id,
+                    model_config = model_configs[model_name]
+                    model_datasets = set(map(str, model_config.get("datasets", [])))
+                    if model_datasets and task.dataset not in model_datasets:
+                        continue
+                    repetitions = stochastic_repetitions if model_config.get("stochastic", False) else 1
+                    diagnostic_model = bool(model_config.get("diagnostic", False))
+                    for repetition in range(repetitions):
+                        seed = stable_seed(base_seed, task.dataset, task.item_id, model_name, repetition)
+                        seed_everything(seed)
+                        result = safe_predict(
                             model_name,
+                            task,
+                            runner,
+                            quantiles,
+                            repetition,
+                            seed,
                         )
-                        metric_failure = ForecastResult(
-                            task.dataset,
-                            task.item_id,
-                            model_name,
-                            None,
-                            result.duration_seconds,
-                            type(exc).__name__,
-                            str(exc),
-                        )
-                        rows.append(empty_metric_row(task, metric_failure))
+                        try:
+                            rows.append(
+                                compute_metrics(
+                                    task,
+                                    result,
+                                    metric_names,
+                                    quantiles,
+                                    point_method,
+                                    diagnostic_model,
+                                )
+                            )
+                            forecast_rows.extend(
+                                forecast_rows_for_result(task, result, quantiles, point_method)
+                            )
+                        except Exception as exc:
+                            LOGGER.exception(
+                                "Metric computation failed | dataset=%s item=%s model=%s repetition=%d",
+                                task.dataset,
+                                task.item_id,
+                                model_name,
+                                repetition,
+                            )
+                            metric_failure = ForecastResult(
+                                dataset=task.dataset,
+                                item_id=task.item_id,
+                                model=model_name,
+                                output=None,
+                                duration_seconds=result.duration_seconds,
+                                error_type=type(exc).__name__,
+                                error=str(exc),
+                                repetition=repetition,
+                                seed=seed,
+                            )
+                            rows.append(empty_metric_row(task, metric_failure, diagnostic_model))
 
             failed_rows = sum(1 for row in rows if row["dataset"] == spec.name and row["error"])
             statuses.append(
@@ -167,7 +231,12 @@ def run_experiment(config: Mapping[str, Any], config_path: Path) -> None:
             )
         except Exception as exc:
             LOGGER.exception("Dataset failed | dataset=%s", spec.name)
-            rows.extend(dataset_failure_rows(spec.name, runners, exc))
+            applicable_runners = {
+                name: runner
+                for name, runner in runners.items()
+                if not model_configs[name].get("datasets") or spec.name in model_configs[name]["datasets"]
+            }
+            rows.extend(dataset_failure_rows(spec.name, applicable_runners, exc))
             statuses.append(
                 {
                     "dataset": spec.name,
@@ -180,7 +249,14 @@ def run_experiment(config: Mapping[str, Any], config_path: Path) -> None:
                 }
             )
 
-        detailed_path, summary_path, status_path = persist_results(rows, statuses, run_config, metric_names)
+        detailed_path, summary_path, status_path, forecast_path, context_path = persist_results(
+            rows,
+            statuses,
+            run_config,
+            metric_names,
+            forecast_rows,
+            context_rows,
+        )
 
     summary = pd.read_csv(summary_path)
     LOGGER.info("Experiment completed | datasets=%d result_rows=%d", len(dataset_specs), len(rows))
@@ -189,4 +265,6 @@ def run_experiment(config: Mapping[str, Any], config_path: Path) -> None:
     print(f"\nDetailed results: {detailed_path}")
     print(f"Summary results:  {summary_path}")
     print(f"Dataset status:  {status_path}")
+    print(f"Forecast values: {forecast_path}")
+    print(f"Plot contexts:   {context_path}")
     print(f"Log file:        {log_path}")

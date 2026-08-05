@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import logging
-from typing import Iterable
+from typing import Iterable, Sequence, TypeVar
 
 import numpy as np
 import pandas as pd
@@ -13,6 +13,7 @@ from pmds.utils import clean_numeric
 
 
 LOGGER = logging.getLogger("pmds.compare")
+T = TypeVar("T")
 
 
 def import_datasets():
@@ -84,36 +85,116 @@ def infer_sequence_columns(hf_dataset) -> list[str]:
     ]
 
 
+def select_representative_items(
+    items: Sequence[T],
+    max_items: int,
+    strategy: str,
+    seed: int,
+) -> list[T]:
+    candidates = list(items)
+    if max_items <= 0 or max_items >= len(candidates):
+        return candidates
+    if strategy == "first":
+        return candidates[:max_items]
+    if strategy == "evenly_spaced":
+        if max_items == 1:
+            return [candidates[len(candidates) // 2]]
+        indices = np.linspace(0, len(candidates) - 1, num=max_items, dtype=int)
+        return [candidates[int(index)] for index in indices]
+    if strategy == "random":
+        rng = np.random.default_rng(seed)
+        indices = sorted(rng.choice(len(candidates), size=max_items, replace=False).tolist())
+        return [candidates[int(index)] for index in indices]
+    raise ValueError(f"Unsupported selection strategy: {strategy}")
+
+
+def make_tasks(
+    spec: DatasetSpec,
+    item_id: str,
+    values: Iterable,
+    timestamps: Iterable | None,
+) -> list[ForecastTask]:
+    series = clean_numeric(values)
+    stride = spec.origin_stride or spec.prediction_length
+    required_length = required_series_length(spec)
+    if len(series) < required_length:
+        LOGGER.warning(
+            "Series has fewer rolling origins than requested | dataset=%s item=%s length=%d required=%d",
+            spec.name,
+            item_id,
+            len(series),
+            required_length,
+        )
+
+    timestamp_index = align_timestamps(series, timestamps, fallback=spec.fallback_frequency)
+    frequency = infer_frequency(timestamp_index, fallback=spec.fallback_frequency)
+    tasks: list[ForecastTask] = []
+    for origin in range(spec.num_origins):
+        future_end = len(series) - origin * stride
+        future_start = future_end - spec.prediction_length
+        if future_start <= 1:
+            continue
+        tasks.append(
+            ForecastTask(
+                dataset=spec.name,
+                item_id=f"{item_id}::origin={origin}",
+                context_timestamps=timestamp_index[:future_start],
+                future_timestamps=timestamp_index[future_start:future_end],
+                context=series[:future_start],
+                future=series[future_start:future_end],
+                prediction_length=spec.prediction_length,
+                seasonality=spec.seasonality,
+                frequency=frequency,
+                series_id=item_id,
+                origin=origin,
+                zero_inflated=spec.zero_inflated,
+                zero_threshold=spec.zero_threshold,
+            )
+        )
+    return tasks
+
+
+def required_series_length(spec: DatasetSpec) -> int:
+    stride = spec.origin_stride or spec.prediction_length
+    minimum_context = max(8, spec.seasonality * 2)
+    return spec.prediction_length + (spec.num_origins - 1) * stride + minimum_context
+
+
+def matching_row_indices(hf_dataset, spec: DatasetSpec) -> list[int]:
+    if spec.filter_column is None:
+        return list(range(len(hf_dataset)))
+    if spec.filter_column not in hf_dataset.column_names:
+        raise ValueError(f"Filter column '{spec.filter_column}' is missing from {spec.name}")
+    allowed = set(spec.filter_values)
+    indices = [
+        index
+        for index, value in enumerate(hf_dataset[spec.filter_column])
+        if str(value) in allowed
+    ]
+    if not indices:
+        raise ValueError(
+            f"Dataset {spec.name} has no rows where {spec.filter_column} is one of {sorted(allowed)}"
+        )
+    LOGGER.info(
+        "Dataset rows filtered | dataset=%s column=%s values=%s matched=%d total=%d",
+        spec.name,
+        spec.filter_column,
+        sorted(allowed),
+        len(indices),
+        len(hf_dataset),
+    )
+    return indices
+
+
 def make_task(
     spec: DatasetSpec,
     item_id: str,
     values: Iterable,
     timestamps: Iterable | None,
 ) -> ForecastTask | None:
-    series = clean_numeric(values)
-    if len(series) <= spec.prediction_length + 1:
-        LOGGER.warning(
-            "Skipping short series | dataset=%s item=%s length=%d horizon=%d",
-            spec.name,
-            item_id,
-            len(series),
-            spec.prediction_length,
-        )
-        return None
-
-    timestamp_index = align_timestamps(series, timestamps, fallback=spec.fallback_frequency)
-    frequency = infer_frequency(timestamp_index, fallback=spec.fallback_frequency)
-    return ForecastTask(
-        dataset=spec.name,
-        item_id=item_id,
-        context_timestamps=timestamp_index[: -spec.prediction_length],
-        future_timestamps=timestamp_index[-spec.prediction_length :],
-        context=series[: -spec.prediction_length],
-        future=series[-spec.prediction_length :],
-        prediction_length=spec.prediction_length,
-        seasonality=spec.seasonality,
-        frequency=frequency,
-    )
+    """Backward-compatible helper returning the most recent forecast origin."""
+    tasks = make_tasks(spec, item_id, values, timestamps)
+    return tasks[0] if tasks else None
 
 
 def load_chronos_tasks(spec: DatasetSpec) -> list[ForecastTask]:
@@ -122,29 +203,53 @@ def load_chronos_tasks(spec: DatasetSpec) -> list[ForecastTask]:
     if not sequence_columns:
         raise ValueError(f"No sequence target columns found in {spec.name}")
 
+    minimum_length = required_series_length(spec)
+    row_indices = matching_row_indices(dataset, spec)
+    candidates = [
+        (row_index, field)
+        for row_index in row_indices
+        for field in sequence_columns
+        if len(dataset[row_index][field]) >= minimum_length
+    ]
+    selected = select_representative_items(
+        candidates,
+        spec.max_series,
+        spec.selection_strategy,
+        spec.selection_seed,
+    )
     tasks: list[ForecastTask] = []
-    for row_index, row in enumerate(dataset):
-        timestamps = row.get("timestamp")
-        for field in sequence_columns:
-            task = make_task(spec, f"{row_index}:{field}", row[field], timestamps)
-            if task is not None:
-                tasks.append(task)
-            if len(tasks) >= spec.max_series:
-                return tasks
+    for row_index, field in selected:
+        row = dataset[row_index]
+        group = f"{spec.filter_column}={row[spec.filter_column]}|" if spec.filter_column else ""
+        tasks.extend(make_tasks(spec, f"{group}{row_index}:{field}", row[field], row.get("timestamp")))
     return tasks
 
 
-def load_external_tasks(spec: DatasetSpec) -> list[ForecastTask]:
-    dataset = load_hf_dataset(spec)
-    frame = dataset.to_pandas()
-
+def external_timestamps(frame: pd.DataFrame, spec: DatasetSpec) -> tuple[str | None, pd.DatetimeIndex | None]:
     date_column = spec.date_column
     if date_column is None:
         date_column = next(
             (candidate for candidate in ("date", "timestamp", "time", "datetime") if candidate in frame.columns),
             None,
         )
-    timestamps = frame[date_column] if date_column is not None and date_column in frame.columns else None
+    if date_column is None or date_column not in frame.columns:
+        return date_column, None
+    values = frame[date_column]
+    if spec.timestamp_unit is None:
+        return date_column, pd.DatetimeIndex(pd.to_datetime(values))
+    numeric = pd.to_numeric(values, errors="coerce")
+    if numeric.isna().any():
+        raise ValueError(f"Timestamp column '{date_column}' contains non-numeric values in {spec.name}")
+    offsets = numeric - numeric.iloc[0]
+    timestamps = pd.Timestamp("2000-01-01") + pd.to_timedelta(offsets, unit=spec.timestamp_unit)
+    return date_column, pd.DatetimeIndex(timestamps)
+
+
+def prepare_external_targets(
+    frame: pd.DataFrame,
+    spec: DatasetSpec,
+) -> tuple[pd.DataFrame, pd.DatetimeIndex | None]:
+    date_column, timestamps = external_timestamps(frame, spec)
     numeric_columns = list(frame.select_dtypes(include=[np.number]).columns)
     if date_column in numeric_columns:
         numeric_columns.remove(date_column)
@@ -156,13 +261,33 @@ def load_external_tasks(spec: DatasetSpec) -> list[ForecastTask]:
     if not numeric_columns:
         raise ValueError(f"No numeric target columns found in {spec.name}")
 
+    targets = frame[numeric_columns].copy()
+    if spec.resample_frequency is not None:
+        if timestamps is None:
+            raise ValueError(f"Dataset {spec.name} requires timestamps before resampling")
+        targets.index = timestamps
+        targets = targets.sort_index()
+        resampler = targets.resample(spec.resample_frequency)
+        targets = getattr(resampler, spec.resample_method)().dropna(how="all")
+        timestamps = pd.DatetimeIndex(targets.index)
+    else:
+        targets = targets.reset_index(drop=True)
+    return targets, timestamps
+
+
+def load_external_tasks(spec: DatasetSpec) -> list[ForecastTask]:
+    dataset = load_hf_dataset(spec)
+    frame = dataset.to_pandas()
+    targets, timestamps = prepare_external_targets(frame, spec)
+    selected_columns = select_representative_items(
+        list(targets.columns),
+        spec.max_series,
+        spec.selection_strategy,
+        spec.selection_seed,
+    )
     tasks: list[ForecastTask] = []
-    for column in numeric_columns:
-        task = make_task(spec, str(column), frame[column], timestamps)
-        if task is not None:
-            tasks.append(task)
-        if len(tasks) >= spec.max_series:
-            break
+    for column in selected_columns:
+        tasks.extend(make_tasks(spec, str(column), targets[column], timestamps))
     return tasks
 
 

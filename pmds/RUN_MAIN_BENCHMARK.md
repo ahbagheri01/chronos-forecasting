@@ -6,7 +6,7 @@ This document explains how to run the main PMDS forecasting benchmark:
 python pmds/compare.py --config pmds/config.json
 ```
 
-This is the long run that benchmarks Chronos, statistical models, AutoARIMA, Prophet, DeepAR, and seasonal naive baselines across the configured datasets. On the current configuration it took about 40-45 minutes on CPU.
+This is the long run that benchmarks Chronos, statistical models, AutoARIMA, Prophet, DeepAR, and seasonal naive baselines across the configured datasets. The repaired configuration is larger than the historical 40--45 minute run and is expected to take roughly three hours on the current CPU setup.
 
 ## 1. Where To Run It
 
@@ -108,13 +108,14 @@ python pmds/compare.py --help
 Current CLI:
 
 ```text
-usage: compare.py [-h] [--config CONFIG]
+usage: compare.py [-h] [--config CONFIG] [--forecast-audit]
 
 Run the config-driven PMDS forecast comparison.
 
 options:
   -h, --help       show this help message and exit
   --config CONFIG  Path to the JSON experiment configuration.
+  --forecast-audit Run one representative series/origin/repetition per dataset.
 ```
 
 ## 5. What The Script Runs
@@ -144,12 +145,16 @@ arima_2_1_2
 auto_arima
 prophet
 deepar
+weather_zero_baseline (diagnostic; weather only)
 ```
 
 Current total workload:
 
 ```text
-71 forecast tasks x 9 enabled models = 639 model results
+213 forecast tasks across 6 datasets
+3 stochastic repetitions for Chronos, Prophet, and DeepAR
+1 run for each deterministic model
+3,255 detailed result rows, including 60 weather zero-baseline rows
 ```
 
 Evaluation metrics:
@@ -160,11 +165,18 @@ rmse
 smape
 mase
 wql
+rain_occurrence_error (rainfall only)
+positive_mae (rainfall only)
 ```
+
+Weather is explicitly filtered to the homogeneous `rain` subset. PSM's minute timestamps are
+parsed and resampled to hourly means, so its 24-step horizon and seasonal lag are both 24 hours.
 
 ## 6. Expected Runtime
 
-On the current CPU setup, the full run took about 40-45 minutes.
+The historical one-origin run took about 40--45 minutes. With three origins and three repetitions
+for stochastic models, budget roughly three hours for the repaired full run. This is an estimate;
+the completed visual audit took about two minutes but evaluates only one series and one origin.
 
 The slowest parts are:
 
@@ -185,31 +197,27 @@ The run writes results to:
 pmds/results/compare_detailed.csv
 pmds/results/compare_summary.csv
 pmds/results/compare_status.json
+pmds/results/compare_forecasts.csv
+pmds/results/compare_contexts.csv
 pmds/results/logs/compare_<timestamp>.log
-```
-
-For the verified run, the log file was:
-
-```text
-pmds/results/logs/compare_20260803_192617.log
 ```
 
 The script also saves checkpoints after each dataset, so partial progress appears in the CSV/status files while the run is still active.
 
 ## 8. How To Know It Worked
 
-At the end, the console should show:
+At the end, the console should show approximately:
 
 ```text
-Experiment completed | datasets=6 result_rows=639
+Experiment completed | datasets=6 result_rows=3255
 ```
 
-The verified run completed with:
+For a clean repaired run, expect:
 
 ```text
 6 completed datasets
-639 detailed rows
-54 summary rows
+3255 detailed rows
+55 summary rows
 0 failed tasks
 0 error rows
 ```
@@ -250,12 +258,21 @@ For a clean full run, expect:
 ```text
 completed datasets: 6
 dataset failures: 0
-detailed rows: 639
-summary rows: 54
+detailed rows: 3255
+summary rows: 55
 error rows: 0
 ```
 
-Each model should have 71 rows.
+The three stochastic models each have 639 rows, the six general deterministic models each have
+213 rows, and the weather-only zero baseline has 60 rows.
+
+Before committing to the full run, execute the reproducible visual audit:
+
+```bash
+python pmds/compare.py --config pmds/config.json --forecast-audit
+```
+
+This writes to `pmds/results/forecast_audit/` without touching the root benchmark CSVs.
 
 ## 9. Common Warnings
 
@@ -292,6 +309,8 @@ Generate plots:
 ```bash
 python pmds/plot_results.py \
   --csv pmds/results/compare_detailed.csv \
+  --forecasts pmds/results/compare_forecasts.csv \
+  --contexts pmds/results/compare_contexts.csv \
   --output pmds/results/plots \
   --config pmds/config.json
 ```

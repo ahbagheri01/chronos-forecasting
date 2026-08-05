@@ -160,7 +160,7 @@
 \end{frame}
 
 % ------------------------------------------------------------
-\begin{frame}{Six datasets, nine models, one common pipeline}
+\begin{frame}{Historical snapshot: six datasets and nine models}
   \vspace{0.20cm}
 
   \begin{center}
@@ -213,7 +213,7 @@
       \end{itemize}
 
       \vspace{0.22cm}
-      {\color{Muted}\scriptsize CPU execution; point metrics use the median forecast.}
+      {\color{Muted}\scriptsize Historical single-origin run. The repaired full rerun is pending.}
     \end{column}
   \end{columns}
 \end{frame}
@@ -264,7 +264,7 @@
 \end{frame}
 
 % ------------------------------------------------------------
-\begin{frame}{There is no single winner across all forecasting tasks}
+\begin{frame}{Historical result: no single winner across all tasks}
   \vspace{0.08cm}
   \scriptsize
   \renewcommand{\arraystretch}{1.31}
@@ -285,15 +285,15 @@
       Weather
         & \bad{No clean winner}
         & Chronos, narrowly
-        & Chronos point forecast is zero-like \\
+        & Zero-collapse confirmed \\
       National illness
         & \good{ARIMA(2,1,2)}
         & \good{Prophet}
-        & One series, one cutoff \\
+        & Historical: one cutoff \\
       PSM
         & \good{ARIMA(2,1,2)}
         & \good{Chronos}
-        & Minute data labeled hourly \\
+        & Historical time-scale error \\
       Traffic
         & \good{DeepAR}
         & \good{DeepAR}
@@ -390,11 +390,11 @@
   \vspace{0.03cm}
   \begin{columns}[T,totalwidth=\linewidth]
     \begin{column}{0.58\linewidth}
-      \includegraphics[width=\linewidth,height=0.48\textheight,keepaspectratio]{chronos_weather/smape.png}
+      \includegraphics[width=\linewidth,height=0.50\textheight,keepaspectratio]{chronos_weather/forecast_vs_actual/chronos_t5_tiny.png}
     \end{column}
     \begin{column}{0.38\linewidth}
       \scriptsize
-      \tagbox{CoralLight}{\color{Coral}\textbf{Metric pathology}}
+      \tagbox{CoralLight}{\color{Coral}\textbf{Historical pathology}}
 
       \vspace{0.12cm}
       Chronos SMAPE is exactly \textbf{2.0} for all 20 series.
@@ -402,17 +402,17 @@
       to $4.6\!\times\!10^{-8}$.
 
       \vspace{0.16cm}
-      \tagbox{GoldLight}{\textbf{Why MAE still looks good}}
+      \tagbox{GoldLight}{\textbf{Corrected visual audit}}
 
       \vspace{0.12cm}
-      Rainfall is 72.67\% zero. An exact-zero forecast matches
-      Chronos MAE, RMSE, and MASE to floating-point precision.
+      The representative rainfall holdout is 86.7\% zero;
+      Chronos predicts zero at every step.
 
       \vspace{0.14cm}
       \begin{itemize}
-        \item Chronos WQL 0.984 vs. zero baseline 1.000.
-        \item DeepAR has the best RMSE, 1.965.
-        \item Add rain-occurrence and positive-amount metrics.
+        \item Audit WQL: Chronos 1.146 vs. zero baseline 1.000.
+        \item Occurrence error and positive-only MAE are now saved.
+        \item Weather is explicitly filtered to the rain subset.
       \end{itemize}
     \end{column}
   \end{columns}
@@ -430,64 +430,65 @@
       \includegraphics[width=\linewidth]{external_national_illness/mase.png}
     \end{column}
     \begin{column}{0.36\linewidth}
-      \small
+      \scriptsize
       \tagbox{GreenLight}{\textbf{Point forecasts}}
 
-      \vspace{0.25cm}
+      \vspace{0.14cm}
       ARIMA(2,1,2) wins MAE, RMSE, SMAPE, and MASE.
       Its MASE is \textbf{0.571}.
 
-      \vspace{0.38cm}
+      \vspace{0.18cm}
       \tagbox{TealLight}{\textbf{Quantile forecasts}}
 
-      \vspace{0.25cm}
+      \vspace{0.14cm}
       Prophet WQL is \textbf{0.0304}, about 9.1\% below
       ARIMA's \textbf{0.0334}.
 
-      \vspace{0.38cm}
+      \vspace{0.18cm}
       \begin{itemize}
         \item Chronos ranks fifth by MASE: 0.968.
         \item MA(2) is last by a wide margin.
-        \item Only one \texttt{OT} series and one cutoff were tested.
+        \item Historical result used one \texttt{OT} cutoff.
+        \item Repaired configuration evaluates three rolling origins.
       \end{itemize}
     \end{column}
   \end{columns}
 \end{frame}
 
 % ------------------------------------------------------------
-\begin{frame}{PSM: strong numbers, wrong operational time scale}
+\begin{frame}{PSM: historical ranking invalid; time scale repaired}
   \vspace{0.03cm}
   \begin{columns}[T,totalwidth=\linewidth]
     \begin{column}{0.59\linewidth}
-      \includegraphics[width=\linewidth,height=0.48\textheight,keepaspectratio]{external_psm/mase.png}
+      \includegraphics[width=\linewidth,height=0.50\textheight,keepaspectratio]{external_psm/forecast_vs_actual/chronos_t5_tiny.png}
     \end{column}
     \begin{column}{0.37\linewidth}
       \scriptsize
-      \tagbox{GreenLight}{\textbf{Numerical ranking}}
+      \tagbox{GoldLight}{\textbf{Historical ranking}}
 
       \vspace{0.12cm}
       ARIMA(2,1,2) wins all point metrics: MASE \textbf{0.270}.
       Chronos wins official WQL: \textbf{0.00375}.
 
       \vspace{0.16cm}
-      \tagbox{CoralLight}{\color{Coral}\textbf{Configuration mismatch}}
+      \tagbox{GreenLight}{\color{Green}\textbf{Implemented repair}}
 
       \vspace{0.12cm}
-      Source \texttt{timestamp\_(min)} increments by one minute,
-      but the project code creates hourly timestamps and uses lag 24.
+      Source minutes are parsed and resampled to hourly means;
+      horizon 24 and lag 24 now both mean 24 hours.
 
       \vspace{0.14cm}
       \begin{itemize}
-        \item This is a 24-step result, apparently 24 minutes.
-        \item Large MASE values reflect tiny lag-24 scales.
-        \item Five of 25 features were evaluated.
+        \item Audit trajectory uses genuine hourly timestamps.
+        \item Features are sampled evenly instead of taking the first five.
+        \item Historical scores still require a full rerun.
       \end{itemize}
     \end{column}
   \end{columns}
 
   \vspace{0.02cm}
   \centering
-  \tagbox{RedLight}{\color{Red}\scriptsize\textbf{Do not select a PSM model until the time scale is corrected and rerun.}}
+  \tagbox{RedLight}{\color{Red}\scriptsize\textbf{Do not select a PSM model from the historical scores; rerun the repaired benchmark.}}
 \end{frame}
 
 % ------------------------------------------------------------
@@ -527,7 +528,7 @@
 \end{frame}
 
 % ------------------------------------------------------------
-\begin{frame}{Descriptive scorecard: ARIMA ranks first, Chronos second}
+\begin{frame}{Historical scorecard: ARIMA first, Chronos second}
   \vspace{0.10cm}
   \scriptsize
   \renewcommand{\arraystretch}{1.22}
@@ -558,13 +559,13 @@
 \end{frame}
 
 % ------------------------------------------------------------
-\begin{frame}{What the comparison supports, and what it does not}
+\begin{frame}{What is historical, and what is now repaired}
   \vspace{0.12cm}
 
   \begin{columns}[T,totalwidth=0.94\linewidth]
     \begin{column}{0.44\linewidth}
       \small
-      \tagbox{GreenLight}{\textbf{What the comparison shows}}
+      \tagbox{GoldLight}{\textbf{Historical result snapshot}}
 
       \vspace{0.20cm}
       \begin{itemize}
@@ -578,22 +579,22 @@
 
     \begin{column}{0.44\linewidth}
       \small
-      \tagbox{CoralLight}{\color{Coral}\textbf{Project constraints}}
+      \tagbox{GreenLight}{\color{Green}\textbf{Repaired evaluation pipeline}}
 
       \vspace{0.20cm}
       \begin{itemize}
-        \item One final holdout window per series.
-        \item Only one illness target and five external columns.
-        \item No repeated stochastic seeds or confidence intervals.
-        \item M1 scale concentration changes the winner.
-        \item Weather and PSM require evaluation fixes.
+        \item Three rolling origins per selected series.
+        \item Three seeded runs for stochastic models.
+        \item Evenly spaced representative sampling.
+        \item Hourly PSM and rainfall-specific diagnostics.
+        \item Forecast values and 55 trajectory plots persisted.
       \end{itemize}
     \end{column}
   \end{columns}
 
   \vspace{0.28cm}
   \centering
-  \tagbox{GoldLight}{\textbf{Use these rankings for the configured datasets and cutoffs only.}}
+  \tagbox{CoralLight}{\color{Coral}\textbf{The full repaired rerun is required before updating model rankings.}}
 \end{frame}
 
 % ------------------------------------------------------------
@@ -623,7 +624,7 @@
       \tagbox{CoralLight}{\color{Coral}\scriptsize\textbf{Weather or PSM?}}
 
       \vspace{0.12cm}
-      \scriptsize Repair evaluation first
+      \scriptsize Rerun before selection
     \end{column}
   \end{columns}
 
@@ -631,20 +632,21 @@
   \begin{columns}[T,totalwidth=0.94\linewidth]
     \begin{column}{0.44\linewidth}
       \small
-      \textbf{Repair validity}
+      \textbf{Completed repairs}
       \begin{itemize}
         \item Correct PSM timestamps and seasonal lag.
         \item Add zero and occurrence baselines for rainfall.
         \item Align WQL plotting with official aggregation.
+        \item Persist forecast trajectories for every model.
       \end{itemize}
     \end{column}
     \begin{column}{0.44\linewidth}
       \small
-      \textbf{Expand the comparison}
+      \textbf{Next validation step}
       \begin{itemize}
-        \item Use rolling origins and multiple seeds.
-        \item Sample sensors/features rather than first columns.
-        \item Persist forecasts and test interval calibration.
+        \item Run all three origins and stochastic seeds.
+        \item Regenerate metric tables and this presentation.
+        \item Report dispersion and interval calibration.
       \end{itemize}
     \end{column}
   \end{columns}

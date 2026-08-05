@@ -2,6 +2,18 @@
 
 This directory contains benchmark outputs produced by `pmds/compare.py`. All experiment settings are read from `pmds/config.json`.
 
+## Current Result Status
+
+The root `compare_*.csv` files are the historical single-origin run. They are retained for
+traceability, but they predate the corrected PSM time scale, rolling origins, representative
+selection, repeated stochastic runs, and weather diagnostics. Do not present their rankings as
+results from the repaired configuration.
+
+`forecast_audit/` is a completed visual smoke run using one representative series, the latest
+origin, and one stochastic repetition per dataset. It completed all 55 dataset/model pairs with
+zero errors and supplies the current forecast-versus-actual plots. Its scores are diagnostic and
+are not a replacement for the full benchmark.
+
 ## Running the Benchmark
 
 From the repository root:
@@ -10,10 +22,18 @@ From the repository root:
 python pmds/compare.py --config pmds/config.json
 ```
 
+For the bounded visual audit:
+
+```bash
+python pmds/compare.py --config pmds/config.json --forecast-audit
+```
+
 The configured run name is `compare`, so the runner writes:
 
-- `compare_detailed.csv`: one row per dataset, series, and model.
+- `compare_detailed.csv`: one row per dataset, series, rolling origin, model, and repetition.
 - `compare_summary.csv`: dataset-level model metrics.
+- `compare_forecasts.csv`: timestamped actuals, point forecasts, means, and every configured quantile.
+- `compare_contexts.csv`: recent pre-cutoff history used by forecast-versus-actual plots.
 - `compare_status.json`: completion/failure status for every processed dataset.
 - `logs/compare_<timestamp>.log`: full rotating log with stack traces and timing.
 
@@ -26,7 +46,10 @@ The CSV and status files are atomically overwritten after each dataset finishes.
 - output and logging paths;
 - random seed;
 - metrics, point-forecast selection, and quantile levels;
-- enabled datasets, horizons, seasonalities, and maximum series counts;
+- rolling origins and repeated stochastic runs;
+- enabled datasets, horizons, seasonalities, timestamp handling, and maximum series counts;
+- optional source-row filtering; weather is explicitly restricted to the `rain` subset;
+- deterministic first, evenly-spaced, or seeded-random series selection;
 - Chronos model, device, dtype, sampling temperature, top-k, and top-p;
 - AR, MA, ARMA, ARIMA, and SARIMA orders;
 - Prophet priors and uncertainty samples;
@@ -48,6 +71,7 @@ The current configuration includes:
 
 - `chronos_t5_tiny`: `amazon/chronos-t5-tiny`.
 - `seasonal_naive`: repeats the last dataset-specific seasonal pattern.
+- `weather_zero_baseline`: weather-only diagnostic that predicts zero at every horizon step.
 - `ar_2`: AR(2), represented by ARIMA order `(2, 0, 0)`.
 - `ma_2`: MA(2), represented by ARIMA order `(0, 0, 2)`.
 - `arma_2_2`: ARMA(2,2), represented by ARIMA order `(2, 0, 2)`.
@@ -113,6 +137,9 @@ mean_q(total_quantile_loss[q] / total_abs_target)
 
 The summary combines loss numerators and target denominators across all series before taking the ratio. This matches the aggregation semantics of GluonTS `MeanWeightedSumQuantileLoss`, which is used by the Chronos evaluation code.
 
+The summary also reports `wql_macro`, the unweighted mean of per-task WQL values, and
+`wql_median`. These expose cases where one large series dominates official WQL.
+
 Quantile generation differs by model:
 
 - Chronos uses its native sampled quantile forecasts.
@@ -121,6 +148,53 @@ Quantile generation differs by model:
 - Prophet uses predictive samples.
 - DeepAR uses its native sample distribution.
 - Seasonal naive is deterministic, so all requested quantiles equal its point forecast. Its WQL is valid as a deterministic baseline but does not represent calibrated uncertainty.
+
+### Zero-Inflated Weather Diagnostics
+
+Weather additionally reports:
+
+- `rain_occurrence_error`: fraction of horizon steps where rain/no-rain classification is wrong;
+- `positive_mae`: MAE only at steps with observed rainfall above the configured threshold;
+- actual and predicted zero fractions in the detailed CSV.
+
+These diagnostics prevent a nearly all-zero forecast from being selected only because ordinary
+MAE or MASE is favorable on sparse rainfall.
+
+## Forecast-Versus-Actual Plots
+
+After a benchmark run, generate metric and trajectory plots with:
+
+```bash
+python pmds/plot_results.py \
+  --csv pmds/results/compare_detailed.csv \
+  --forecasts pmds/results/compare_forecasts.csv \
+  --contexts pmds/results/compare_contexts.csv \
+  --output pmds/results/plots \
+  --config pmds/config.json
+```
+
+Each dataset/model combination receives one multi-panel image under:
+
+```text
+pmds/results/plots/<dataset>/forecast_vs_actual/<model>.png
+```
+
+Each panel shows recent history, the actual holdout, the point forecast, the outer configured
+quantile interval, and the forecast cutoff. Multiple stochastic repetitions are aggregated by
+their median for display. Metric bar plots use official WQL aggregation, while the comparison
+views use within-metric ranks instead of outlier-sensitive min-max scaling.
+
+To rebuild only the 55 visual-audit trajectories without replacing historical metric plots:
+
+```bash
+python pmds/plot_results.py \
+  --csv pmds/results/forecast_audit/forecast_audit_detailed.csv \
+  --forecasts pmds/results/forecast_audit/forecast_audit_forecasts.csv \
+  --contexts pmds/results/forecast_audit/forecast_audit_contexts.csv \
+  --output pmds/results/plots \
+  --config pmds/config.json \
+  --forecast-only
+```
 
 ## Chronos Paper Alignment
 
@@ -143,6 +217,7 @@ One model failure does not stop other models or datasets. Dataset loading failur
 
 ## Existing Results
 
-Any CSV files created before this config-driven version do not contain WQL. Running the new command overwrites `compare_detailed.csv` and `compare_summary.csv` incrementally with the new schema.
-
-The previous run suggested that Prophet was strongest on M1 yearly and national illness, Chronos was competitive on M4 hourly, and seasonal naive was strong on weather. Those conclusions should be revisited after the new WQL-enabled run, especially because probabilistic quality can rank models differently from point-error metrics.
+Running the full command overwrites the root `compare_*.csv` files incrementally with the new
+schema. The historical rankings must be revisited after that run. In particular, the completed
+visual audit confirms that Chronos can collapse to an all-zero rainfall median; on its sampled
+window its WQL is `1.146`, worse than the explicit zero baseline's `1.000`.

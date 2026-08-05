@@ -1,0 +1,44 @@
+[
+  {
+    "dataset": "chronos_m1_yearly",
+    "status": "completed",
+    "tasks": 1,
+    "failed_model_tasks": 0,
+    "duration_seconds": 7.6160267449995445
+  },
+  {
+    "dataset": "chronos_m4_hourly",
+    "status": "completed",
+    "tasks": 1,
+    "failed_model_tasks": 0,
+    "duration_seconds": 6.714667494998139
+  },
+  {
+    "dataset": "chronos_weather",
+    "status": "completed",
+    "tasks": 1,
+    "failed_model_tasks": 0,
+    "duration_seconds": 20.981205447998946
+  },
+  {
+    "dataset": "external_national_illness",
+    "status": "completed",
+    "tasks": 1,
+    "failed_model_tasks": 0,
+    "duration_seconds": 3.7459467810003844
+  },
+  {
+    "dataset": "external_traffic",
+    "status": "completed",
+    "tasks": 1,
+    "failed_model_tasks": 0,
+    "duration_seconds": 53.13186928399955
+  },
+  {
+    "dataset": "external_psm",
+    "status": "completed",
+    "tasks": 1,
+    "failed_model_tasks": 0,
+    "duration_seconds": 8.714703599998757
+  }
+]
