@@ -172,3 +172,6 @@ checkpoints/
 # Fixed official-data snapshots and their integrity sidecars are generated locally.
 pmds/data/official/*.json
 pmds/data/official/*.json.sha256
+
+# Generated presentation binary; compile locally from the tracked LaTeX source.
+pmds/latex/final_clean_benchmark_presentation.pdf
