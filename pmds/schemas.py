@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any, Mapping
 
 import numpy as np
@@ -64,6 +64,10 @@ class DatasetSpec:
     filter_values: tuple[str, ...] = ()
     zero_inflated: bool = False
     zero_threshold: float = 0.0
+    source: str | None = None
+    source_params: Mapping[str, Any] = field(default_factory=dict)
+    snapshot_path: str | None = None
+    revision: str | None = None
 
     @classmethod
     def from_config(cls, config: Mapping[str, Any]) -> "DatasetSpec":
@@ -108,6 +112,10 @@ class DatasetSpec:
             filter_values=tuple(map(str, config.get("filter_values", []))),
             zero_inflated=bool(config.get("zero_inflated", False)),
             zero_threshold=float(config.get("zero_threshold", 0.0)),
+            source=(str(config["source"]) if config.get("source") is not None else None),
+            source_params=dict(config.get("source_params", {})),
+            snapshot_path=(str(config["snapshot_path"]) if config.get("snapshot_path") is not None else None),
+            revision=(str(config["revision"]) if config.get("revision") is not None else None),
         )
 
 

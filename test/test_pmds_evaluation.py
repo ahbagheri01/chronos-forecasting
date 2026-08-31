@@ -4,6 +4,7 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 import numpy as np
 import pandas as pd
@@ -18,6 +19,18 @@ from pmds.datasets import (
 from pmds.metrics import compute_metrics, summarize
 from pmds.outputs import context_rows_for_task, forecast_rows_for_result
 from pmds.plot_results import aggregate_model_metrics, plot_results
+from pmds.robustness import (
+    aggregate_robustness,
+    bias_scenarios,
+    cap_context,
+    normalize_scenario_result,
+    outage_scenarios,
+    outlier_scenarios,
+    robust_scale,
+    scale_invariance_error,
+    scale_scenarios,
+    run_robustness,
+)
 from pmds.runtime import stable_seed
 from pmds.schemas import DatasetSpec, ForecastOutput, ForecastResult, ForecastTask
 
@@ -87,6 +100,222 @@ class PmdsEvaluationTest(unittest.TestCase):
         np.testing.assert_array_equal(tasks[0].future, [17, 18, 19])
         np.testing.assert_array_equal(tasks[1].future, [14, 15, 16])
         np.testing.assert_array_equal(tasks[2].future, [11, 12, 13])
+
+    def test_make_tasks_splits_before_causal_context_cleaning(self) -> None:
+        spec = dataset_spec(prediction_length=2, seasonality=1, num_origins=1)
+        values = [*np.arange(1.0, 20.0), np.nan, 100.0, 200.0]
+        tasks = make_tasks(spec, "sensor", values, None)
+
+        self.assertEqual(len(tasks), 1)
+        np.testing.assert_array_equal(tasks[0].context, [*np.arange(1.0, 20.0), 19.0])
+        np.testing.assert_array_equal(tasks[0].future, [100.0, 200.0])
+
+    def test_context_cap_keeps_only_latest_observations(self) -> None:
+        task = self._robustness_task()
+        capped = cap_context(task, 5)
+
+        np.testing.assert_array_equal(capped.context, task.context[-5:])
+        self.assertEqual(list(capped.context_timestamps), list(task.context_timestamps[-5:]))
+        np.testing.assert_array_equal(capped.future, task.future)
+
+    def test_outlier_corruption_is_deterministic_shared_and_recent(self) -> None:
+        task = self._robustness_task()
+        first = outlier_scenarios(task, [2026])
+        second = outlier_scenarios(task, [2026])
+
+        self.assertEqual(len(first), 3)
+        for left, right in zip(first, second):
+            self.assertEqual(left.selected_indices, right.selected_indices)
+            self.assertEqual(left.selected_signs, right.selected_signs)
+            np.testing.assert_array_equal(left.task.context, right.task.context)
+            np.testing.assert_array_equal(left.task.future, task.future)
+            self.assertTrue(
+                all(
+                    index >= len(task.context) - 2 * task.prediction_length
+                    for index in left.selected_indices
+                )
+            )
+
+    def test_outage_requests_g_plus_h_and_discards_gap_predictions(self) -> None:
+        task = self._robustness_task()
+        moderate = next(scenario for scenario in outage_scenarios(task) if scenario.severity == "moderate")
+        self.assertEqual(moderate.outage_length, 2)
+        self.assertEqual(moderate.task.prediction_length, 6)
+        np.testing.assert_array_equal(moderate.task.context, task.context[:-2])
+
+        quantiles = np.array([0.1, 0.5, 0.9], dtype=np.float32)
+        output = ForecastOutput(
+            mean=np.arange(6, dtype=np.float32),
+            quantiles=np.repeat(np.arange(6, dtype=np.float32)[:, None], 3, axis=1),
+            distribution="samples",
+        )
+        result = ForecastResult(task.dataset, task.item_id, "model", output, 0.1, seed=1001)
+        normalized = normalize_scenario_result(result, moderate, task.prediction_length)
+
+        np.testing.assert_array_equal(normalized.output.mean, [2.0, 3.0, 4.0, 5.0])
+        self.assertEqual(normalized.output.quantiles.shape, (4, 3))
+
+    def test_bias_and_scale_preserve_the_clean_target_for_scoring(self) -> None:
+        task = self._robustness_task()
+        positive_bias = next(
+            scenario
+            for scenario in bias_scenarios(task)
+            if scenario.severity == "moderate" and scenario.direction == "positive"
+        )
+        scale_up = next(
+            scenario
+            for scenario in scale_scenarios(task)
+            if scenario.severity == "moderate" and scenario.factor == 10.0
+        )
+
+        np.testing.assert_array_equal(positive_bias.task.future, task.future)
+        np.testing.assert_array_equal(scale_up.task.future, task.future * 10.0)
+
+        quantiles = np.array([0.1, 0.5, 0.9], dtype=np.float32)
+        scaled_output = ForecastOutput(
+            mean=task.future * 10.0,
+            quantiles=np.repeat((task.future * 10.0)[:, None], 3, axis=1),
+            distribution="samples",
+        )
+        scaled_result = ForecastResult(task.dataset, task.item_id, "model", scaled_output, 0.1, seed=1001)
+        normalized = normalize_scenario_result(scaled_result, scale_up, task.prediction_length)
+        np.testing.assert_array_equal(normalized.output.mean, task.future)
+
+    def test_scale_invariance_uses_clean_mase_denominator(self) -> None:
+        task = self._robustness_task()
+        quantiles = np.array([0.1, 0.5, 0.9], dtype=np.float32)
+        clean_values = task.future.copy()
+        shifted_values = task.future + 1.0
+        clean = ForecastResult(
+            task.dataset,
+            task.item_id,
+            "model",
+            ForecastOutput(clean_values, np.repeat(clean_values[:, None], 3, axis=1), "samples"),
+            0.1,
+        )
+        shifted = ForecastResult(
+            task.dataset,
+            task.item_id,
+            "model",
+            ForecastOutput(shifted_values, np.repeat(shifted_values[:, None], 3, axis=1), "samples"),
+            0.1,
+        )
+
+        self.assertAlmostEqual(scale_invariance_error(task, clean, shifted, quantiles, "median"), 1.0)
+
+    def test_hierarchical_summary_equal_weights_datasets(self) -> None:
+        rows = []
+        for dataset, ratios in {"small": [1.0], "large": [3.0, 3.0, 3.0]}.items():
+            for index, ratio in enumerate(ratios):
+                rows.append(
+                    {
+                        "dataset": dataset,
+                        "series_id": f"s{index}",
+                        "model": "m",
+                        "model_family": "classical",
+                        "test": "outlier",
+                        "severity": "moderate",
+                        "clean_mase": 1.0,
+                        "stress_mase": ratio,
+                        "robustness_ratio": ratio,
+                        "percentage_degradation": 100.0 * (ratio - 1.0),
+                        "absolute_degradation": ratio - 1.0,
+                        "scale_invariance_error": np.nan,
+                        "runtime_seconds": 1.0,
+                        "applicable": True,
+                        "status": "ok",
+                    }
+                )
+        summary = aggregate_robustness(pd.DataFrame(rows), bootstrap_samples=0, bootstrap_seed=2026)
+
+        self.assertAlmostEqual(summary.iloc[0]["robustness_ratio"], 2.0)
+
+    def test_empty_robustness_results_produce_an_empty_summary(self) -> None:
+        summary = aggregate_robustness(pd.DataFrame(), bootstrap_samples=10, bootstrap_seed=2026)
+        self.assertTrue(summary.empty)
+
+    def test_robust_scale_is_nan_for_constant_series(self) -> None:
+        self.assertTrue(np.isnan(robust_scale(np.ones(20), seasonality=4)))
+
+    def test_robustness_audit_runner_writes_paired_outputs(self) -> None:
+        task = self._robustness_task()
+        with tempfile.TemporaryDirectory() as directory:
+            config = {
+                "run": {
+                    "name": "test",
+                    "output_dir": directory,
+                    "log_dir": str(Path(directory) / "logs"),
+                    "random_seed": 42,
+                    "environment": {"MPLCONFIGDIR": str(Path(directory) / "mpl")},
+                    "logging": {
+                        "console_level": "ERROR",
+                        "file_level": "ERROR",
+                        "max_bytes": 100000,
+                        "backup_count": 1,
+                    },
+                },
+                "evaluation": {
+                    "metrics": ["mae", "rmse", "smape", "mase", "wql"],
+                    "point_forecast": "median",
+                    "quantiles": [0.1, 0.5, 0.9],
+                },
+                "robustness": {
+                    "max_context": 512,
+                    "max_series_per_dataset": 5,
+                    "num_origins": 3,
+                    "model_seeds": [1001, 1002, 1003],
+                    "corruption_seeds": [2026, 2027, 2028],
+                    "bootstrap_samples": 10,
+                    "ratio_epsilon": 1e-8,
+                },
+                "datasets": [
+                    {
+                        "name": "d",
+                        "family": "external",
+                        "repo": "unused",
+                        "hf_configs": ["unused"],
+                        "split": "train",
+                        "prediction_length": 4,
+                        "seasonality": 1,
+                        "max_series": 5,
+                        "fallback_frequency": "D",
+                    }
+                ],
+                "models": [
+                    {
+                        "name": "seasonal_naive",
+                        "type": "seasonal_naive",
+                        "params": {"use_dataset_seasonality": True, "seasonality": 1},
+                    }
+                ],
+            }
+            with patch("pmds.robustness.load_dataset_tasks", return_value=[task]):
+                paths = run_robustness(config, Path("config.json"), audit=True)
+
+            robustness = pd.read_csv(paths["robustness"])
+            manifest = pd.read_csv(paths["manifest"])
+            summary = pd.read_csv(paths["summary"])
+            self.assertEqual(len(robustness), 18)
+            self.assertEqual(len(manifest), 18)
+            self.assertEqual(len(summary), 12)
+            self.assertTrue((robustness["status"] == "ok").all())
+            self.assertEqual(set(robustness["test"]), {"outlier", "outage", "bias", "scale"})
+
+    @staticmethod
+    def _robustness_task() -> ForecastTask:
+        timestamps = pd.date_range("2024-01-01", periods=24, freq="D")
+        return ForecastTask(
+            dataset="d",
+            item_id="s::origin=0",
+            context_timestamps=timestamps[:20],
+            future_timestamps=timestamps[20:],
+            context=np.arange(1, 21, dtype=np.float32),
+            future=np.arange(21, 25, dtype=np.float32),
+            prediction_length=4,
+            seasonality=1,
+            frequency="D",
+            series_id="s",
+        )
 
     def test_psm_minute_timestamps_are_resampled_to_hourly_means(self) -> None:
         frame = pd.DataFrame(

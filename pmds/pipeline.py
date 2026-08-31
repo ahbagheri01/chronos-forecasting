@@ -6,6 +6,7 @@ import json
 import logging
 import sys
 import time
+from dataclasses import replace
 from pathlib import Path
 from typing import Any, Callable, Mapping
 
@@ -95,6 +96,16 @@ def safe_predict(
         )
 
 
+def cap_task_context(task: ForecastTask, max_context: int) -> ForecastTask:
+    if len(task.context) <= max_context:
+        return task
+    return replace(
+        task,
+        context=task.context[-max_context:].copy(),
+        context_timestamps=task.context_timestamps[-max_context:],
+    )
+
+
 def run_experiment(config: Mapping[str, Any], config_path: Path) -> None:
     run_config = config["run"]
     evaluation_config = config["evaluation"]
@@ -103,6 +114,7 @@ def run_experiment(config: Mapping[str, Any], config_path: Path) -> None:
     point_method = str(evaluation_config["point_forecast"])
     stochastic_repetitions = int(evaluation_config.get("stochastic_repetitions", 1))
     context_multiplier = int(evaluation_config.get("forecast_context_multiplier", 3))
+    max_context = int(evaluation_config["max_context"])
     base_seed = int(run_config["random_seed"])
 
     log_path = setup_logging(run_config)
@@ -143,7 +155,7 @@ def run_experiment(config: Mapping[str, Any], config_path: Path) -> None:
             len(dataset_specs),
         )
         try:
-            tasks = load_dataset_tasks(spec)
+            tasks = [cap_task_context(task, max_context) for task in load_dataset_tasks(spec)]
             if not tasks:
                 raise RuntimeError(f"Dataset {spec.name} produced no forecast tasks")
             LOGGER.info("Dataset loaded | dataset=%s tasks=%d", spec.name, len(tasks))

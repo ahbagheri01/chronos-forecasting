@@ -13,14 +13,29 @@ def resolve_path(path_value: str) -> Path:
     return Path(path_value).expanduser()
 
 
+def numeric_array(values: Iterable) -> np.ndarray:
+    """Convert values to a numeric array without filling missing observations."""
+    return np.asarray(values, dtype=np.float64)
+
+
 def clean_numeric(values: Iterable) -> np.ndarray:
-    series = pd.Series(np.asarray(values, dtype=np.float64))
-    return series.interpolate(limit_direction="both").fillna(0.0).to_numpy(dtype=np.float32)
+    """Causally fill an already-split forecast context.
+
+    Forward filling never borrows information from the forecast target. Leading
+    missing values remain invalid because filling them would require looking
+    ahead or inventing a dataset-specific value.
+    """
+    series = pd.Series(numeric_array(values)).replace([np.inf, -np.inf], np.nan).ffill()
+    if series.isna().any():
+        raise ValueError("Context contains leading or unfillable missing values")
+    return series.to_numpy(dtype=np.float32)
 
 
 def period_compatible_frequency(frequency: str) -> str:
     replacements = {
+        "MS": "M",
         "ME": "M",
+        "QS-": "Q-",
         "QE-": "Q-",
         "YE-": "Y-",
         "YS-": "Y-",

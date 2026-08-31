@@ -90,6 +90,153 @@ class ChronosRunner:
         )
 
 
+def _quantile_indices(requested: np.ndarray, available: Sequence[float], model_name: str) -> list[int]:
+    available_array = np.asarray(available, dtype=float)
+    indices: list[int] = []
+    for level in requested:
+        matches = np.flatnonzero(np.isclose(available_array, level, atol=1e-7, rtol=0.0))
+        if len(matches) != 1:
+            raise ValueError(f"{model_name} does not provide required quantile {level:g}; available={available}")
+        indices.append(int(matches[0]))
+    return indices
+
+
+class TimesFMRunner:
+    """Lazy adapter for the official TimesFM 2.5 PyTorch implementation."""
+
+    OFFICIAL_QUANTILES = tuple(index / 10 for index in range(1, 10))
+    INPUT_PATCH_LENGTH = 32
+
+    def __init__(self, params: Mapping[str, Any], quantiles: np.ndarray):
+        self.params = dict(params)
+        self.quantiles = quantiles
+        self.model = None
+        self.load_error: Exception | None = None
+        self.compiled_context: int | None = None
+        self.quantile_indices = _quantile_indices(quantiles, self.OFFICIAL_QUANTILES, "TimesFM 2.5")
+
+    def _load(self):
+        if self.load_error is not None:
+            raise RuntimeError("TimesFM model loading failed previously") from self.load_error
+        if self.model is None:
+            try:
+                import timesfm
+
+                kwargs: dict[str, Any] = {
+                    "local_files_only": bool(self.params.get("local_files_only", False)),
+                    "torch_compile": bool(self.params.get("torch_compile", False)),
+                }
+                if self.params.get("revision"):
+                    kwargs["revision"] = self.params["revision"]
+                LOGGER.info("Loading TimesFM model | model_id=%s", self.params["model_id"])
+                model = timesfm.TimesFM_2p5_200M_torch.from_pretrained(self.params["model_id"], **kwargs)
+                self.model = model
+            except ImportError as exc:
+                self.load_error = exc
+                raise ImportError("Install the PMDS foundation-model dependencies with: pip install -e '.[pmds]'") from exc
+            except Exception as exc:
+                self.load_error = exc
+                raise
+        return self.model
+
+    def __call__(self, task: ForecastTask) -> ForecastOutput:
+        context = clean_numeric(task.context)[-int(self.params.get("max_context", 512)) :]
+        model = self._load()
+        # Excess fully-masked leading patches can yield NaNs in the official
+        # PyTorch decoder. Compile to the smallest patch-aligned context that
+        # contains this task's real observations instead of always padding to
+        # the experiment-wide cap.
+        compiled_context = int(math.ceil(len(context) / self.INPUT_PATCH_LENGTH) * self.INPUT_PATCH_LENGTH)
+        if compiled_context != self.compiled_context:
+            import timesfm
+
+            model.compile(
+                timesfm.ForecastConfig(
+                    max_context=compiled_context,
+                    max_horizon=int(self.params.get("max_horizon", 256)),
+                    normalize_inputs=bool(self.params.get("normalize_inputs", True)),
+                    use_continuous_quantile_head=True,
+                    fix_quantile_crossing=True,
+                )
+            )
+            self.compiled_context = compiled_context
+        point, probabilistic = model.forecast(horizon=task.prediction_length, inputs=[context])
+        point_values = np.asarray(point, dtype=np.float32).reshape(1, task.prediction_length)[0]
+        all_values = np.asarray(probabilistic, dtype=np.float32)
+        if all_values.shape != (1, task.prediction_length, 10):
+            raise ValueError(f"Unexpected TimesFM quantile shape: {all_values.shape}")
+        # TimesFM places its mean in column 0 and q0.1,...,q0.9 in columns 1,...,9.
+        mean = all_values[0, :, 0]
+        quantile_values = np.take(all_values[0], np.asarray(self.quantile_indices) + 1, axis=1)
+        if quantile_values.shape != (task.prediction_length, len(self.quantiles)):
+            raise ValueError(f"Unexpected TimesFM selected quantile shape: {quantile_values.shape}")
+        del point_values  # The official point output is the median; evaluation selects q0.5 explicitly.
+        return ForecastOutput(mean, quantile_values, distribution="timesfm_quantiles")
+
+
+class Moirai2Runner:
+    """Lazy adapter for Salesforce Moirai 2.0 checkpoints."""
+
+    def __init__(self, params: Mapping[str, Any], quantiles: np.ndarray):
+        self.params = dict(params)
+        self.quantiles = quantiles
+        self.module = None
+        self.forecast_class = None
+        self.load_error: Exception | None = None
+        self.quantile_indices: list[int] | None = None
+
+    def _load(self):
+        if self.load_error is not None:
+            raise RuntimeError("Moirai model loading failed previously") from self.load_error
+        if self.module is None:
+            try:
+                from uni2ts.model.moirai2 import Moirai2Forecast, Moirai2Module
+
+                kwargs: dict[str, Any] = {}
+                if self.params.get("revision"):
+                    kwargs["revision"] = self.params["revision"]
+                LOGGER.info("Loading Moirai model | model_id=%s device=%s", self.params["model_id"], self.params["device"])
+                module = Moirai2Module.from_pretrained(self.params["model_id"], **kwargs)
+                module = module.to(str(self.params.get("device", "cpu")))
+                module.eval()
+                available = [float(value) for value in module.quantile_levels]
+                self.quantile_indices = _quantile_indices(self.quantiles, available, "Moirai 2.0")
+                self.module = module
+                self.forecast_class = Moirai2Forecast
+            except ImportError as exc:
+                self.load_error = exc
+                raise ImportError("Install the PMDS foundation-model dependencies with: pip install -e '.[pmds]'") from exc
+            except Exception as exc:
+                self.load_error = exc
+                raise
+        return self.module
+
+    def __call__(self, task: ForecastTask) -> ForecastOutput:
+        module = self._load()
+        context = clean_numeric(task.context)[-int(self.params.get("max_context", 512)) :]
+        model = self.forecast_class(
+            module=module,
+            prediction_length=task.prediction_length,
+            context_length=len(context),
+            target_dim=1,
+            feat_dynamic_real_dim=0,
+            past_feat_dynamic_real_dim=0,
+        ).to(str(self.params.get("device", "cpu")))
+        with torch.inference_mode():
+            prediction = model.predict([context])
+        values = prediction.detach().cpu().numpy() if torch.is_tensor(prediction) else np.asarray(prediction)
+        if values.ndim != 3 or values.shape[0] != 1 or values.shape[2] != task.prediction_length:
+            raise ValueError(f"Unexpected Moirai quantile shape: {values.shape}")
+        assert self.quantile_indices is not None
+        quantile_values = values[0, self.quantile_indices, :].T.astype(np.float32)
+        median_index = int(np.flatnonzero(np.isclose(self.quantiles, 0.5))[0])
+        return ForecastOutput(
+            quantile_values[:, median_index].copy(),
+            quantile_values,
+            distribution="moirai_quantiles_no_mean",
+        )
+
+
 def seasonal_naive_runner(params: Mapping[str, Any], quantiles: np.ndarray) -> Callable[[ForecastTask], ForecastOutput]:
     def run(task: ForecastTask) -> ForecastOutput:
         context = clean_numeric(task.context)
@@ -386,6 +533,10 @@ def build_model_runners(
         params = model_config.get("params", {})
         if model_type == "chronos":
             runners[name] = ChronosRunner(params, quantiles)
+        elif model_type == "timesfm":
+            runners[name] = TimesFMRunner(params, quantiles)
+        elif model_type == "moirai2":
+            runners[name] = Moirai2Runner(params, quantiles)
         elif model_type in builders:
             runners[name] = builders[model_type](params, quantiles)
         else:

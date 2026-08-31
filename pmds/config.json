@@ -9,9 +9,9 @@
       "HF_HOME": "/tmp/pmds-hf",
       "HF_DATASETS_CACHE": "/tmp/pmds-hf/datasets",
       "TRANSFORMERS_CACHE": "/tmp/pmds-hf/hub",
-      "HF_HUB_OFFLINE": "1",
-      "HF_DATASETS_OFFLINE": "1",
-      "TRANSFORMERS_OFFLINE": "1"
+      "HF_HUB_OFFLINE": "0",
+      "HF_DATASETS_OFFLINE": "0",
+      "TRANSFORMERS_OFFLINE": "0"
     },
     "logging": {
       "console_level": "INFO",
@@ -31,29 +31,29 @@
       "positive_mae"
     ],
     "point_forecast": "median",
+    "max_context": 512,
     "stochastic_repetitions": 3,
     "forecast_context_multiplier": 3,
     "quantiles": [
-      0.05,
       0.1,
-      0.15,
       0.2,
-      0.25,
       0.3,
-      0.35,
       0.4,
-      0.45,
       0.5,
-      0.55,
       0.6,
-      0.65,
       0.7,
-      0.75,
       0.8,
-      0.85,
-      0.9,
-      0.95
+      0.9
     ]
+  },
+  "robustness": {
+    "max_context": 512,
+    "max_series_per_dataset": 5,
+    "num_origins": 3,
+    "model_seeds": [1001, 1002, 1003],
+    "corruption_seeds": [2026, 2027, 2028],
+    "bootstrap_samples": 1000,
+    "ratio_epsilon": 1e-8
   },
   "datasets": [
     {
@@ -61,6 +61,7 @@
       "enabled": true,
       "family": "chronos",
       "repo": "autogluon/chronos_datasets",
+      "revision": "eeecad0b82a8c237e212ce6f8d1abecb513e2cec",
       "hf_configs": ["monash_m1_yearly"],
       "split": "train",
       "prediction_length": 6,
@@ -76,6 +77,7 @@
       "enabled": true,
       "family": "chronos",
       "repo": "autogluon/chronos_datasets",
+      "revision": "eeecad0b82a8c237e212ce6f8d1abecb513e2cec",
       "hf_configs": ["m4_hourly"],
       "split": "train",
       "prediction_length": 48,
@@ -91,6 +93,7 @@
       "enabled": true,
       "family": "chronos",
       "repo": "autogluon/chronos_datasets",
+      "revision": "eeecad0b82a8c237e212ce6f8d1abecb513e2cec",
       "hf_configs": ["monash_weather"],
       "split": "train",
       "prediction_length": 30,
@@ -110,6 +113,7 @@
       "enabled": true,
       "family": "external",
       "repo": "thuml/Time-Series-Library",
+      "revision": "2b66e59ee19dac8f6f19fb5d4997f289fdfea357",
       "hf_configs": ["national_illness"],
       "split": "train",
       "prediction_length": 24,
@@ -126,6 +130,7 @@
       "enabled": true,
       "family": "external",
       "repo": "thuml/Time-Series-Library",
+      "revision": "2b66e59ee19dac8f6f19fb5d4997f289fdfea357",
       "hf_configs": ["traffic"],
       "split": "train",
       "prediction_length": 24,
@@ -142,6 +147,7 @@
       "enabled": true,
       "family": "external",
       "repo": "thuml/Time-Series-Library",
+      "revision": "2b66e59ee19dac8f6f19fb5d4997f289fdfea357",
       "hf_configs": ["PSM-data"],
       "split": "train",
       "prediction_length": 24,
@@ -155,6 +161,127 @@
       "num_origins": 3,
       "origin_stride": 24,
       "selection_strategy": "evenly_spaced"
+    },
+    {
+      "name": "chronos_m3_quarterly",
+      "enabled": true,
+      "family": "chronos",
+      "repo": "autogluon/chronos_datasets",
+      "revision": "eeecad0b82a8c237e212ce6f8d1abecb513e2cec",
+      "hf_configs": ["monash_m3_quarterly"],
+      "split": "train",
+      "prediction_length": 8,
+      "seasonality": 4,
+      "max_series": 20,
+      "fallback_frequency": "QE-DEC",
+      "num_origins": 3,
+      "origin_stride": 8,
+      "selection_strategy": "evenly_spaced"
+    },
+    {
+      "name": "chronos_car_parts",
+      "enabled": true,
+      "family": "chronos",
+      "repo": "autogluon/chronos_datasets",
+      "revision": "eeecad0b82a8c237e212ce6f8d1abecb513e2cec",
+      "hf_configs": ["monash_car_parts"],
+      "split": "train",
+      "prediction_length": 12,
+      "seasonality": 12,
+      "max_series": 20,
+      "fallback_frequency": "ME",
+      "num_origins": 2,
+      "origin_stride": 12,
+      "selection_strategy": "evenly_spaced",
+      "zero_inflated": true,
+      "zero_threshold": 0.000001
+    },
+    {
+      "name": "chronos_nn5_weekly",
+      "enabled": true,
+      "family": "chronos",
+      "repo": "autogluon/chronos_datasets",
+      "revision": "eeecad0b82a8c237e212ce6f8d1abecb513e2cec",
+      "hf_configs": ["monash_nn5_weekly"],
+      "split": "train",
+      "prediction_length": 8,
+      "seasonality": 52,
+      "max_series": 20,
+      "fallback_frequency": "W",
+      "num_origins": 3,
+      "origin_stride": 8,
+      "selection_strategy": "evenly_spaced"
+    },
+    {
+      "name": "official_eia_930",
+      "enabled": true,
+      "family": "official",
+      "repo": "",
+      "hf_configs": [],
+      "split": "snapshot",
+      "prediction_length": 24,
+      "seasonality": 24,
+      "max_series": 5,
+      "fallback_frequency": "h",
+      "num_origins": 3,
+      "origin_stride": 24,
+      "selection_strategy": "evenly_spaced",
+      "source": "eia_930",
+      "snapshot_path": "pmds/data/official/eia_930_through_2026-07-31.json",
+      "source_params": {
+        "api_key_env": "EIA_API_KEY",
+        "authorities": ["CISO", "ERCO", "MISO", "NYIS", "PJM"],
+        "start": "2025-01-01T00",
+        "end": "2026-07-31T23"
+      }
+    },
+    {
+      "name": "official_usgs_streamflow",
+      "enabled": true,
+      "family": "official",
+      "repo": "",
+      "hf_configs": [],
+      "split": "snapshot",
+      "prediction_length": 30,
+      "seasonality": 365,
+      "max_series": 5,
+      "fallback_frequency": "D",
+      "num_origins": 3,
+      "origin_stride": 30,
+      "selection_strategy": "evenly_spaced",
+      "source": "usgs_streamflow",
+      "snapshot_path": "pmds/data/official/usgs_streamflow_through_2026-07-31.json",
+      "source_params": {
+        "gauges": ["01646500", "02087500", "08158000", "09380000", "14211720"],
+        "parameter_code": "00060",
+        "statistic_id": "00003",
+        "start": "2015-01-01",
+        "end": "2026-07-31"
+      }
+    },
+    {
+      "name": "official_fred_md",
+      "enabled": true,
+      "family": "official",
+      "repo": "",
+      "hf_configs": [],
+      "split": "snapshot",
+      "prediction_length": 6,
+      "seasonality": 12,
+      "max_series": 7,
+      "fallback_frequency": "MS",
+      "num_origins": 3,
+      "origin_stride": 6,
+      "selection_strategy": "evenly_spaced",
+      "source": "fred_md",
+      "snapshot_path": "pmds/data/official/fred_md_vintage_2026-07-31.json",
+      "source_params": {
+        "api_key_env": "FRED_API_KEY",
+        "series_ids": ["RPI", "INDPRO", "PAYEMS", "UNRATE", "HOUST", "CPIAUCSL", "FEDFUNDS"],
+        "start": "2010-01-01",
+        "end": "2026-07-31",
+        "vintage_date": "2026-07-31"
+      }
     }
   ],
   "models": [
@@ -162,6 +289,7 @@
       "name": "chronos_t5_tiny",
       "type": "chronos",
       "enabled": true,
+      "foundation_model": true,
       "stochastic": true,
       "params": {
         "model_id": "amazon/chronos-t5-tiny",
@@ -171,6 +299,35 @@
         "temperature": 1.0,
         "top_k": 50,
         "top_p": 1.0
+      }
+    },
+    {
+      "name": "timesfm_2_5_200m",
+      "type": "timesfm",
+      "enabled": true,
+      "foundation_model": true,
+      "stochastic": false,
+      "params": {
+        "model_id": "google/timesfm-2.5-200m-pytorch",
+        "revision": "1d95242",
+        "max_context": 512,
+        "max_horizon": 256,
+        "normalize_inputs": true,
+        "torch_compile": false,
+        "local_files_only": false
+      }
+    },
+    {
+      "name": "moirai_2_0_small",
+      "type": "moirai2",
+      "enabled": true,
+      "foundation_model": true,
+      "stochastic": false,
+      "params": {
+        "model_id": "Salesforce/moirai-2.0-R-small",
+        "revision": "30f43ff",
+        "device": "cpu",
+        "max_context": 512
       }
     },
     {
@@ -185,7 +342,7 @@
     {
       "name": "weather_zero_baseline",
       "type": "zero",
-      "enabled": true,
+      "enabled": false,
       "diagnostic": true,
       "datasets": ["chronos_weather"],
       "params": {}
@@ -235,7 +392,7 @@
     {
       "name": "sarima_1_0_1",
       "type": "statsmodels_arima",
-      "enabled": true,
+      "enabled": false,
       "params": {
         "order": [1, 0, 1],
         "seasonal_order": [1, 0, 1, "dataset_seasonality"],
@@ -283,7 +440,7 @@
         "temporary_directory": "/tmp",
         "trainer": {
           "max_epochs": 50,
-          "accelerator": "cuda:0",
+          "accelerator": "cpu",
           "devices": 1,
           "enable_checkpointing": true,
           "logger": false,

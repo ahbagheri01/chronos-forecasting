@@ -1,0 +1,13 @@
+dataset,family,source_or_repo,revision_or_vintage,series_selection,frequency,horizon,seasonality,origins
+chronos_m1_yearly,chronos,autogluon/chronos_datasets,eeecad0b82a8c237e212ce6f8d1abecb513e2cec,20 evenly spaced,Y-DEC,6,1,3
+chronos_m4_hourly,chronos,autogluon/chronos_datasets,eeecad0b82a8c237e212ce6f8d1abecb513e2cec,20 evenly spaced,h,48,24,3
+chronos_weather,chronos,autogluon/chronos_datasets,eeecad0b82a8c237e212ce6f8d1abecb513e2cec,20 evenly spaced rain subset,D,30,7,3
+external_national_illness,external,thuml/Time-Series-Library,2b66e59ee19dac8f6f19fb5d4997f289fdfea357,OT,W,24,52,3
+external_traffic,external,thuml/Time-Series-Library,2b66e59ee19dac8f6f19fb5d4997f289fdfea357,5 evenly spaced channels,h,24,24,3
+external_psm,external,thuml/Time-Series-Library,2b66e59ee19dac8f6f19fb5d4997f289fdfea357,5 evenly spaced hourly-resampled channels,h,24,24,3
+chronos_m3_quarterly,chronos,autogluon/chronos_datasets,eeecad0b82a8c237e212ce6f8d1abecb513e2cec,20 evenly spaced,QE-DEC,8,4,3
+chronos_car_parts,chronos,autogluon/chronos_datasets,eeecad0b82a8c237e212ce6f8d1abecb513e2cec,20 evenly spaced,ME,12,12,2
+chronos_nn5_weekly,chronos,autogluon/chronos_datasets,eeecad0b82a8c237e212ce6f8d1abecb513e2cec,20 evenly spaced,W,8,52,3
+official_eia_930,official,EIA-930,through 2026-07-31,CISO|ERCO|MISO|NYIS|PJM,h,24,24,3
+official_usgs_streamflow,official,USGS Water Data,through 2026-07-31,01646500|02087500|08158000|09380000|14211720,D,30,365,3
+official_fred_md,official,FRED API,vintage 2026-07-31,RPI|INDPRO|PAYEMS|UNRATE|HOUST|CPIAUCSL|FEDFUNDS,MS,6,12,3

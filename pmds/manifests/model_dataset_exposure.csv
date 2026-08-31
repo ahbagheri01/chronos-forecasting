@@ -1,0 +1,37 @@
+model,dataset,status,evidence
+chronos_t5_tiny,chronos_m1_yearly,claimed_unseen,Project plan classifies selected non-M4 Monash data as zero-shot evaluation
+chronos_t5_tiny,chronos_m4_hourly,confirmed_pretraining,Project plan identifies M4 Hourly as in-domain for Chronos
+chronos_t5_tiny,chronos_weather,claimed_unseen,Project plan classifies selected non-M4 Monash data as zero-shot evaluation
+chronos_t5_tiny,external_national_illness,unknown,No documented model-specific exposure determination
+chronos_t5_tiny,external_traffic,unknown,No documented model-specific exposure determination
+chronos_t5_tiny,external_psm,unknown,No documented model-specific exposure determination
+chronos_t5_tiny,chronos_m3_quarterly,claimed_unseen,Project plan classifies selected non-M4 Monash data as zero-shot evaluation
+chronos_t5_tiny,chronos_car_parts,claimed_unseen,Project plan classifies selected non-M4 Monash data as zero-shot evaluation
+chronos_t5_tiny,chronos_nn5_weekly,claimed_unseen,Project plan classifies selected non-M4 Monash data as zero-shot evaluation
+chronos_t5_tiny,official_eia_930,post_release_target,Fixed target window extends through July 2026
+chronos_t5_tiny,official_usgs_streamflow,post_release_target,Fixed target window extends through July 2026
+chronos_t5_tiny,official_fred_md,post_release_target,Fixed July 2026 vintage and target window
+timesfm_2_5_200m,chronos_m1_yearly,unknown,No checkpoint-level overlap evidence recorded
+timesfm_2_5_200m,chronos_m4_hourly,unknown,No checkpoint-level overlap evidence recorded
+timesfm_2_5_200m,chronos_weather,unknown,No checkpoint-level overlap evidence recorded
+timesfm_2_5_200m,external_national_illness,unknown,Legacy data may predate model training cutoff
+timesfm_2_5_200m,external_traffic,unknown,Legacy data may predate model training cutoff
+timesfm_2_5_200m,external_psm,unknown,Legacy data may predate model training cutoff
+timesfm_2_5_200m,chronos_m3_quarterly,unknown,No checkpoint-level overlap evidence recorded
+timesfm_2_5_200m,chronos_car_parts,unknown,No checkpoint-level overlap evidence recorded
+timesfm_2_5_200m,chronos_nn5_weekly,unknown,No checkpoint-level overlap evidence recorded
+timesfm_2_5_200m,official_eia_930,post_release_target,Fixed target window extends through July 2026 after model release
+timesfm_2_5_200m,official_usgs_streamflow,post_release_target,Fixed target window extends through July 2026 after model release
+timesfm_2_5_200m,official_fred_md,post_release_target,Fixed July 2026 vintage after model release
+moirai_2_0_small,chronos_m1_yearly,unknown,Moirai reports Chronos-derived and GIFT-Eval pretraining data
+moirai_2_0_small,chronos_m4_hourly,unknown,Moirai reports Chronos-derived and GIFT-Eval pretraining data
+moirai_2_0_small,chronos_weather,unknown,Moirai reports Chronos-derived and GIFT-Eval pretraining data
+moirai_2_0_small,external_national_illness,unknown,Legacy data may predate model training cutoff
+moirai_2_0_small,external_traffic,unknown,Legacy data may predate model training cutoff
+moirai_2_0_small,external_psm,unknown,Legacy data may predate model training cutoff
+moirai_2_0_small,chronos_m3_quarterly,unknown,Moirai reports Chronos-derived and GIFT-Eval pretraining data
+moirai_2_0_small,chronos_car_parts,unknown,Moirai reports Chronos-derived and GIFT-Eval pretraining data
+moirai_2_0_small,chronos_nn5_weekly,unknown,Moirai reports Chronos-derived and GIFT-Eval pretraining data
+moirai_2_0_small,official_eia_930,post_release_target,Fixed target window extends through July 2026 after model release
+moirai_2_0_small,official_usgs_streamflow,post_release_target,Fixed target window extends through July 2026 after model release
+moirai_2_0_small,official_fred_md,post_release_target,Fixed July 2026 vintage after model release

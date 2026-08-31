@@ -1,0 +1,72 @@
+[
+  {
+    "dataset": "chronos_m1_yearly",
+    "status": "completed_with_errors",
+    "tasks": 1,
+    "failed_model_tasks": 1,
+    "duration_seconds": 413.83928388000015
+  },
+  {
+    "dataset": "chronos_m4_hourly",
+    "status": "completed",
+    "tasks": 1,
+    "failed_model_tasks": 0,
+    "duration_seconds": 16.203164260999984
+  },
+  {
+    "dataset": "chronos_weather",
+    "status": "completed",
+    "tasks": 1,
+    "failed_model_tasks": 0,
+    "duration_seconds": 104.69937035500016
+  },
+  {
+    "dataset": "external_national_illness",
+    "status": "completed",
+    "tasks": 1,
+    "failed_model_tasks": 0,
+    "duration_seconds": 11.411867294999865
+  },
+  {
+    "dataset": "external_traffic",
+    "status": "completed",
+    "tasks": 1,
+    "failed_model_tasks": 0,
+    "duration_seconds": 121.5998765400002
+  },
+  {
+    "dataset": "external_psm",
+    "status": "completed",
+    "tasks": 1,
+    "failed_model_tasks": 0,
+    "duration_seconds": 124.22805926199999
+  },
+  {
+    "dataset": "chronos_m3_quarterly",
+    "status": "completed_with_errors",
+    "tasks": 1,
+    "failed_model_tasks": 1,
+    "duration_seconds": 9.00150104799991
+  },
+  {
+    "dataset": "chronos_car_parts",
+    "status": "completed_with_errors",
+    "tasks": 1,
+    "failed_model_tasks": 2,
+    "duration_seconds": 4.465291860999969
+  },
+  {
+    "dataset": "chronos_nn5_weekly",
+    "status": "completed_with_errors",
+    "tasks": 1,
+    "failed_model_tasks": 1,
+    "duration_seconds": 8.654988551000088
+  },
+  {
+    "dataset": "official_usgs_streamflow",
+    "status": "completed",
+    "tasks": 1,
+    "failed_model_tasks": 0,
+    "duration_seconds": 31.691273597999952
+  }
+]

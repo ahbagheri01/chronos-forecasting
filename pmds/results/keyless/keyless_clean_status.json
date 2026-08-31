@@ -1,0 +1,78 @@
+[
+  {
+    "dataset": "chronos_m1_yearly",
+    "status": "completed",
+    "tasks": 60,
+    "failed_model_tasks": 0,
+    "duration_seconds": 694.8955842449996
+  },
+  {
+    "dataset": "chronos_m4_hourly",
+    "status": "completed",
+    "tasks": 60,
+    "failed_model_tasks": 0,
+    "duration_seconds": 2176.910385426
+  },
+  {
+    "dataset": "chronos_weather",
+    "status": "completed",
+    "tasks": 60,
+    "failed_model_tasks": 0,
+    "duration_seconds": 1900.671790163
+  },
+  {
+    "dataset": "external_national_illness",
+    "status": "failed",
+    "tasks": 0,
+    "failed_model_tasks": 8,
+    "duration_seconds": 0.005940153000665305,
+    "error_type": "RuntimeError",
+    "error": "Could not load external_national_illness from thuml/Time-Series-Library with configs=('national_illness',)"
+  },
+  {
+    "dataset": "external_traffic",
+    "status": "failed",
+    "tasks": 0,
+    "failed_model_tasks": 8,
+    "duration_seconds": 0.0013658469997608336,
+    "error_type": "RuntimeError",
+    "error": "Could not load external_traffic from thuml/Time-Series-Library with configs=('traffic',)"
+  },
+  {
+    "dataset": "external_psm",
+    "status": "failed",
+    "tasks": 0,
+    "failed_model_tasks": 8,
+    "duration_seconds": 0.0014265679992604419,
+    "error_type": "RuntimeError",
+    "error": "Could not load external_psm from thuml/Time-Series-Library with configs=('PSM-data',)"
+  },
+  {
+    "dataset": "chronos_m3_quarterly",
+    "status": "completed",
+    "tasks": 60,
+    "failed_model_tasks": 0,
+    "duration_seconds": 1092.1005935829999
+  },
+  {
+    "dataset": "chronos_car_parts",
+    "status": "completed",
+    "tasks": 40,
+    "failed_model_tasks": 0,
+    "duration_seconds": 851.2763417590013
+  },
+  {
+    "dataset": "chronos_nn5_weekly",
+    "status": "completed",
+    "tasks": 60,
+    "failed_model_tasks": 0,
+    "duration_seconds": 1350.1427544159997
+  },
+  {
+    "dataset": "official_usgs_streamflow",
+    "status": "completed",
+    "tasks": 13,
+    "failed_model_tasks": 0,
+    "duration_seconds": 419.79213548700136
+  }
+]

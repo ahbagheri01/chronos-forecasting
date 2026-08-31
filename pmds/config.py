@@ -57,6 +57,8 @@ def validate_config(config: Mapping[str, Any]) -> None:
         raise ValueError("evaluation.stochastic_repetitions must be at least 1")
     if int(evaluation.get("forecast_context_multiplier", 3)) < 1:
         raise ValueError("evaluation.forecast_context_multiplier must be at least 1")
+    if int(evaluation.get("max_context", 0)) < 1:
+        raise ValueError("evaluation.max_context must be at least 1")
 
     enabled_datasets = [dataset for dataset in config["datasets"] if dataset.get("enabled", True)]
     dataset_names = [dataset.get("name") for dataset in enabled_datasets]
@@ -64,6 +66,14 @@ def validate_config(config: Mapping[str, Any]) -> None:
         raise ValueError("Enabled dataset names must be unique")
     for dataset in enabled_datasets:
         name = dataset.get("name", "<unnamed>")
+        family = dataset.get("family")
+        if family not in {"chronos", "external", "official"}:
+            raise ValueError(f"Dataset '{name}' has unsupported family '{family}'")
+        if family == "official":
+            if dataset.get("source") not in {"eia_930", "usgs_streamflow", "fred_md"}:
+                raise ValueError(f"Dataset '{name}' has an unsupported official source")
+            if not dataset.get("snapshot_path") or not isinstance(dataset.get("source_params"), Mapping):
+                raise ValueError(f"Dataset '{name}' requires snapshot_path and source_params")
         if int(dataset.get("num_origins", 1)) < 1:
             raise ValueError(f"Dataset '{name}' num_origins must be at least 1")
         if dataset.get("origin_stride") is not None and int(dataset["origin_stride"]) < 1:
@@ -92,6 +102,20 @@ def validate_config(config: Mapping[str, Any]) -> None:
     }
     if unknown_scopes:
         raise ValueError(f"Models reference unknown datasets: {sorted(unknown_scopes)}")
+
+    robustness = config.get("robustness")
+    if robustness is not None:
+        for field in ("max_context", "max_series_per_dataset", "num_origins"):
+            if int(robustness.get(field, 0)) < 1:
+                raise ValueError(f"robustness.{field} must be at least 1")
+        for field in ("model_seeds", "corruption_seeds"):
+            seeds = list(robustness.get(field, []))
+            if not seeds or len(seeds) != len(set(map(int, seeds))):
+                raise ValueError(f"robustness.{field} must contain unique integer seeds")
+        if int(robustness.get("bootstrap_samples", 0)) < 0:
+            raise ValueError("robustness.bootstrap_samples must be non-negative")
+        if float(robustness.get("ratio_epsilon", 0.0)) <= 0.0:
+            raise ValueError("robustness.ratio_epsilon must be positive")
 
 
 

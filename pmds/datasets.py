@@ -9,7 +9,7 @@ import numpy as np
 import pandas as pd
 
 from pmds.schemas import DatasetSpec, ForecastTask
-from pmds.utils import clean_numeric
+from pmds.utils import clean_numeric, numeric_array
 
 
 LOGGER = logging.getLogger("pmds.compare")
@@ -58,12 +58,13 @@ def load_hf_dataset(spec: DatasetSpec):
                 hf_config,
                 spec.split,
             )
-            return datasets.load_dataset(
-                spec.repo,
-                hf_config,
-                split=spec.split,
-                trust_remote_code=spec.trust_remote_code,
-            )
+            kwargs = {
+                "split": spec.split,
+                "trust_remote_code": spec.trust_remote_code,
+            }
+            if spec.revision is not None:
+                kwargs["revision"] = spec.revision
+            return datasets.load_dataset(spec.repo, hf_config, **kwargs)
         except Exception as exc:
             last_error = exc
             LOGGER.warning(
@@ -114,7 +115,7 @@ def make_tasks(
     values: Iterable,
     timestamps: Iterable | None,
 ) -> list[ForecastTask]:
-    series = clean_numeric(values)
+    series = numeric_array(values)
     stride = spec.origin_stride or spec.prediction_length
     required_length = required_series_length(spec)
     if len(series) < required_length:
@@ -134,14 +135,55 @@ def make_tasks(
         future_start = future_end - spec.prediction_length
         if future_start <= 1:
             continue
+        raw_context = series[:future_start]
+        future = series[future_start:future_end]
+        missing_fraction = float(np.mean(~np.isfinite(raw_context)))
+        if missing_fraction > 0.05:
+            LOGGER.warning(
+                "Skipping task with excessive context missingness | "
+                "dataset=%s item=%s origin=%d missing_fraction=%.4f",
+                spec.name,
+                item_id,
+                origin,
+                missing_fraction,
+            )
+            continue
+        if not np.isfinite(future).all():
+            LOGGER.warning(
+                "Skipping task with missing forecast target | dataset=%s item=%s origin=%d",
+                spec.name,
+                item_id,
+                origin,
+            )
+            continue
+        try:
+            context = clean_numeric(raw_context)
+        except ValueError as exc:
+            LOGGER.warning(
+                "Skipping task with invalid causal context | dataset=%s item=%s origin=%d error=%s",
+                spec.name,
+                item_id,
+                origin,
+                exc,
+            )
+            continue
+        imputed_points = int(np.sum(~np.isfinite(raw_context)))
+        if imputed_points:
+            LOGGER.info(
+                "Causally imputed context | dataset=%s item=%s origin=%d points=%d",
+                spec.name,
+                item_id,
+                origin,
+                imputed_points,
+            )
         tasks.append(
             ForecastTask(
                 dataset=spec.name,
                 item_id=f"{item_id}::origin={origin}",
                 context_timestamps=timestamp_index[:future_start],
                 future_timestamps=timestamp_index[future_start:future_end],
-                context=series[:future_start],
-                future=series[future_start:future_end],
+                context=context,
+                future=future.astype(np.float32),
                 prediction_length=spec.prediction_length,
                 seasonality=spec.seasonality,
                 frequency=frequency,
@@ -156,8 +198,27 @@ def make_tasks(
 
 def required_series_length(spec: DatasetSpec) -> int:
     stride = spec.origin_stride or spec.prediction_length
-    minimum_context = max(8, spec.seasonality * 2)
+    minimum_context = max(8, spec.seasonality)
     return spec.prediction_length + (spec.num_origins - 1) * stride + minimum_context
+
+
+def supports_requested_origins(values: Iterable, spec: DatasetSpec) -> bool:
+    series = numeric_array(values)
+    if len(series) < required_series_length(spec):
+        return False
+    stride = spec.origin_stride or spec.prediction_length
+    for origin in range(spec.num_origins):
+        future_end = len(series) - origin * stride
+        future_start = future_end - spec.prediction_length
+        if future_start <= 1:
+            return False
+        context = series[:future_start]
+        future = series[future_start:future_end]
+        if not np.isfinite(future).all() or not np.isfinite(context).any():
+            return False
+        if float(np.mean(~np.isfinite(context))) > 0.05:
+            return False
+    return True
 
 
 def matching_row_indices(hf_dataset, spec: DatasetSpec) -> list[int]:
@@ -210,6 +271,7 @@ def load_chronos_tasks(spec: DatasetSpec) -> list[ForecastTask]:
         for row_index in row_indices
         for field in sequence_columns
         if len(dataset[row_index][field]) >= minimum_length
+        and supports_requested_origins(dataset[row_index][field], spec)
     ]
     selected = select_representative_items(
         candidates,
@@ -296,4 +358,8 @@ def load_dataset_tasks(spec: DatasetSpec) -> list[ForecastTask]:
         return load_chronos_tasks(spec)
     if spec.family == "external":
         return load_external_tasks(spec)
+    if spec.family == "official":
+        from pmds.official_datasets import load_official_tasks
+
+        return load_official_tasks(spec)
     raise ValueError(f"Unsupported dataset family: {spec.family}")
