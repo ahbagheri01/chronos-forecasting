@@ -1,0 +1,16 @@
+{
+  "base_config": "config.json",
+  "run": {
+    "name": "external_keyless_clean",
+    "output_dir": "pmds/results/external_keyless",
+    "log_dir": "pmds/results/external_keyless/logs"
+  },
+  "enabled_datasets": [
+    "external_national_illness",
+    "external_traffic",
+    "external_psm",
+    "official_elexon_demand",
+    "official_usgs_streamflow",
+    "official_bls_macro"
+  ]
+}

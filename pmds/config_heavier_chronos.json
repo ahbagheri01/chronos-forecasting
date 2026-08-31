@@ -1,0 +1,88 @@
+{
+  "base_config": "config.json",
+  "run": {
+    "name": "heavier_chronos_clean",
+    "output_dir": "pmds/results/heavier_chronos",
+    "log_dir": "pmds/results/heavier_chronos/logs"
+  },
+  "enabled_datasets": [
+    "chronos_m1_yearly",
+    "chronos_m4_hourly",
+    "chronos_weather",
+    "external_national_illness",
+    "external_traffic",
+    "external_psm",
+    "chronos_m3_quarterly",
+    "chronos_car_parts",
+    "chronos_nn5_weekly",
+    "official_elexon_demand",
+    "official_usgs_streamflow",
+    "official_bls_macro"
+  ],
+  "models": [
+    {
+      "name": "chronos_t5_mini",
+      "type": "chronos",
+      "enabled": true,
+      "foundation_model": true,
+      "stochastic": true,
+      "params": {
+        "model_id": "amazon/chronos-t5-mini",
+        "device": "cuda",
+        "torch_dtype": "bfloat16",
+        "num_samples": 100,
+        "temperature": 1.0,
+        "top_k": 50,
+        "top_p": 1.0
+      }
+    },
+    {
+      "name": "chronos_t5_small",
+      "type": "chronos",
+      "enabled": true,
+      "foundation_model": true,
+      "stochastic": true,
+      "params": {
+        "model_id": "amazon/chronos-t5-small",
+        "device": "cuda",
+        "torch_dtype": "bfloat16",
+        "num_samples": 100,
+        "temperature": 1.0,
+        "top_k": 50,
+        "top_p": 1.0
+      }
+    },
+    {
+      "name": "chronos_t5_base",
+      "type": "chronos",
+      "enabled": true,
+      "foundation_model": true,
+      "stochastic": true,
+      "params": {
+        "model_id": "amazon/chronos-t5-base",
+        "device": "cuda",
+        "torch_dtype": "bfloat16",
+        "num_samples": 100,
+        "temperature": 1.0,
+        "top_k": 50,
+        "top_p": 1.0
+      }
+    },
+    {
+      "name": "chronos_t5_large",
+      "type": "chronos",
+      "enabled": true,
+      "foundation_model": true,
+      "stochastic": true,
+      "params": {
+        "model_id": "amazon/chronos-t5-large",
+        "device": "cuda",
+        "torch_dtype": "bfloat16",
+        "num_samples": 100,
+        "temperature": 1.0,
+        "top_k": 50,
+        "top_p": 1.0
+      }
+    }
+  ]
+}

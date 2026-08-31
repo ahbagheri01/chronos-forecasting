@@ -8,6 +8,6 @@ external_psm,external,thuml/Time-Series-Library,2b66e59ee19dac8f6f19fb5d4997f289
 chronos_m3_quarterly,chronos,autogluon/chronos_datasets,eeecad0b82a8c237e212ce6f8d1abecb513e2cec,20 evenly spaced,QE-DEC,8,4,3
 chronos_car_parts,chronos,autogluon/chronos_datasets,eeecad0b82a8c237e212ce6f8d1abecb513e2cec,20 evenly spaced,ME,12,12,2
 chronos_nn5_weekly,chronos,autogluon/chronos_datasets,eeecad0b82a8c237e212ce6f8d1abecb513e2cec,20 evenly spaced,W,8,52,3
-official_eia_930,official,EIA-930,through 2026-07-31,CISO|ERCO|MISO|NYIS|PJM,h,24,24,3
+official_elexon_demand,official,Elexon Insights,through 2026-07-31,GB national demand,D,30,7,3
 official_usgs_streamflow,official,USGS Water Data,through 2026-07-31,01646500|02087500|08158000|09380000|14211720,D,30,365,3
-official_fred_md,official,FRED API,vintage 2026-07-31,RPI|INDPRO|PAYEMS|UNRATE|HOUST|CPIAUCSL|FEDFUNDS,MS,6,12,3
+official_bls_macro,official,BLS Public Data API,snapshot through 2026-07-31,CUUR0000SA0|LNS14000000|CES0000000001,MS,6,12,3

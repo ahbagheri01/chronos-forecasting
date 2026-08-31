@@ -213,26 +213,24 @@
       "selection_strategy": "evenly_spaced"
     },
     {
-      "name": "official_eia_930",
+      "name": "official_elexon_demand",
       "enabled": true,
       "family": "official",
       "repo": "",
       "hf_configs": [],
       "split": "snapshot",
-      "prediction_length": 24,
-      "seasonality": 24,
-      "max_series": 5,
-      "fallback_frequency": "h",
+      "prediction_length": 30,
+      "seasonality": 7,
+      "max_series": 1,
+      "fallback_frequency": "D",
       "num_origins": 3,
-      "origin_stride": 24,
+      "origin_stride": 30,
       "selection_strategy": "evenly_spaced",
-      "source": "eia_930",
-      "snapshot_path": "pmds/data/official/eia_930_through_2026-07-31.json",
+      "source": "elexon_demand",
+      "snapshot_path": "pmds/data/official/elexon_demand_through_2026-07-31.json",
       "source_params": {
-        "api_key_env": "EIA_API_KEY",
-        "authorities": ["CISO", "ERCO", "MISO", "NYIS", "PJM"],
-        "start": "2025-01-01T00",
-        "end": "2026-07-31T23"
+        "start": "2024-08-01",
+        "end": "2026-07-31"
       }
     },
     {
@@ -260,7 +258,7 @@
       }
     },
     {
-      "name": "official_fred_md",
+      "name": "official_bls_macro",
       "enabled": true,
       "family": "official",
       "repo": "",
@@ -268,19 +266,17 @@
       "split": "snapshot",
       "prediction_length": 6,
       "seasonality": 12,
-      "max_series": 7,
+      "max_series": 3,
       "fallback_frequency": "MS",
       "num_origins": 3,
       "origin_stride": 6,
       "selection_strategy": "evenly_spaced",
-      "source": "fred_md",
-      "snapshot_path": "pmds/data/official/fred_md_vintage_2026-07-31.json",
+      "source": "bls_macro",
+      "snapshot_path": "pmds/data/official/bls_macro_through_2026-07-31.json",
       "source_params": {
-        "api_key_env": "FRED_API_KEY",
-        "series_ids": ["RPI", "INDPRO", "PAYEMS", "UNRATE", "HOUST", "CPIAUCSL", "FEDFUNDS"],
+        "series_ids": ["CUUR0000SA0", "LNS14000000", "CES0000000001"],
         "start": "2010-01-01",
-        "end": "2026-07-31",
-        "vintage_date": "2026-07-31"
+        "end": "2026-07-31"
       }
     }
   ],

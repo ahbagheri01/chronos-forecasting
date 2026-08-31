@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import copy
 import json
 from pathlib import Path
 from typing import Any, Mapping
@@ -14,6 +15,22 @@ def load_config(path: Path) -> dict[str, Any]:
         raise FileNotFoundError(f"Configuration file does not exist: {path}")
     with path.open(encoding="utf-8") as fp:
         config = json.load(fp)
+    if "base_config" in config:
+        base_path = (path.parent / str(config["base_config"])).resolve()
+        if base_path == path.resolve():
+            raise ValueError("A configuration profile cannot extend itself")
+        resolved = copy.deepcopy(load_config(base_path))
+        resolved["run"].update(config.get("run", {}))
+        if "models" in config:
+            resolved["models"] = copy.deepcopy(config["models"])
+        selected = set(map(str, config.get("enabled_datasets", [])))
+        known = {str(dataset["name"]) for dataset in resolved["datasets"]}
+        unknown = selected - known
+        if unknown:
+            raise ValueError(f"Configuration profile references unknown datasets: {sorted(unknown)}")
+        for dataset in resolved["datasets"]:
+            dataset["enabled"] = dataset["name"] in selected
+        config = resolved
     validate_config(config)
     return config
 
@@ -70,7 +87,13 @@ def validate_config(config: Mapping[str, Any]) -> None:
         if family not in {"chronos", "external", "official"}:
             raise ValueError(f"Dataset '{name}' has unsupported family '{family}'")
         if family == "official":
-            if dataset.get("source") not in {"eia_930", "usgs_streamflow", "fred_md"}:
+            if dataset.get("source") not in {
+                "eia_930",
+                "elexon_demand",
+                "usgs_streamflow",
+                "fred_md",
+                "bls_macro",
+            }:
                 raise ValueError(f"Dataset '{name}' has an unsupported official source")
             if not dataset.get("snapshot_path") or not isinstance(dataset.get("source_params"), Mapping):
                 raise ValueError(f"Dataset '{name}' requires snapshot_path and source_params")

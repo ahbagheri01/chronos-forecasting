@@ -8,9 +8,9 @@ chronos_t5_tiny,external_psm,unknown,No documented model-specific exposure deter
 chronos_t5_tiny,chronos_m3_quarterly,claimed_unseen,Project plan classifies selected non-M4 Monash data as zero-shot evaluation
 chronos_t5_tiny,chronos_car_parts,claimed_unseen,Project plan classifies selected non-M4 Monash data as zero-shot evaluation
 chronos_t5_tiny,chronos_nn5_weekly,claimed_unseen,Project plan classifies selected non-M4 Monash data as zero-shot evaluation
-chronos_t5_tiny,official_eia_930,post_release_target,Fixed target window extends through July 2026
+chronos_t5_tiny,official_elexon_demand,post_release_target,Fixed target window extends through July 2026
 chronos_t5_tiny,official_usgs_streamflow,post_release_target,Fixed target window extends through July 2026
-chronos_t5_tiny,official_fred_md,post_release_target,Fixed July 2026 vintage and target window
+chronos_t5_tiny,official_bls_macro,post_release_target,Fixed snapshot and target window extend through July 2026
 timesfm_2_5_200m,chronos_m1_yearly,unknown,No checkpoint-level overlap evidence recorded
 timesfm_2_5_200m,chronos_m4_hourly,unknown,No checkpoint-level overlap evidence recorded
 timesfm_2_5_200m,chronos_weather,unknown,No checkpoint-level overlap evidence recorded
@@ -20,9 +20,9 @@ timesfm_2_5_200m,external_psm,unknown,Legacy data may predate model training cut
 timesfm_2_5_200m,chronos_m3_quarterly,unknown,No checkpoint-level overlap evidence recorded
 timesfm_2_5_200m,chronos_car_parts,unknown,No checkpoint-level overlap evidence recorded
 timesfm_2_5_200m,chronos_nn5_weekly,unknown,No checkpoint-level overlap evidence recorded
-timesfm_2_5_200m,official_eia_930,post_release_target,Fixed target window extends through July 2026 after model release
+timesfm_2_5_200m,official_elexon_demand,post_release_target,Fixed target window extends through July 2026 after model release
 timesfm_2_5_200m,official_usgs_streamflow,post_release_target,Fixed target window extends through July 2026 after model release
-timesfm_2_5_200m,official_fred_md,post_release_target,Fixed July 2026 vintage after model release
+timesfm_2_5_200m,official_bls_macro,post_release_target,Fixed snapshot and target window extend through July 2026 after model release
 moirai_2_0_small,chronos_m1_yearly,unknown,Moirai reports Chronos-derived and GIFT-Eval pretraining data
 moirai_2_0_small,chronos_m4_hourly,unknown,Moirai reports Chronos-derived and GIFT-Eval pretraining data
 moirai_2_0_small,chronos_weather,unknown,Moirai reports Chronos-derived and GIFT-Eval pretraining data
@@ -32,6 +32,6 @@ moirai_2_0_small,external_psm,unknown,Legacy data may predate model training cut
 moirai_2_0_small,chronos_m3_quarterly,unknown,Moirai reports Chronos-derived and GIFT-Eval pretraining data
 moirai_2_0_small,chronos_car_parts,unknown,Moirai reports Chronos-derived and GIFT-Eval pretraining data
 moirai_2_0_small,chronos_nn5_weekly,unknown,Moirai reports Chronos-derived and GIFT-Eval pretraining data
-moirai_2_0_small,official_eia_930,post_release_target,Fixed target window extends through July 2026 after model release
+moirai_2_0_small,official_elexon_demand,post_release_target,Fixed target window extends through July 2026 after model release
 moirai_2_0_small,official_usgs_streamflow,post_release_target,Fixed target window extends through July 2026 after model release
-moirai_2_0_small,official_fred_md,post_release_target,Fixed July 2026 vintage after model release
+moirai_2_0_small,official_bls_macro,post_release_target,Fixed snapshot and target window extend through July 2026 after model release

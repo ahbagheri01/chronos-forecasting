@@ -29,10 +29,25 @@ LOGGER = logging.getLogger("pmds.compare")
 USER_AGENT = "chronos-forecasting-pmds/1.0 (research benchmark)"
 
 
-def _get_json(url: str, params: Mapping[str, Any] | None = None) -> dict[str, Any]:
+def _get_json(url: str, params: Mapping[str, Any] | None = None) -> Any:
     query = urlencode(params or {}, doseq=True)
     request_url = f"{url}?{query}" if query else url
     request = Request(request_url, headers={"User-Agent": USER_AGENT, "Accept": "application/json"})
+    with urlopen(request, timeout=60) as response:  # nosec B310: fixed official endpoints are configured below
+        return json.loads(response.read().decode("utf-8"))
+
+
+def _post_json(url: str, payload: Mapping[str, Any]) -> Any:
+    request = Request(
+        url,
+        data=json.dumps(payload).encode("utf-8"),
+        headers={
+            "User-Agent": USER_AGENT,
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+        },
+        method="POST",
+    )
     with urlopen(request, timeout=60) as response:  # nosec B310: fixed official endpoints are configured below
         return json.loads(response.read().decode("utf-8"))
 
@@ -204,6 +219,78 @@ def _download_usgs_streamflow(spec: DatasetSpec) -> dict[str, Any]:
     }
 
 
+def _download_elexon_demand(spec: DatasetSpec) -> dict[str, Any]:
+    params = spec.source_params
+    endpoint = "https://data.elexon.co.uk/bmrs/api/v1/demand/outturn/daily/stream"
+    start, end = str(params["start"]), str(params["end"])
+    response = _get_json(
+        endpoint,
+        {"settlementDateFrom": start, "settlementDateTo": end},
+    )
+    if not isinstance(response, list):
+        raise RuntimeError("Elexon returned an unexpected demand response")
+    observations = [(row.get("settlementDate"), row.get("demand")) for row in response]
+    normalized = _normalize_series(observations, "D", start, end)
+    if not normalized["values"] or not any(value is not None for value in normalized["values"]):
+        raise RuntimeError("Elexon returned no daily national-demand observations")
+    return {
+        "dataset": "elexon_daily_national_demand",
+        "downloaded_at": _utc_now(),
+        "source": endpoint,
+        "query": {"start": start, "end": end},
+        "series": {"GB_NATIONAL_DEMAND": normalized},
+    }
+
+
+def _download_bls_macro(spec: DatasetSpec) -> dict[str, Any]:
+    params = spec.source_params
+    endpoint = "https://api.bls.gov/publicAPI/v1/timeseries/data/"
+    start, end = str(params["start"]), str(params["end"])
+    series_ids = list(map(str, params["series_ids"]))
+    start_year, end_year = pd.Timestamp(start).year, pd.Timestamp(end).year
+    observations: dict[str, list[tuple[Any, Any]]] = {series_id: [] for series_id in series_ids}
+
+    # Unregistered BLS API v1 requests are limited to ten years per request.
+    for chunk_start in range(start_year, end_year + 1, 10):
+        chunk_end = min(chunk_start + 9, end_year)
+        response = _post_json(
+            endpoint,
+            {
+                "seriesid": series_ids,
+                "startyear": str(chunk_start),
+                "endyear": str(chunk_end),
+            },
+        )
+        if response.get("status") != "REQUEST_SUCCEEDED":
+            raise RuntimeError(f"BLS request failed: {response.get('message', [])}")
+        for series in response.get("Results", {}).get("series", []):
+            series_id = str(series.get("seriesID"))
+            if series_id not in observations:
+                continue
+            for row in series.get("data", []):
+                period = str(row.get("period", ""))
+                if len(period) == 3 and period.startswith("M") and period[1:].isdigit():
+                    month = int(period[1:])
+                    if 1 <= month <= 12:
+                        observations[series_id].append(
+                            (f"{row.get('year')}-{month:02d}-01", row.get("value"))
+                        )
+
+    result: dict[str, Any] = {}
+    for series_id in series_ids:
+        normalized = _normalize_series(observations[series_id], "MS", start, end)
+        if not normalized["values"] or not any(value is not None for value in normalized["values"]):
+            raise RuntimeError(f"BLS returned no monthly observations for {series_id}")
+        result[series_id] = normalized
+    return {
+        "dataset": "bls_monthly_macro",
+        "downloaded_at": _utc_now(),
+        "source": endpoint,
+        "query": {"series_ids": series_ids, "start": start, "end": end},
+        "series": result,
+    }
+
+
 def _download_fred_md(spec: DatasetSpec) -> dict[str, Any]:
     params = spec.source_params
     api_key = _required_env(str(params.get("api_key_env", "FRED_API_KEY")), spec.name)
@@ -243,8 +330,10 @@ def _download_fred_md(spec: DatasetSpec) -> dict[str, Any]:
 
 DOWNLOADERS = {
     "eia_930": _download_eia_930,
+    "elexon_demand": _download_elexon_demand,
     "usgs_streamflow": _download_usgs_streamflow,
     "fred_md": _download_fred_md,
+    "bls_macro": _download_bls_macro,
 }
 
 

@@ -15,7 +15,12 @@ import torch
 from pmds.config import load_config
 from pmds.datasets import supports_requested_origins
 from pmds.models import Moirai2Runner, TimesFMRunner, build_model_runners
-from pmds.official_datasets import _write_snapshot, load_official_tasks
+from pmds.official_datasets import (
+    _download_bls_macro,
+    _download_elexon_demand,
+    _write_snapshot,
+    load_official_tasks,
+)
 from pmds.pipeline import cap_task_context
 from pmds.schemas import DatasetSpec, ForecastTask
 from pmds.utils import period_compatible_frequency
@@ -54,8 +59,104 @@ class PmdsExpansionTest(unittest.TestCase):
         )
         self.assertEqual(
             {item["name"] for item in datasets if item["family"] == "official"},
-            {"official_eia_930", "official_usgs_streamflow", "official_fred_md"},
+            {"official_elexon_demand", "official_usgs_streamflow", "official_bls_macro"},
         )
+
+    def test_external_keyless_profile_selects_only_six_non_chronos_datasets(self) -> None:
+        config = load_config(Path("pmds/config_external_keyless.json"))
+        enabled = [item for item in config["datasets"] if item.get("enabled", True)]
+
+        self.assertEqual(config["run"]["name"], "external_keyless_clean")
+        self.assertEqual(config["run"]["output_dir"], "pmds/results/external_keyless")
+        self.assertEqual(len(enabled), 6)
+        self.assertTrue(all(item["family"] != "chronos" for item in enabled))
+        self.assertEqual(
+            {item["name"] for item in enabled},
+            {
+                "external_national_illness",
+                "external_traffic",
+                "external_psm",
+                "official_elexon_demand",
+                "official_usgs_streamflow",
+                "official_bls_macro",
+            },
+        )
+
+    def test_heavier_chronos_profile_runs_all_datasets_with_four_requested_models(self) -> None:
+        config = load_config(Path("pmds/config_heavier_chronos.json"))
+        enabled_datasets = [item for item in config["datasets"] if item.get("enabled", True)]
+        enabled_models = [item for item in config["models"] if item.get("enabled", True)]
+
+        self.assertEqual(config["run"]["name"], "heavier_chronos_clean")
+        self.assertEqual(config["run"]["output_dir"], "pmds/results/heavier_chronos")
+        self.assertEqual(len(enabled_datasets), 12)
+        self.assertEqual(
+            {item["name"] for item in enabled_models},
+            {"chronos_t5_mini", "chronos_t5_small", "chronos_t5_base", "chronos_t5_large"},
+        )
+        self.assertTrue(all(item["params"]["device"] == "cuda" for item in enabled_models))
+        self.assertTrue(all(item["params"]["torch_dtype"] == "bfloat16" for item in enabled_models))
+
+    def test_keyless_official_downloaders_normalize_elexon_and_bls(self) -> None:
+        elexon = DatasetSpec(
+            name="elexon",
+            family="official",
+            repo="",
+            hf_configs=(),
+            split="snapshot",
+            prediction_length=1,
+            seasonality=1,
+            max_series=1,
+            fallback_frequency="D",
+            source="elexon_demand",
+            source_params={"start": "2026-07-01", "end": "2026-07-03"},
+        )
+        with patch(
+            "pmds.official_datasets._get_json",
+            return_value=[
+                {"settlementDate": "2026-07-03", "demand": 30},
+                {"settlementDate": "2026-07-01", "demand": 10},
+                {"settlementDate": "2026-07-02", "demand": 20},
+            ],
+        ):
+            payload = _download_elexon_demand(elexon)
+        self.assertEqual(payload["series"]["GB_NATIONAL_DEMAND"]["values"], [10.0, 20.0, 30.0])
+
+        bls = DatasetSpec(
+            name="bls",
+            family="official",
+            repo="",
+            hf_configs=(),
+            split="snapshot",
+            prediction_length=1,
+            seasonality=1,
+            max_series=1,
+            fallback_frequency="MS",
+            source="bls_macro",
+            source_params={
+                "series_ids": ["SERIES"],
+                "start": "2026-01-01",
+                "end": "2026-03-31",
+            },
+        )
+        response = {
+            "status": "REQUEST_SUCCEEDED",
+            "Results": {
+                "series": [
+                    {
+                        "seriesID": "SERIES",
+                        "data": [
+                            {"year": "2026", "period": "M03", "value": "3"},
+                            {"year": "2026", "period": "M13", "value": "2"},
+                            {"year": "2026", "period": "M01", "value": "1"},
+                        ],
+                    }
+                ]
+            },
+        }
+        with patch("pmds.official_datasets._post_json", return_value=response):
+            payload = _download_bls_macro(bls)
+        self.assertEqual(payload["series"]["SERIES"]["values"], [1.0, None, 3.0])
 
     def test_all_model_runners_are_registered_without_loading_optional_packages(self) -> None:
         configs = [
