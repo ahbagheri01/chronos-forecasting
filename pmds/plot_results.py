@@ -26,6 +26,16 @@ FORECAST_COLOR = "#087E8B"
 ACTUAL_COLOR = "#17212B"
 CONTEXT_COLOR = "#7A8793"
 BAND_COLOR = "#9FD5D9"
+METRIC_COLORS = [
+    "#087E8B",
+    "#D95D39",
+    "#4F86A8",
+    "#7B2CBF",
+    "#E09F3E",
+    "#2A9D8F",
+    "#6C757D",
+    "#C44536",
+]
 
 
 def load_config(config_path: Path) -> dict:
@@ -59,6 +69,54 @@ def aggregate_model_metrics(dataset_frame: pd.DataFrame, metrics: Iterable[str])
     if not rows:
         return pd.DataFrame()
     return pd.DataFrame(rows).set_index("model")
+
+
+def aggregate_repetition_metrics(
+    dataset_frame: pd.DataFrame,
+    metrics: Iterable[str],
+) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Return model means and sample standard deviations across repetitions.
+
+    Each metric is first aggregated over every task in one repetition. This keeps
+    the error bars tied to independent benchmark repetitions instead of treating
+    individual series/origins as independent runs.
+    """
+    metric_names = list(metrics)
+    repetition_rows: list[dict[str, float | int | str]] = []
+    for (model, repetition), repetition_frame in dataset_frame.groupby(
+        ["model", "repetition"], sort=True
+    ):
+        row: dict[str, float | int | str] = {
+            "model": str(model),
+            "repetition": int(repetition),
+        }
+        for metric in metric_names:
+            if metric not in repetition_frame.columns:
+                row[metric] = float("nan")
+                continue
+            if metric == "wql" and {
+                "wql_loss_sum",
+                "wql_abs_target_sum",
+            }.issubset(repetition_frame.columns):
+                loss = repetition_frame["wql_loss_sum"].sum(min_count=1)
+                target = repetition_frame["wql_abs_target_sum"].sum(min_count=1)
+                row[metric] = (
+                    float(loss / target)
+                    if pd.notna(target) and target != 0
+                    else float("nan")
+                )
+                row["wql_macro"] = float(repetition_frame["wql"].mean())
+            else:
+                row[metric] = float(repetition_frame[metric].mean())
+        repetition_rows.append(row)
+
+    if not repetition_rows:
+        return pd.DataFrame(), pd.DataFrame()
+
+    repetition_stats = pd.DataFrame(repetition_rows)
+    value_columns = [metric for metric in [*metric_names, "wql_macro"] if metric in repetition_stats]
+    grouped = repetition_stats.groupby("model", sort=True)[value_columns]
+    return grouped.mean(), grouped.std(ddof=1)
 
 
 def metric_label(value: float) -> str:
@@ -120,6 +178,63 @@ def save_metric_bar(data: pd.Series, dataset: str, metric: str, path: Path) -> N
     plt.close(fig)
 
 
+def save_metric_scatter_with_std(
+    means: pd.Series,
+    standard_deviations: pd.Series,
+    dataset: str,
+    metric: str,
+    path: Path,
+) -> None:
+    means = means.dropna().sort_values()
+    if means.empty:
+        return
+    errors = standard_deviations.reindex(means.index).fillna(0.0)
+    positions = np.arange(len(means))
+    width = max(9.0, 0.9 * len(means))
+    fig, axis = plt.subplots(figsize=(width, 5.4))
+    axis.errorbar(
+        positions,
+        means.to_numpy(dtype=float),
+        yerr=errors.to_numpy(dtype=float),
+        fmt="o",
+        color=MODEL_COLOR,
+        ecolor="#24485F",
+        elinewidth=1.4,
+        capsize=4,
+        markersize=7,
+    )
+    axis.set_xticks(positions, labels=means.index, rotation=38, ha="right")
+    axis.set_title(
+        f"{dataset.replace('_', ' ').title()}\n{metric.upper()} mean with sample SD across repetitions (n=3)",
+        weight="bold",
+    )
+    axis.set_xlabel("Model")
+    axis.set_ylabel(f"Mean +/- 1 SD ({metric.upper()})")
+    positive = means.loc[means.gt(0)]
+    use_log_scale = (
+        len(positive) == len(means)
+        and not positive.empty
+        and float(positive.max() / positive.min()) >= 100.0
+    )
+    if use_log_scale:
+        axis.set_yscale("log")
+        axis.set_ylabel(f"Mean +/- 1 SD ({metric.upper()}, log scale)")
+    axis.text(
+        0.99,
+        0.98,
+        "Lower is better" + (" | log scale" if use_log_scale else ""),
+        transform=axis.transAxes,
+        ha="right",
+        va="top",
+        color="#66717D",
+        fontsize=9,
+    )
+    axis.margins(x=0.05, y=0.16)
+    fig.tight_layout()
+    fig.savefig(path, dpi=220, bbox_inches="tight")
+    plt.close(fig)
+
+
 def save_rank_views(model_stats: pd.DataFrame, dataset: str, metrics: list[str], output_dir: Path) -> None:
     available = [metric for metric in metrics if metric in model_stats and model_stats[metric].notna().any()]
     if len(available) < 2:
@@ -160,6 +275,127 @@ def save_rank_views(model_stats: pd.DataFrame, dataset: str, metrics: list[str],
     fig.colorbar(image, ax=ax, label="Rank")
     fig.tight_layout()
     fig.savefig(output_dir / "all_metrics_dot_comparison.png", dpi=220, bbox_inches="tight")
+    plt.close(fig)
+
+
+def save_raw_metric_scatter_with_std(
+    means: pd.DataFrame,
+    standard_deviations: pd.DataFrame,
+    dataset: str,
+    metrics: list[str],
+    output_dir: Path,
+) -> None:
+    available = [metric for metric in metrics if metric in means and means[metric].notna().any()]
+    if not available:
+        return
+
+    columns = 2
+    rows = math.ceil(len(available) / columns)
+    fig, axes = plt.subplots(rows, columns, figsize=(8.2 * columns, 4.3 * rows), squeeze=False)
+    for axis, metric in zip(axes.flat, available):
+        values = means[metric].dropna().sort_values()
+        errors = standard_deviations.reindex(values.index)[metric].fillna(0.0)
+        positions = np.arange(len(values))
+        axis.errorbar(
+            positions,
+            values.to_numpy(dtype=float),
+            yerr=errors.to_numpy(dtype=float),
+            fmt="o",
+            color=MODEL_COLOR,
+            ecolor="#24485F",
+            elinewidth=1.3,
+            capsize=4,
+            markersize=6,
+        )
+        axis.set_xticks(positions, labels=values.index, rotation=38, ha="right")
+        axis.set_title(metric.upper(), weight="bold")
+        axis.set_ylabel(f"Mean +/- 1 SD ({metric.upper()})")
+        positive = values.loc[values.gt(0)]
+        if (
+            len(positive) == len(values)
+            and not positive.empty
+            and float(positive.max() / positive.min()) >= 100.0
+        ):
+            axis.set_yscale("log")
+            axis.set_ylabel(f"Mean +/- 1 SD ({metric.upper()}, log scale)")
+        axis.margins(x=0.05, y=0.16)
+
+    for axis in axes.flat[len(available) :]:
+        axis.set_visible(False)
+    fig.suptitle(
+        f"{dataset.replace('_', ' ').title()}\nMetric means with sample SD across repetitions (n=3)",
+        fontsize=15,
+        weight="bold",
+    )
+    fig.tight_layout(rect=(0, 0, 1, 0.95))
+    fig.savefig(output_dir / "all_metrics_scatter_with_std.png", dpi=220, bbox_inches="tight")
+    plt.close(fig)
+
+
+def save_normalized_metric_scatter_with_std(
+    means: pd.DataFrame,
+    standard_deviations: pd.DataFrame,
+    dataset: str,
+    metrics: list[str],
+    output_dir: Path,
+) -> None:
+    available = [metric for metric in metrics if metric in means and means[metric].notna().any()]
+    if not available:
+        return
+
+    model_names = list(means.index)
+    positions = np.arange(len(model_names), dtype=float)
+    offsets = np.linspace(-0.3, 0.3, len(available)) if len(available) > 1 else np.array([0.0])
+    fig, axis = plt.subplots(figsize=(max(12.0, 1.05 * len(model_names)), 6.4))
+    plotted = 0
+    for metric, offset, color in zip(available, offsets, METRIC_COLORS):
+        metric_means = means[metric].astype(float)
+        finite = metric_means[np.isfinite(metric_means)]
+        if finite.empty:
+            continue
+        lower = float(finite.min())
+        span = float(finite.max() - lower)
+        if np.isclose(span, 0.0):
+            normalized_means = metric_means * 0.0
+            normalized_std = standard_deviations[metric].astype(float) * 0.0
+        else:
+            normalized_means = (metric_means - lower) / span
+            normalized_std = standard_deviations[metric].astype(float) / span
+        valid = normalized_means.notna()
+        axis.errorbar(
+            positions[valid.to_numpy()] + offset,
+            normalized_means.loc[valid].to_numpy(dtype=float),
+            yerr=normalized_std.loc[valid].fillna(0.0).to_numpy(dtype=float),
+            fmt="o",
+            color=color,
+            ecolor=color,
+            elinewidth=1.1,
+            capsize=3,
+            markersize=5.5,
+            alpha=0.9,
+            label=metric.upper(),
+        )
+        plotted += 1
+
+    if not plotted:
+        plt.close(fig)
+        return
+    axis.set_xticks(positions, labels=model_names, rotation=38, ha="right")
+    axis.set_ylabel("Normalized score +/- 1 SD (0 = best mean, 1 = worst mean)")
+    axis.set_xlabel("Model")
+    axis.set_title(
+        f"{dataset.replace('_', ' ').title()}\nNormalized metric means with sample SD across repetitions (n=3)",
+        weight="bold",
+    )
+    axis.axhline(0.0, color="#66717D", linewidth=0.9, linestyle="--", alpha=0.7)
+    axis.legend(title="Metric", bbox_to_anchor=(1.02, 1), loc="upper left")
+    axis.margins(x=0.04, y=0.15)
+    fig.tight_layout()
+    fig.savefig(
+        output_dir / "all_metrics_normalized_scatter_with_std.png",
+        dpi=220,
+        bbox_inches="tight",
+    )
     plt.close(fig)
 
 
@@ -307,6 +543,7 @@ def plot_results(
     forecast_path: Path | None = None,
     context_path: Path | None = None,
     forecast_only: bool = False,
+    metric_only: bool = False,
 ) -> None:
     config = load_config(config_path)
     metrics = list(config.get("evaluation", {}).get("metrics", ["mae", "rmse", "smape", "mase", "wql"]))
@@ -335,6 +572,42 @@ def plot_results(
                 print(f"  Saved: {path}")
             save_rank_views(model_stats, dataset, metrics, dataset_dir)
 
+            repetition_means, repetition_std = aggregate_repetition_metrics(dataset_frame, metrics)
+            scatter_metrics = [
+                metric
+                for metric in [*metrics, "wql_macro"]
+                if metric in repetition_means and repetition_means[metric].notna().any()
+            ]
+            for metric in scatter_metrics:
+                path = dataset_dir / f"{metric}_scatter_with_std.png"
+                save_metric_scatter_with_std(
+                    repetition_means[metric],
+                    repetition_std[metric],
+                    dataset,
+                    metric,
+                    path,
+                )
+                print(f"  Saved: {path}")
+            save_raw_metric_scatter_with_std(
+                repetition_means,
+                repetition_std,
+                dataset,
+                scatter_metrics,
+                dataset_dir,
+            )
+            save_normalized_metric_scatter_with_std(
+                repetition_means,
+                repetition_std,
+                dataset,
+                scatter_metrics,
+                dataset_dir,
+            )
+            print(f"  Saved: {dataset_dir / 'all_metrics_scatter_with_std.png'}")
+            print(f"  Saved: {dataset_dir / 'all_metrics_normalized_scatter_with_std.png'}")
+
+    if metric_only:
+        print(f"\nMetric plots saved under: {output_base}")
+        return
     if forecast_path is None:
         forecast_path = csv_path.with_name(csv_path.name.replace("_detailed.csv", "_forecasts.csv"))
     if context_path is None:
@@ -356,7 +629,14 @@ def main() -> None:
         action="store_true",
         help="Generate forecast-versus-actual plots without replacing metric plots.",
     )
+    parser.add_argument(
+        "--metric-only",
+        action="store_true",
+        help="Generate metric plots without replacing forecast-versus-actual plots.",
+    )
     args = parser.parse_args()
+    if args.forecast_only and args.metric_only:
+        parser.error("--forecast-only and --metric-only cannot be used together")
     if not args.csv.exists():
         raise FileNotFoundError(f"Detailed results CSV not found: {args.csv}")
     plot_results(
@@ -366,6 +646,7 @@ def main() -> None:
         args.forecasts,
         args.contexts,
         forecast_only=args.forecast_only,
+        metric_only=args.metric_only,
     )
 
 
