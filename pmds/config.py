@@ -53,6 +53,7 @@ def validate_config(config: Mapping[str, Any]) -> None:
         "rmse",
         "smape",
         "mase",
+        "crps",
         "wql",
         "rain_occurrence_error",
         "positive_mae",

@@ -71,6 +71,7 @@ pmds = [
   "dieboldmariano>=1.1,<2",
   "pyhomogeneity>=1.1,<2",
   "pymannkendall>=1.4,<2",
+  "scoringrules>=0.8,<0.9",
   "transformers>=4.41,<5",
   "timesfm[torch] @ git+https://github.com/google-research/timesfm.git@331c6d33cb1ac2611de3056d0ac7164aab6301eb",
   "uni2ts @ git+https://github.com/SalesforceAIResearch/uni2ts.git@cfd46d4510ed8896f263116f32928eede05b0a75",

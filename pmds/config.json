@@ -26,6 +26,7 @@
       "rmse",
       "smape",
       "mase",
+      "crps",
       "wql",
       "rain_occurrence_error",
       "positive_mae"

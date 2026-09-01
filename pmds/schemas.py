@@ -24,6 +24,7 @@ RESULT_COLUMNS = [
     "rmse",
     "smape",
     "mase",
+    "crps",
     "wql",
     "wql_loss_sum",
     "wql_abs_target_sum",

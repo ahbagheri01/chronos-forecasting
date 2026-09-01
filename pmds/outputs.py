@@ -146,6 +146,7 @@ def dataset_failure_rows(
             "rmse": float("nan"),
             "smape": float("nan"),
             "mase": float("nan"),
+            "crps": float("nan"),
             "wql": float("nan"),
             "wql_loss_sum": float("nan"),
             "wql_abs_target_sum": float("nan"),

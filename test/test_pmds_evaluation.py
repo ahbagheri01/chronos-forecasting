@@ -402,7 +402,7 @@ class PmdsEvaluationTest(unittest.TestCase):
         row = compute_metrics(
             task,
             result,
-            ["mae", "smape", "wql", "rain_occurrence_error", "positive_mae"],
+            ["mae", "smape", "crps", "wql", "rain_occurrence_error", "positive_mae"],
             quantiles,
             "median",
             diagnostic_model=True,
@@ -412,6 +412,7 @@ class PmdsEvaluationTest(unittest.TestCase):
         self.assertAlmostEqual(row["positive_mae"], 2.0)
         self.assertAlmostEqual(row["actual_zero_fraction"], 0.5)
         self.assertAlmostEqual(row["predicted_zero_fraction"], 1.0)
+        self.assertAlmostEqual(row["crps"], row["mae"])
         self.assertIn("degenerate distribution", row["metric_notes"])
 
     def test_forecast_and_context_rows_preserve_auditable_values(self) -> None:
@@ -452,7 +453,9 @@ class PmdsEvaluationTest(unittest.TestCase):
                     "dataset": "d",
                     "item_id": "s::origin=0",
                     "model": model,
+                    "repetition": 0,
                     "mae": mae,
+                    "crps": mae,
                     "wql": loss / target,
                     "wql_loss_sum": loss,
                     "wql_abs_target_sum": target,
@@ -461,7 +464,7 @@ class PmdsEvaluationTest(unittest.TestCase):
                 for model, mae, loss, target in [("a", 1.0, 2.0, 10.0), ("b", 2.0, 4.0, 10.0)]
             ]
         )
-        stats = aggregate_model_metrics(detailed, ["mae", "wql"])
+        stats = aggregate_model_metrics(detailed, ["mae", "crps", "wql"])
         self.assertAlmostEqual(stats.loc["a", "wql"], 0.2)
 
         forecasts = pd.DataFrame(
@@ -497,7 +500,7 @@ class PmdsEvaluationTest(unittest.TestCase):
                 for timestamp, actual in zip(pd.date_range("2024-01-01", periods=4, freq="D"), [1, 2, 3, 4])
             ]
         )
-        config = {"evaluation": {"metrics": ["mae", "wql"]}}
+        config = {"evaluation": {"metrics": ["mae", "crps", "wql"]}}
         with tempfile.TemporaryDirectory() as directory:
             tmp_path = Path(directory)
             detailed_path = tmp_path / "run_detailed.csv"
@@ -513,6 +516,8 @@ class PmdsEvaluationTest(unittest.TestCase):
             plot_results(detailed_path, output_path, config_path, forecast_path, context_path)
 
             self.assertTrue((output_path / "d" / "wql.png").exists())
+            self.assertTrue((output_path / "d" / "crps.png").exists())
+            self.assertTrue((output_path / "d" / "crps_scatter_with_std.png").exists())
             self.assertTrue((output_path / "d" / "forecast_vs_actual" / "a.png").exists())
             self.assertTrue((output_path / "d" / "forecast_vs_actual" / "b.png").exists())
 

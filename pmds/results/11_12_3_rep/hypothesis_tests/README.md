@@ -9,6 +9,7 @@ These reports use the completed `11_12_3_rep` benchmark outputs. No forecasting 
 - `dieboldmariano`: Diebold-Mariano test with the Harvey-Leybourne-Newbold small-sample correction.
 - `pyHomogeneity`: Pettitt's single-change-point test.
 - `pymannkendall`: original and Hamed-Rao modified Mann-Kendall tests.
+- `scoringrules`: finite-quantile CRPS approximation from the saved q10-q90 forecasts.
 - `scipy`: signed-error bias tests and binomial calibration diagnostics.
 
 ## Settings
@@ -43,9 +44,9 @@ These reports use the completed `11_12_3_rep` benchmark outputs. No forecasting 
 - `forecast_bias.csv`: 1540 rows
 - `mann_kendall_trends.csv`: 3080 rows
 - `probabilistic_calibration.csv`: 1848 rows
-- `winner_vs_rest.csv`: 760 rows
-- `model_confidence_set.csv`: 836 rows
-- `diebold_mariano_winner_vs_rest.csv`: 720 rows
-- `repetition_variability.csv`: 792 rows
-- `winner_vs_rest_plots`: 76 rows
+- `winner_vs_rest.csv`: 880 rows
+- `model_confidence_set.csv`: 968 rows
+- `diebold_mariano_winner_vs_rest.csv`: 840 rows
+- `repetition_variability.csv`: 924 rows
+- `winner_vs_rest_plots`: 88 rows
 - `model_confidence_set_plots`: 12 rows

@@ -36,7 +36,7 @@ DEFAULT_ALPHA = 0.05
 DEFAULT_BOOTSTRAP_REPS = 5000
 DEFAULT_SEED = 20260901
 DEFAULT_PETTITT_SIMULATIONS = 0
-CORE_METRICS = ("mae", "rmse", "smape", "mase", "wql_macro", "wql")
+CORE_METRICS = ("mae", "rmse", "smape", "mase", "crps", "wql_macro", "wql")
 
 
 def stable_seed(base_seed: int, *parts: object) -> int:
@@ -1228,6 +1228,7 @@ These reports use the completed `11_12_3_rep` benchmark outputs. No forecasting 
 - `dieboldmariano`: Diebold-Mariano test with the Harvey-Leybourne-Newbold small-sample correction.
 - `pyHomogeneity`: Pettitt's single-change-point test.
 - `pymannkendall`: original and Hamed-Rao modified Mann-Kendall tests.
+- `scoringrules`: finite-quantile CRPS approximation from the saved q10-q90 forecasts.
 - `scipy`: signed-error bias tests and binomial calibration diagnostics.
 
 ## Settings
@@ -1364,6 +1365,7 @@ def run_analysis(
                 "dieboldmariano",
                 "pyhomogeneity",
                 "pymannkendall",
+                "scoringrules",
                 "scipy",
                 "statsmodels",
                 "pandas",

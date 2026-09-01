@@ -7,6 +7,7 @@ from typing import Any, Mapping, Sequence
 
 import numpy as np
 import pandas as pd
+import scoringrules as sr
 
 from pmds.schemas import RESULT_COLUMNS, ForecastOutput, ForecastResult, ForecastTask
 from pmds.utils import clean_numeric
@@ -55,6 +56,21 @@ def weighted_quantile_loss_components(
     return mean_loss_sum / denominator, mean_loss_sum, denominator
 
 
+def quantile_crps(
+    y_true: np.ndarray,
+    quantile_values: np.ndarray,
+    quantile_levels: np.ndarray,
+) -> float:
+    """Approximate mean CRPS from a finite set of predictive quantiles."""
+    scores = sr.crps_quantile(
+        np.asarray(y_true, dtype=np.float64),
+        np.asarray(quantile_values, dtype=np.float64),
+        np.asarray(quantile_levels, dtype=np.float64),
+        backend="numpy",
+    )
+    return float(np.mean(np.asarray(scores, dtype=np.float64)))
+
+
 def empty_metric_row(
     task: ForecastTask,
     result: ForecastResult,
@@ -75,6 +91,7 @@ def empty_metric_row(
         "rmse": float("nan"),
         "smape": float("nan"),
         "mase": float("nan"),
+        "crps": float("nan"),
         "wql": float("nan"),
         "wql_loss_sum": float("nan"),
         "wql_abs_target_sum": float("nan"),
@@ -123,6 +140,8 @@ def compute_metrics(
         row["smape"] = float(np.mean(2.0 * np.abs(y_true - y_pred) / denominator))
     if "mase" in metric_names:
         row["mase"] = mase(y_true, y_pred, clean_numeric(task.context), task.seasonality)
+    if "crps" in metric_names:
+        row["crps"] = quantile_crps(y_true, result.output.quantiles, quantiles)
     if "wql" in metric_names:
         row["wql"], row["wql_loss_sum"], row["wql_abs_target_sum"] = weighted_quantile_loss_components(
             y_true,
@@ -143,6 +162,16 @@ def compute_metrics(
         notes["mase"] = "Undefined because the in-sample seasonal-naive scale is zero or unavailable."
     if "wql" in metric_names and row["wql_abs_target_sum"] == 0.0:
         notes["wql"] = "Undefined because every actual value in the forecast window is zero."
+    if "crps" in metric_names:
+        notes["crps"] = (
+            "Finite-quantile approximation from the configured quantile grid via "
+            "scoringrules.crps_quantile; lower is better."
+        )
+    if result.output.distribution == "degenerate" and "crps" in metric_names:
+        notes["crps_distribution"] = (
+            "Repeated point forecasts form a degenerate distribution; with the symmetric quantile grid, "
+            "quantile CRPS reduces to point error."
+        )
     if result.output.distribution == "degenerate" and "wql" in metric_names:
         notes["wql_distribution"] = (
             "Repeated point forecasts form a degenerate distribution; calibration is not measured."
