@@ -1,0 +1,36 @@
+{
+  "alpha": 0.05,
+  "bootstrap_reps": 5000,
+  "pettitt_simulations": 0,
+  "seed": 20260901,
+  "input_files": {
+    "detailed": "pmds/results/11_12_3_rep/11_12_3_rep_detailed.csv",
+    "forecasts": "pmds/results/11_12_3_rep/11_12_3_rep_forecasts.csv",
+    "contexts": "pmds/results/11_12_3_rep/11_12_3_rep_contexts.csv",
+    "config": "pmds/config.json"
+  },
+  "library_versions": {
+    "arch": "8.0.0",
+    "dieboldmariano": "1.1.0",
+    "pyhomogeneity": "1.1",
+    "pymannkendall": "1.4.3",
+    "scipy": "1.11.4",
+    "statsmodels": "0.14.6",
+    "pandas": "2.1.4",
+    "numpy": "1.26.4"
+  },
+  "counts": {
+    "dataset_stationarity.csv": 140,
+    "pettitt_change_points.csv": 1680,
+    "residual_diagnostics.csv": 1540,
+    "forecast_bias.csv": 1540,
+    "mann_kendall_trends.csv": 3080,
+    "probabilistic_calibration.csv": 1848,
+    "winner_vs_rest.csv": 760,
+    "model_confidence_set.csv": 836,
+    "diebold_mariano_winner_vs_rest.csv": 720,
+    "repetition_variability.csv": 792,
+    "winner_vs_rest_plots": 76,
+    "model_confidence_set_plots": 12
+  }
+}
