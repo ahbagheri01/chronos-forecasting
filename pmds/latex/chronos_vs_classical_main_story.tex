@@ -457,46 +457,79 @@
 \end{frame}
 
 % -----------------------------------------------------------------------------
-\begin{frame}{Hypothesis tests and confidence sets for predictive ability}
-  \vspace{0.08cm}
-  \begin{center}
-    \begin{tikzpicture}[
-      node distance=5mm,
-      box/.style={draw=Line,rounded corners=2pt,align=left,text width=3.80cm,
-        minimum height=4.65cm,inner sep=8pt},
-      arrow/.style={-{Stealth[length=5pt]},thick,color=Muted}
-    ]
-      \node[box,fill=TealLight] (dm) {
-        \large\textbf{Diebold--Mariano}\\[4pt]
-        \scriptsize
-        $d_t=L_t(A)-L_t(B)$\\[-1pt]
-        $H_0:\;\mathbb{E}[d_t]=0$\\[5pt]
-        Tests equal predictive accuracy for two models while estimating the
-        sampling variance of the serially dependent loss differential.\\[5pt]
-        \textbf{Insight:} direction and significance of one pairwise difference.
-      };
-      \node[box,fill=GoldLight,right=of dm] (spa) {
-        \large\textbf{SPA}\\[4pt]
-        \scriptsize
-        $d_{k,t}=L_t(B)-L_t(k)$\\[-1pt]
-        $H_0:\;\max_k\mathbb{E}[d_{k,t}]\leq 0$\\[5pt]
-        Tests whether any candidate improves on benchmark $B$. Bootstrap
-        critical values account for searching over many alternatives.\\[5pt]
-        \textbf{Insight:} evidence that the benchmark is genuinely outperformed.
-      };
-      \node[box,fill=PurpleLight,right=of spa] (mcs) {
-        \large\textbf{Model Confidence Set}\\[4pt]
-        \scriptsize
-        $H_0:\;\mathbb{E}[d_{ij,t}]=0$ for all $i,j\in\mathcal{M}$\\[5pt]
-        Begins with all models and sequentially removes the worst-supported
-        member until equal predictive ability is no longer rejected.\\[5pt]
-        \textbf{Insight:} $\widehat{\mathcal{M}}_{1-\alpha}$, the set of models
-        statistically compatible with best performance.
-      };
-      \draw[arrow] (dm) -- (spa);
-      \draw[arrow] (spa) -- (mcs);
-    \end{tikzpicture}
-  \end{center}
+\begin{frame}{Statistical inference for forecast comparisons}
+  \vspace{0.10cm}
+  \begin{columns}[T,totalwidth=0.97\linewidth]
+    \begin{column}{0.31\linewidth}
+      \tagbox{TealLight}{\normalsize\textbf{Diebold--Mariano}}
+      \vspace{0.10cm}
+
+      \centering\small\textbf{Which of two models is better?}
+
+      \vspace{0.08cm}
+      \scriptsize
+      \[
+        d_t=L_t(A)-L_t(B),
+        \qquad H_0:\mathbb{E}[d_t]=0
+      \]
+      \raggedright
+      \textbf{Use:} compare A and B on the same forecast origins. The variance
+      estimate accounts for serial dependence in $d_t$.
+
+      \vspace{0.12cm}
+      \colorbox{TealLight}{\parbox{0.90\linewidth}{\centering\scriptsize
+        \textbf{Decision}\par
+        $p<\alpha$ and $\bar d<0$: A has significantly lower expected loss.}}
+    \end{column}
+
+    \begin{column}{0.31\linewidth}
+      \tagbox{GoldLight}{\normalsize\textbf{SPA}}
+      \vspace{0.10cm}
+
+      \centering\small\textbf{Does any alternative beat a benchmark?}
+
+      \vspace{0.08cm}
+      \scriptsize
+      \[
+        d_{k,t}=L_t(B)-L_t(k)
+      \]
+      \vspace{-0.16cm}
+      \[
+        H_0:\max_k\mathbb{E}[d_{k,t}]\leq0
+      \]
+      \raggedright
+      \textbf{Use:} compare benchmark B with many challengers at once. The
+      bootstrap corrects for searching over multiple models.
+
+      \vspace{0.12cm}
+      \colorbox{GoldLight}{\parbox{0.90\linewidth}{\centering\scriptsize
+        \textbf{Decision}\par
+        Reject $H_0$: at least one challenger has lower expected loss than B.}}
+    \end{column}
+
+    \begin{column}{0.31\linewidth}
+      \tagbox{PurpleLight}{\normalsize\textbf{Model Confidence Set}}
+      \vspace{0.10cm}
+
+      \centering\small\textbf{Which models remain plausible best models?}
+
+      \vspace{0.08cm}
+      \scriptsize
+      \[
+        \mathcal{M}_0\supset\cdots\supset
+        \widehat{\mathcal{M}}_{1-\alpha}
+      \]
+      \raggedright
+      \textbf{Use:} begin with every model. Repeatedly test equal predictive
+      ability and remove the worst-supported model.
+
+      \vspace{0.12cm}
+      \colorbox{PurpleLight}{\parbox{0.90\linewidth}{\centering\scriptsize
+        \textbf{Output}\par
+        $\widehat{\mathcal M}_{1-\alpha}$ is a set of models that cannot be
+        distinguished from the best at level $\alpha$.}}
+    \end{column}
+  \end{columns}
 \end{frame}
 
 \end{document}
