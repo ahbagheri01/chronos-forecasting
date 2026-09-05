@@ -666,17 +666,17 @@
 \end{frame}
 
 % -----------------------------------------------------------------------------
-\begin{frame}{Clear empirical separation: M4 Hourly MASE}
+\begin{frame}{Clear empirical separation: M4 Hourly CRPS}
   \vspace{-0.02cm}
   \begin{center}
-    \includegraphics[width=0.94\linewidth]{m4-mase-separated-case.png}
+    \includegraphics[width=0.94\linewidth]{m4-crps-separated-case.png}
   \end{center}
 
   \vspace{-0.04cm}
   \begin{center}\small
-    \tagbox{TealLight}{\textbf{64.1\% lower aggregate MASE}}
+    \tagbox{TealLight}{\textbf{38.1\% lower aggregate CRPS}}
     \hspace{0.15cm}
-    Chronos Base tracks the cycle; Seasonal Naive is phase-shifted.
+    Similar point forecasts can still have differently scored distributions.
   \end{center}
 \end{frame}
 
@@ -758,17 +758,17 @@
 \end{frame}
 
 % -----------------------------------------------------------------------------
-\begin{frame}{Close empirical contest: USGS Streamflow MASE}
+\begin{frame}{Close empirical contest: M3 Quarterly WQL}
   \vspace{-0.02cm}
   \begin{center}
-    \includegraphics[width=0.94\linewidth]{usgs-mase-close-case.png}
+    \includegraphics[width=0.94\linewidth]{m3-wql-close-case.png}
   \end{center}
 
   \vspace{-0.04cm}
   \begin{center}\small
-    \tagbox{GoldLight}{\textbf{6.75\% aggregate gap}}
+    \tagbox{GoldLight}{\textbf{8.74\% lower aggregate WQL}}
     \hspace{0.15cm}
-    Moirai leads Auto-ARIMA, while both forecasts smooth over the observed peak.
+    TimesFM follows the realized level; Auto ARIMA drifts upward.
   \end{center}
 \end{frame}
 
@@ -1059,8 +1059,8 @@
       \begin{itemize}\setlength{\itemsep}{0.10cm}
         \item ARIMA has the lowest WQL and CRPS on M1 Yearly.
         \item Auto ARIMA has the lowest MASE on BLS Macro.
-        \item Some foundation model wins are very close, as seen for M1 and
-          USGS MASE.
+        \item Some foundation model wins are relatively close, as seen for M1
+          MASE and M3 WQL.
       \end{itemize}
     \end{column}
   \end{columns}

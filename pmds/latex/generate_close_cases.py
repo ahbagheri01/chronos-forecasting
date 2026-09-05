@@ -41,16 +41,6 @@ FOUNDATION_MODELS = {
 
 CASES = (
     {
-        "dataset": "chronos_m4_hourly",
-        "title": "M4 Hourly",
-        "winner": "chronos_t5_base",
-        "comparator": "seasonal_naive",
-        "item_id": "239:target::origin=1",
-        "output": "m4-mase-separated-case.png",
-        "history": 48,
-        "gap_text": "64.1% lower",
-    },
-    {
         "dataset": "external_psm",
         "title": "PSM",
         "winner": "chronos_t5_small",
@@ -68,15 +58,6 @@ CASES = (
         "item_id": "156:target::origin=2",
         "output": "m1-mase-close-case.png",
         "history": 18,
-    },
-    {
-        "dataset": "official_usgs_streamflow",
-        "title": "USGS Streamflow",
-        "winner": "moirai_2_0_small",
-        "comparator": "auto_arima",
-        "item_id": "08158000::origin=1",
-        "output": "usgs-mase-close-case.png",
-        "history": 30,
     },
 )
 
