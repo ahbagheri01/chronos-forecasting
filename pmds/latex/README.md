@@ -2,8 +2,15 @@
 
 The rebuilt presentation is `chronos_vs_classical_main_story.tex`. It contains
 the motivation, model descriptions, the 12-dataset benchmark, evaluation
-metrics, and statistical comparison methods. It intentionally contains no
-experimental results and no appendix.
+metrics, statistical comparison methods, and initial experimental results for
+MASE, WQL, and CRPS. The results section reports empirical winners alongside
+Holm-adjusted SPA and Diebold--Mariano comparison counts and 95% Model
+Confidence Set sizes, followed by model-level win counts for each loss. It
+contains no appendix.
+
+The result tables are based on the CSV outputs in
+`../results/11_12_3_rep/`, with low-power datasets and the exploratory status
+of the Diebold--Mariano analysis marked directly on the statistical slides.
 
 Build from this directory with:
 

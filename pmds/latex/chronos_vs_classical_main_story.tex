@@ -68,6 +68,8 @@
 \newcommand{\key}[1]{{\color{Teal}\textbf{#1}}}
 \newcommand{\good}[1]{{\color{Green}\textbf{#1}}}
 \newcommand{\warn}[1]{{\color{Coral}\textbf{#1}}}
+\newcommand{\foundationwinner}[1]{\cellcolor{PurpleLight}\textbf{#1}}
+\newcommand{\classicalwinner}[1]{\cellcolor{GoldLight}\textbf{#1}}
 \newcommand{\tagbox}[2]{%
   \tikz[baseline=(tag.base)]{%
     \node[fill=#1,rounded corners=1.5pt,inner xsep=4pt,inner ysep=3pt]
@@ -528,6 +530,205 @@
         \textbf{Output}\par
         $\widehat{\mathcal M}_{1-\alpha}$ is a set of models that cannot be
         distinguished from the best at level $\alpha$.}}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}{Empirical winners across the three core losses}
+  \vspace{0.04cm}
+  \begin{center}
+    \fontsize{8.4}{9.6}\selectfont
+    \renewcommand{\arraystretch}{1.12}
+    \setlength{\tabcolsep}{5.5pt}
+    \begin{tabular}{L{3.05cm} C{3.20cm} C{3.20cm} C{3.20cm}}
+      \toprule
+      \textbf{Dataset} & \textbf{MASE} & \textbf{WQL} & \textbf{CRPS} \\
+      \midrule
+      M1 Yearly & \foundationwinner{TimesFM} & \classicalwinner{ARIMA} & \classicalwinner{ARIMA} \\
+      M4 Hourly & \foundationwinner{Chronos Base} & \foundationwinner{Chronos Base} & \foundationwinner{Chronos Base} \\
+      Weather & \foundationwinner{Chronos Base} & \foundationwinner{Moirai} & \foundationwinner{Moirai} \\
+      M3 Quarterly & \foundationwinner{TimesFM} & \foundationwinner{TimesFM} & \foundationwinner{TimesFM} \\
+      Car Parts & \foundationwinner{Moirai} & \foundationwinner{Moirai} & \foundationwinner{Moirai} \\
+      NN5 Weekly & \foundationwinner{TimesFM} & \foundationwinner{TimesFM} & \foundationwinner{TimesFM} \\
+      National Illness & \foundationwinner{TimesFM} & \foundationwinner{TimesFM} & \foundationwinner{TimesFM} \\
+      Traffic & \foundationwinner{Moirai} & \foundationwinner{Moirai} & \foundationwinner{Moirai} \\
+      PSM & \foundationwinner{Chronos Small} & \foundationwinner{Chronos Small} & \foundationwinner{Chronos Small} \\
+      Elexon Demand & \foundationwinner{TimesFM} & \foundationwinner{TimesFM} & \foundationwinner{TimesFM} \\
+      USGS Streamflow & \foundationwinner{Moirai} & \foundationwinner{TimesFM} & \foundationwinner{TimesFM} \\
+      BLS Macro & \classicalwinner{Auto-ARIMA} & \foundationwinner{TimesFM} & \foundationwinner{TimesFM} \\
+      \bottomrule
+    \end{tabular}
+  \end{center}
+
+  \vspace{0.08cm}
+  \begin{center}
+    \scriptsize
+    \tagbox{PurpleLight}{\textbf{foundation model}}
+    \hspace{0.18cm}
+    \tagbox{GoldLight}{\textbf{statistical model}}
+    \hspace{0.28cm}
+    Each cell is the lowest aggregate loss among 11 models; this is a
+    \textbf{descriptive ranking}, not a significance claim.
+  \end{center}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}{MASE: statistical evidence behind the empirical winner}
+  \vspace{0.06cm}
+  \begin{center}
+    \fontsize{7.5}{8.6}\selectfont
+    \renewcommand{\arraystretch}{1.18}
+    \setlength{\tabcolsep}{4.2pt}
+    \begin{tabular}{L{3.10cm} L{2.75cm} C{1.55cm} C{1.55cm} C{1.45cm}}
+      \toprule
+      \textbf{Dataset} & \textbf{Empirical winner} & \textbf{SPA} &
+        \textbf{DM\textsuperscript{*}} & \textbf{MCS size} \\
+      \midrule
+      M1 Yearly & TimesFM & 3/10 & 1/10 & 9 \\
+      M4 Hourly & Chronos Base & 5/10 & 10/10 & 6 \\
+      Weather & Chronos Base & 4/10 & 6/10 & 8 \\
+      M3 Quarterly & TimesFM & 9/10 & 4/10 & 4 \\
+      Car Parts & Moirai & 4/10 & 4/10 & 7 \\
+      \rowcolor{GreenLight} NN5 Weekly & \textbf{TimesFM} & \textbf{10/10} & \textbf{10/10} & \textbf{1} \\
+      National Illness\textsuperscript{\(\dagger\)} & TimesFM & 1/10 & --- & 7 \\
+      Traffic\textsuperscript{\(\dagger\)} & Moirai & 5/10 & 3/10 & 6 \\
+      PSM\textsuperscript{\(\dagger\)} & Chronos Small & 4/10 & 4/10 & 7 \\
+      Elexon Demand\textsuperscript{\(\dagger\)} & TimesFM & 9/10 & --- & 3 \\
+      USGS Streamflow\textsuperscript{\(\dagger\)} & Moirai & 3/10 & 1/10 & 8 \\
+      BLS Macro\textsuperscript{\(\dagger\)} & Auto-ARIMA & 5/10 & --- & 5 \\
+      \bottomrule
+    \end{tabular}
+  \end{center}
+
+  \vspace{0.08cm}
+  \fontsize{6.8}{7.6}\selectfont
+  SPA/DM = Holm-adjusted significant wins out of 10; MCS = models retained in
+  the 95\% set. \textsuperscript{*}DM is exploratory; --- = not run ($<8$
+  ordered tasks). \textsuperscript{\(\dagger\)}Low power ($<20$ paired tasks).\par
+  \vspace{0.04cm}\scriptsize
+  \good{Strict separation occurs only on NN5 Weekly: TimesFM beats all ten
+  alternatives by SPA and is the sole MCS member.}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}{WQL: statistical evidence behind the empirical winner}
+  \vspace{0.06cm}
+  \begin{center}
+    \fontsize{7.5}{8.6}\selectfont
+    \renewcommand{\arraystretch}{1.18}
+    \setlength{\tabcolsep}{4.2pt}
+    \begin{tabular}{L{3.10cm} L{2.75cm} C{1.55cm} C{1.55cm} C{1.45cm}}
+      \toprule
+      \textbf{Dataset} & \textbf{Empirical winner} & \textbf{SPA} &
+        \textbf{DM\textsuperscript{*}} & \textbf{MCS size} \\
+      \midrule
+      M1 Yearly & ARIMA & 0/10 & 0/10 & 11 \\
+      M4 Hourly & Chronos Base & 0/10 & 0/10 & 11 \\
+      Weather & Moirai & 9/10 & 9/10 & 2 \\
+      M3 Quarterly & TimesFM & 9/10 & 7/10 & 2 \\
+      Car Parts & Moirai & 4/10 & 5/10 & 7 \\
+      \rowcolor{GreenLight} NN5 Weekly & \textbf{TimesFM} & \textbf{10/10} & \textbf{10/10} & \textbf{1} \\
+      National Illness\textsuperscript{\(\dagger\)} & TimesFM & 1/10 & --- & 5 \\
+      Traffic\textsuperscript{\(\dagger\)} & Moirai & 6/10 & 3/10 & 5 \\
+      PSM\textsuperscript{\(\dagger\)} & Chronos Small & 4/10 & 3/10 & 7 \\
+      Elexon Demand\textsuperscript{\(\dagger\)} & TimesFM & 9/10 & --- & 2 \\
+      USGS Streamflow\textsuperscript{\(\dagger\)} & TimesFM & 0/10 & 0/10 & 11 \\
+      BLS Macro\textsuperscript{\(\dagger\)} & TimesFM & 0/10 & --- & 11 \\
+      \bottomrule
+    \end{tabular}
+  \end{center}
+
+  \vspace{0.08cm}
+  \fontsize{6.8}{7.6}\selectfont
+  SPA/DM = Holm-adjusted significant wins out of 10; MCS = models retained in
+  the 95\% set. \textsuperscript{*}DM is exploratory; --- = not run ($<8$
+  ordered tasks). \textsuperscript{\(\dagger\)}Low power ($<20$ paired tasks).\par
+  \vspace{0.04cm}\scriptsize
+  \good{Strict separation occurs only on NN5 Weekly; Weather and M3 show strong
+  but not unique leadership.}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}{CRPS: statistical evidence behind the empirical winner}
+  \vspace{0.06cm}
+  \begin{center}
+    \fontsize{7.5}{8.6}\selectfont
+    \renewcommand{\arraystretch}{1.18}
+    \setlength{\tabcolsep}{4.2pt}
+    \begin{tabular}{L{3.10cm} L{2.75cm} C{1.55cm} C{1.55cm} C{1.45cm}}
+      \toprule
+      \textbf{Dataset} & \textbf{Empirical winner} & \textbf{SPA} &
+        \textbf{DM\textsuperscript{*}} & \textbf{MCS size} \\
+      \midrule
+      M1 Yearly & ARIMA & 0/10 & 0/10 & 11 \\
+      M4 Hourly & Chronos Base & 0/10 & 0/10 & 11 \\
+      \rowcolor{GreenLight} Weather & \textbf{Moirai} & \textbf{10/10} & \textbf{10/10} & \textbf{1} \\
+      M3 Quarterly & TimesFM & 9/10 & 7/10 & 5 \\
+      Car Parts & Moirai & 4/10 & 10/10 & 7 \\
+      \rowcolor{GreenLight} NN5 Weekly & \textbf{TimesFM} & \textbf{10/10} & \textbf{10/10} & \textbf{1} \\
+      National Illness\textsuperscript{\(\dagger\)} & TimesFM & 1/10 & --- & 5 \\
+      Traffic\textsuperscript{\(\dagger\)} & Moirai & 6/10 & 3/10 & 5 \\
+      PSM\textsuperscript{\(\dagger\)} & Chronos Small & 4/10 & 3/10 & 7 \\
+      Elexon Demand\textsuperscript{\(\dagger\)} & TimesFM & 9/10 & --- & 2 \\
+      USGS Streamflow\textsuperscript{\(\dagger\)} & TimesFM & 0/10 & 0/10 & 11 \\
+      BLS Macro\textsuperscript{\(\dagger\)} & TimesFM & 1/10 & --- & 11 \\
+      \bottomrule
+    \end{tabular}
+  \end{center}
+
+  \vspace{0.08cm}
+  \fontsize{6.8}{7.6}\selectfont
+  SPA/DM = Holm-adjusted significant wins out of 10; MCS = models retained in
+  the 95\% set. \textsuperscript{*}DM is exploratory; --- = not run ($<8$
+  ordered tasks). \textsuperscript{\(\dagger\)}Low power ($<20$ paired tasks).\par
+  \vspace{0.04cm}\scriptsize
+  \good{Weather (Moirai) and NN5 Weekly (TimesFM) are the two clean CRPS
+  results: 10/10 SPA wins and singleton confidence sets.}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}{How often each model wins a dataset--metric cell}
+  \vspace{0.10cm}
+  \begin{columns}[T,totalwidth=0.96\linewidth]
+    \begin{column}{0.58\linewidth}
+      \fontsize{8.2}{9.4}\selectfont
+      \renewcommand{\arraystretch}{1.22}
+      \setlength{\tabcolsep}{4.2pt}
+      \begin{tabular}{L{3.15cm} C{0.82cm} C{0.82cm} C{0.82cm} C{0.82cm}}
+        \toprule
+        \textbf{Model} & \textbf{MASE} & \textbf{WQL} & \textbf{CRPS} & \textbf{Total} \\
+        \midrule
+        \rowcolor{GreenLight} TimesFM 2.5 200M & 5 & 6 & 6 & \textbf{17} \\
+        Moirai 2.0 Small & 3 & 3 & 3 & \textbf{9} \\
+        \rowcolor{Paper} Chronos Base & 2 & 1 & 1 & \textbf{4} \\
+        Chronos Small & 1 & 1 & 1 & \textbf{3} \\
+        \rowcolor{Paper} ARIMA(2,1,2) & 0 & 1 & 1 & \textbf{2} \\
+        Auto-ARIMA & 1 & 0 & 0 & \textbf{1} \\
+        \rowcolor{Paper} Chronos Mini & 0 & 0 & 0 & \textbf{0} \\
+        Chronos Tiny & 0 & 0 & 0 & \textbf{0} \\
+        \rowcolor{Paper} DeepAR & 0 & 0 & 0 & \textbf{0} \\
+        Prophet & 0 & 0 & 0 & \textbf{0} \\
+        \rowcolor{Paper} Seasonal Naive & 0 & 0 & 0 & \textbf{0} \\
+        \midrule
+        \textbf{Column total} & \textbf{12} & \textbf{12} & \textbf{12} & \textbf{36} \\
+        \bottomrule
+      \end{tabular}
+    \end{column}
+
+    \begin{column}{0.35\linewidth}
+      \tagbox{GreenLight}{\large\textbf{36 winner cells}}
+      \vspace{0.22cm}
+
+      \small
+      \begin{itemize}\setlength{\itemsep}{0.18cm}
+        \item 12 datasets $\times$ 3 core losses.
+        \item A win is the lowest aggregate loss for one dataset and metric.
+        \item TimesFM leads with \textbf{17/36}; Moirai follows with \textbf{9/36}.
+        \item Foundation models occupy \textbf{33/36} empirical winner cells.
+        \item Counts summarize breadth, not statistical significance; the
+          losses are correlated and cells are not independent experiments.
+      \end{itemize}
     \end{column}
   \end{columns}
 \end{frame}
