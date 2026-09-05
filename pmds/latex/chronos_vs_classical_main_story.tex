@@ -847,6 +847,114 @@
 \end{frame}
 
 % -----------------------------------------------------------------------------
+\begin{frame}{How to read the repetition results}
+  \vspace{0.01cm}
+  \begin{center}
+    \small
+    \textbf{$p_{\mathrm{Holm}}$ is a corrected p-value.}
+    Holm correction accounts for testing several dataset and metric combinations
+    at the same time.
+  \end{center}
+
+  \vspace{0.06cm}
+  \begin{columns}[T,totalwidth=0.94\linewidth]
+    \begin{column}{0.29\linewidth}
+      \colorbox{GreenLight}{\parbox{0.88\linewidth}{\centering
+        \large\bfseries $p_{\mathrm{Holm}}<0.05$\par
+        \vspace{0.04cm}
+        \fontsize{7.7}{8.8}\selectfont
+        The observed lead is large relative to seed variation in the three runs.}}
+    \end{column}
+    \begin{column}{0.29\linewidth}
+      \colorbox{PurpleLight}{\parbox{0.88\linewidth}{\centering
+        \large\bfseries SI\par
+        \vspace{0.04cm}
+        \fontsize{7.7}{8.8}\selectfont
+        The same positive gap occurs in every run; a finite p-value is undefined.}}
+    \end{column}
+    \begin{column}{0.29\linewidth}
+      \colorbox{GoldLight}{\parbox{0.88\linewidth}{\centering
+        \large\bfseries $p_{\mathrm{Holm}}\geq0.05$\par
+        \vspace{0.04cm}
+        \fontsize{7.7}{8.8}\selectfont
+        Three repetitions do not distinguish the lead from seed variation.}}
+    \end{column}
+  \end{columns}
+
+  \vspace{0.10cm}
+  \begin{center}
+    \fontsize{8.0}{9.2}\selectfont
+    \renewcommand{\arraystretch}{1.20}
+    \setlength{\tabcolsep}{5.5pt}
+    \begin{tabular}{L{2.70cm} C{2.40cm} L{6.50cm}}
+      \toprule
+      \textbf{Example} & \textbf{Reported value} & \textbf{Interpretation} \\
+      \midrule
+      M4 Hourly CRPS & \cellcolor{GreenLight}\textbf{$p=0.010$} & The lead remains clear after correcting for multiple tests. \\
+      \rowcolor{Paper} M1 Yearly WQL & \cellcolor{GoldLight}\textbf{$p=0.068$} & The observed lead is not resolved by three repetitions. \\
+      BLS Macro MASE & \cellcolor{PurpleLight}\textbf{SI} & The same positive gap is recorded in every repetition. \\
+      \bottomrule
+    \end{tabular}
+  \end{center}
+
+  \vspace{0.02cm}
+  \begin{center}
+    \colorbox{TealLight}{\parbox{0.84\linewidth}{\centering\scriptsize
+      These results describe repeatability across the three random seeds.}}
+  \end{center}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}{Do the rankings persist across random seeds?}
+  \vspace{-0.02cm}
+  \begin{center}
+    \colorbox{Paper}{\parbox{0.91\linewidth}{\centering\fontsize{6.7}{7.4}\selectfont
+      Winner versus the best model from the opposite family:\quad
+      $d_r=L_{\mathrm{opposite},r}-L_{\mathrm{winner},r}$,\quad
+      $H_0:\mathbb{E}[d]\leq0$,\quad one-sided paired $t$ test, $n=3$.}}
+  \end{center}
+
+  \vspace{0.04cm}
+  \begin{center}
+    \fontsize{7.2}{8.0}\selectfont
+    \renewcommand{\arraystretch}{1.02}
+    \setlength{\tabcolsep}{6.5pt}
+    \begin{tabular}{L{3.65cm} C{2.40cm} C{2.40cm} C{2.40cm}}
+      \toprule
+      \textbf{Dataset} & \textbf{MASE} & \textbf{WQL} & \textbf{CRPS} \\
+      \midrule
+      Car Parts & \cellcolor{GreenLight}\textbf{0.025} & \cellcolor{PurpleLight}\textbf{SI} & \cellcolor{PurpleLight}\textbf{SI} \\
+      \rowcolor{Paper} M1 Yearly & \cellcolor{GreenLight}\textbf{0.004} & \cellcolor{GoldLight}0.068 & \cellcolor{GoldLight}0.068 \\
+      M3 Quarterly & \cellcolor{PurpleLight}\textbf{SI} & \cellcolor{PurpleLight}\textbf{SI} & \cellcolor{PurpleLight}\textbf{SI} \\
+      \rowcolor{Paper} M4 Hourly & \cellcolor{GreenLight}\textbf{$<0.001$} & \cellcolor{GreenLight}\textbf{0.010} & \cellcolor{GreenLight}\textbf{0.010} \\
+      NN5 Weekly & \cellcolor{GreenLight}\textbf{0.047} & \cellcolor{GreenLight}\textbf{0.025} & \cellcolor{GreenLight}\textbf{0.025} \\
+      \rowcolor{Paper} Weather & \cellcolor{GoldLight}0.091 & \cellcolor{GreenLight}\textbf{0.025} & \cellcolor{GreenLight}\textbf{0.025} \\
+      National Illness & \cellcolor{GreenLight}\textbf{$<0.001$} & \cellcolor{GreenLight}\textbf{$<0.001$} & \cellcolor{GreenLight}\textbf{$<0.001$} \\
+      \rowcolor{Paper} PSM & \cellcolor{GreenLight}\textbf{$<0.001$} & \cellcolor{GreenLight}\textbf{$<0.001$} & \cellcolor{GreenLight}\textbf{$<0.001$} \\
+      Traffic & \cellcolor{PurpleLight}\textbf{SI} & \cellcolor{PurpleLight}\textbf{SI} & \cellcolor{PurpleLight}\textbf{SI} \\
+      \rowcolor{Paper} BLS Macro & \cellcolor{PurpleLight}\textbf{SI} & \cellcolor{PurpleLight}\textbf{SI} & \cellcolor{PurpleLight}\textbf{SI} \\
+      Elexon Demand & \cellcolor{PurpleLight}\textbf{SI} & \cellcolor{PurpleLight}\textbf{SI} & \cellcolor{GreenLight}\textbf{$<0.001$} \\
+      \rowcolor{Paper} USGS Streamflow & \cellcolor{PurpleLight}\textbf{SI} & \cellcolor{GoldLight}0.052 & \cellcolor{GoldLight}0.052 \\
+      \bottomrule
+    \end{tabular}
+  \end{center}
+
+  \vspace{0.04cm}
+  \begin{center}
+    \tagbox{GreenLight}{\scriptsize\textbf{17 significant}}
+    \hspace{0.12cm}
+    \tagbox{PurpleLight}{\scriptsize\textbf{14 seed invariant}}
+    \hspace{0.12cm}
+    \tagbox{GoldLight}{\scriptsize\textbf{5 unresolved}}
+  \end{center}
+
+  \vspace{0.02cm}
+  \fontsize{6.2}{7.0}\selectfont\color{Muted}
+  Holm-adjusted $p$ values cover the 22 finite tests. SI means the same positive
+  gap occurred in all three runs, so finite $t$ and $p$ values do not exist.
+  The table measures repeatability across the three random seeds only.
+\end{frame}
+
 \begin{frame}{Is the empirical benchmark narrative enough?}
   \vspace{0.01cm}
   \begin{center}

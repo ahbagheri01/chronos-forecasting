@@ -32,6 +32,7 @@ These reports use the completed `11_12_3_rep` benchmark outputs. No forecasting 
 - The Model Confidence Set is the primary protection against selecting a winner on the same data used for testing.
 - DM results are exploratory here because their ordered loss series pools forecast tasks from multiple series and origins; a classical confirmatory DM design requires a long fixed-horizon loss-differential time series.
 - Repetition SD describes sensitivity to random seeds. Three repetitions do not estimate dataset/task sampling uncertainty reliably, so SD or overlap of SD bands is not a significance test.
+- `repetition_paired_tests_core_metrics.csv` adds an exploratory seed-stability check for MASE, WQL, and CRPS only. It compares each empirical winner with the best model from the opposite family using a one-sided paired t-test across the three matched repetitions, followed by one Holm correction across all finite tests. A constant positive paired gap is labelled `seed_invariant_gap`; no artificial variance or p-value is assigned.
 - `very_low_power` and `low_power` rows must not be presented as strong evidence even when a p-value is small.
 - `reportable_significance` is true only for Holm-significant rows classified as `adequate_with_dependence_caveat`.
 - Calibration binomial p-values are diagnostic because forecast observations are serially dependent.
@@ -48,5 +49,6 @@ These reports use the completed `11_12_3_rep` benchmark outputs. No forecasting 
 - `model_confidence_set.csv`: 968 rows
 - `diebold_mariano_winner_vs_rest.csv`: 840 rows
 - `repetition_variability.csv`: 924 rows
+- `repetition_paired_tests_core_metrics.csv`: 36 rows
 - `winner_vs_rest_plots`: 88 rows
 - `model_confidence_set_plots`: 12 rows
