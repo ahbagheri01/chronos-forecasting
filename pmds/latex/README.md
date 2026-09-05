@@ -4,9 +4,11 @@ The rebuilt presentation is `chronos_vs_classical_main_story.tex`. It contains
 the motivation, model descriptions, the 12-dataset benchmark, evaluation
 metrics, statistical comparison methods, and initial experimental results for
 MASE, WQL, and CRPS. The results section reports empirical winners alongside
-Holm-adjusted SPA and Diebold--Mariano comparison counts and 95% Model
-Confidence Set sizes, followed by model-level win counts for each loss. It
-contains no appendix.
+model-level win counts, strict and mixed family-ranking cases, and classical
+exceptions. It then asks whether that empirical narrative is sufficient before
+presenting Holm-adjusted SPA and Diebold--Mariano comparison counts, 95% Model
+Confidence Set sizes, and the final evidence-qualified conclusion. It contains
+no appendix.
 
 The result tables are based on the CSV outputs in
 `../results/11_12_3_rep/`, with low-power datasets and the exploratory status
