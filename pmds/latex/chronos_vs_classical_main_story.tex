@@ -574,7 +574,7 @@
 \end{frame}
 
 % -----------------------------------------------------------------------------
-\begin{frame}{How often each model wins a dataset--metric cell}
+\begin{frame}{How often each model records the lowest loss}
   \vspace{0.10cm}
   \begin{columns}[T,totalwidth=0.96\linewidth]
     \begin{column}{0.58\linewidth}
@@ -603,17 +603,18 @@
     \end{column}
 
     \begin{column}{0.35\linewidth}
-      \tagbox{GreenLight}{\large\textbf{36 winner cells}}
+      \tagbox{GreenLight}{\large\textbf{36 comparisons}}
       \vspace{0.22cm}
 
       \small
-      \begin{itemize}\setlength{\itemsep}{0.18cm}
-        \item 12 datasets $\times$ 3 core losses.
-        \item A win is the lowest aggregate loss for one dataset and metric.
-        \item TimesFM leads with \textbf{17/36}; Moirai follows with \textbf{9/36}.
-        \item Foundation models occupy \textbf{33/36} empirical winner cells.
-        \item Counts summarize breadth, not statistical significance; the
-          losses are correlated and cells are not independent experiments.
+      \begin{itemize}\setlength{\itemsep}{0.24cm}
+        \item Each model is ranked on \textbf{MASE, WQL, and CRPS} across 12 datasets.
+        \item A win means recording the lowest aggregate loss for one dataset
+          under one metric.
+        \item TimesFM records the lowest loss \textbf{17 times}; Moirai does so
+          \textbf{9 times}.
+        \item Across all comparisons, a foundation model ranks first
+          \textbf{33 times}.
       \end{itemize}
     \end{column}
   \end{columns}
@@ -634,7 +635,7 @@
   \vspace{0.20cm}
   \begin{center}
     \fontsize{8.3}{9.6}\selectfont
-    \renewcommand{\arraystretch}{1.30}
+    \renewcommand{\arraystretch}{1.22}
     \setlength{\tabcolsep}{5pt}
     \begin{tabular}{L{2.85cm} C{3.20cm} C{3.20cm} C{3.20cm}}
       \toprule
@@ -644,23 +645,19 @@
       PSM\textsuperscript{\(\dagger\)} & $\checkmark$ Chronos Small & $\checkmark$ Chronos Small & $\checkmark$ Chronos Small \\
       \rowcolor{Paper} Elexon Demand\textsuperscript{\(\dagger\)} & $\checkmark$ TimesFM & $\checkmark$ TimesFM & $\checkmark$ TimesFM \\
       USGS Streamflow\textsuperscript{\(\dagger\)} & $\checkmark$ Moirai & $\checkmark$ TimesFM & $\checkmark$ TimesFM \\
+      \rowcolor{Paper} Car Parts & \cellcolor{CoralLight}\textit{not strict} & $\checkmark$ Moirai & $\checkmark$ Moirai \\
+      Traffic\textsuperscript{\(\dagger\)} & \cellcolor{CoralLight}\textit{not strict} & $\checkmark$ Moirai & $\checkmark$ Moirai \\
       \bottomrule
     \end{tabular}
   \end{center}
 
-  \vspace{0.22cm}
-  \begin{columns}[T,totalwidth=0.92\linewidth]
-    \begin{column}{0.46\linewidth}
-      \colorbox{PurpleLight}{\parbox{0.91\linewidth}{\centering\small
-        \textbf{12 cells}\par
-        Four datasets satisfy strict dominance on all three losses.}}
-    \end{column}
-    \begin{column}{0.46\linewidth}
-      \colorbox{GoldLight}{\parbox{0.91\linewidth}{\centering\small
-        \textbf{+4 cells}\par
-        Car Parts and Traffic satisfy it for WQL and CRPS only.}}
-    \end{column}
-  \end{columns}
+  \vspace{0.18cm}
+  \begin{center}
+    \tagbox{GreenLight}{\textbf{16 strict comparisons}}
+    \hspace{0.22cm}
+    \small Four datasets satisfy the condition for all three losses; Car Parts
+    and Traffic satisfy it for WQL and CRPS.
+  \end{center}
 
   \vspace{0.12cm}
   \scriptsize\color{Muted}
@@ -669,43 +666,110 @@
 \end{frame}
 
 % -----------------------------------------------------------------------------
-\begin{frame}{Foundation model first, but the ranking is interleaved}
-  \vspace{0.01cm}
+\begin{frame}{Clear empirical separation: M4 Hourly MASE}
+  \vspace{-0.02cm}
   \begin{center}
-    \scriptsize\color{Muted}
-    The lowest loss belongs to a foundation model, yet the best conventional
-    model still outranks one or more foundation models.
+    \includegraphics[width=0.94\linewidth]{m4-mase-separated-case.png}
   \end{center}
 
-  \vspace{0.12cm}
+  \vspace{-0.04cm}
+  \begin{center}\small
+    \tagbox{TealLight}{\textbf{64.1\% lower aggregate MASE}}
+    \hspace{0.15cm}
+    Chronos Base tracks the cycle; Seasonal Naive is phase-shifted.
+  \end{center}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}{Clear empirical separation: PSM MASE}
+  \vspace{-0.02cm}
   \begin{center}
-    \fontsize{8.1}{9.4}\selectfont
-    \renewcommand{\arraystretch}{1.20}
-    \setlength{\tabcolsep}{4.5pt}
-    \begin{tabular}{L{2.15cm} L{2.55cm} L{2.90cm} C{1.10cm} C{1.80cm}}
+    \includegraphics[width=0.94\linewidth]{psm-mase-separated-case.png}
+  \end{center}
+
+  \vspace{-0.04cm}
+  \begin{center}\small
+    \tagbox{TealLight}{\textbf{34.2\% lower aggregate MASE}}
+    \hspace{0.15cm}
+    Chronos Small follows the rise and decline; ARIMA remains nearly flat.
+  \end{center}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}{Where a foundation model ranks first in a mixed ordering}
+  \vspace{0.02cm}
+  \begin{center}
+    \small
+    \colorbox{PurpleLight}{\parbox{0.89\linewidth}{\centering
+      \textbf{Mixed ordering:} a foundation model has the lowest loss, but at
+      least one classical/conventional model still outranks another foundation
+      model.}}
+  \end{center}
+
+  \vspace{0.16cm}
+  \begin{center}
+    \fontsize{7.7}{8.9}\selectfont
+    \renewcommand{\arraystretch}{1.15}
+    \setlength{\tabcolsep}{5pt}
+    \begin{tabular}{L{2.85cm} C{3.20cm} C{3.20cm} C{3.20cm}}
       \toprule
-      \textbf{Example} & \textbf{Foundation leader} &
-        \textbf{Best conventional} & \textbf{Rank} & \textbf{FMs below it} \\
+      \textbf{Dataset} & \textbf{MASE} & \textbf{WQL} & \textbf{CRPS} \\
       \midrule
-      M1 Yearly / MASE & TimesFM \; 3.129 & Prophet \; 3.184 & 2nd & 5 of 6 \\
-      \rowcolor{Paper} M3 Quarterly / WQL & TimesFM \; 0.0776 & Auto-ARIMA \; 0.0850 & 2nd & 5 of 6 \\
-      NN5 Weekly / CRPS & TimesFM \; 11.855 & DeepAR \; 13.695 & 5th & 2 of 6 \\
-      \rowcolor{Paper} Weather / CRPS & Moirai \; 1.188 & DeepAR \; 1.305 & 6th & 1 of 6 \\
+      Car Parts & \cellcolor{PurpleLight}\textbf{Moirai} & \cellcolor{TealLight}\textit{strict FM} & \cellcolor{TealLight}\textit{strict FM} \\
+      \rowcolor{Paper} M1 Yearly & \cellcolor{PurpleLight}\textbf{TimesFM} & \cellcolor{GoldLight}\textit{classical first} & \cellcolor{GoldLight}\textit{classical first} \\
+      M3 Quarterly & \cellcolor{PurpleLight}\textbf{TimesFM} & \cellcolor{PurpleLight}\textbf{TimesFM} & \cellcolor{PurpleLight}\textbf{TimesFM} \\
+      \rowcolor{Paper} NN5 Weekly & \cellcolor{PurpleLight}\textbf{TimesFM} & \cellcolor{PurpleLight}\textbf{TimesFM} & \cellcolor{PurpleLight}\textbf{TimesFM} \\
+      Weather & \cellcolor{PurpleLight}\textbf{Chronos Base} & \cellcolor{PurpleLight}\textbf{Moirai} & \cellcolor{PurpleLight}\textbf{Moirai} \\
+      \rowcolor{Paper} National Illness\textsuperscript{\(\dagger\)} & \cellcolor{PurpleLight}\textbf{TimesFM} & \cellcolor{PurpleLight}\textbf{TimesFM} & \cellcolor{PurpleLight}\textbf{TimesFM} \\
+      Traffic\textsuperscript{\(\dagger\)} & \cellcolor{PurpleLight}\textbf{Moirai} & \cellcolor{TealLight}\textit{strict FM} & \cellcolor{TealLight}\textit{strict FM} \\
+      \rowcolor{Paper} BLS Macro\textsuperscript{\(\dagger\)} & \cellcolor{GoldLight}\textit{classical first} & \cellcolor{PurpleLight}\textbf{TimesFM} & \cellcolor{PurpleLight}\textbf{TimesFM} \\
       \bottomrule
     \end{tabular}
   \end{center}
 
-  \vspace{0.10cm}
+  \vspace{0.14cm}
   \begin{center}
-    \tagbox{PurpleLight}{\large\textbf{17 of 36 cells}}
-    \hspace{0.25cm}
-    \small A foundation model ranks first, but strict family dominance fails.
+    \tagbox{PurpleLight}{\textbf{17 mixed comparisons}}
+    \hspace{0.14cm}
+    \tagbox{TealLight}{\scriptsize strict FM dominance}
+    \hspace{0.14cm}
+    \tagbox{GoldLight}{\scriptsize classical model ranks first}
   \end{center}
 
-  \vspace{0.10cm}
-  \scriptsize
-  \textbf{Interpretation:} a first-place foundation model does not imply that
-  the foundation-model family has displaced established forecasting methods.
+  \vspace{0.08cm}
+  \scriptsize\color{Muted}
+  Purple cells name the empirical foundation-model leader.
+  \textsuperscript{\(\dagger\)}Descriptive low-power dataset.
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}{Close empirical contest: M1 Yearly MASE}
+  \vspace{-0.02cm}
+  \begin{center}
+    \includegraphics[width=0.94\linewidth]{m1-mase-close-case.png}
+  \end{center}
+
+  \vspace{-0.04cm}
+  \begin{center}\small
+    \tagbox{GoldLight}{\textbf{1.76\% aggregate gap}}
+    \hspace{0.15cm}
+    TimesFM ranks first, while Prophet is close and the forecasts nearly overlap.
+  \end{center}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}{Close empirical contest: USGS Streamflow MASE}
+  \vspace{-0.02cm}
+  \begin{center}
+    \includegraphics[width=0.94\linewidth]{usgs-mase-close-case.png}
+  \end{center}
+
+  \vspace{-0.04cm}
+  \begin{center}\small
+    \tagbox{GoldLight}{\textbf{6.75\% aggregate gap}}
+    \hspace{0.15cm}
+    Moirai leads Auto-ARIMA, while both forecasts smooth over the observed peak.
+  \end{center}
 \end{frame}
 
 % -----------------------------------------------------------------------------
@@ -750,6 +814,36 @@
   \scriptsize\color{Muted}
   Values are aggregate losses; percentages compare the classical winner with
   the best-performing foundation model. Lower is better.
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}{Classical exception: M1 Yearly WQL}
+  \vspace{-0.02cm}
+  \begin{center}
+    \includegraphics[width=0.94\linewidth]{m1-wql-classical-win.png}
+  \end{center}
+
+  \vspace{-0.04cm}
+  \begin{center}\small
+    \tagbox{GoldLight}{\textbf{12.4\% lower aggregate WQL}}
+    \hspace{0.15cm}
+    ARIMA follows the rise; its 10--90\% interval covers the observations.
+  \end{center}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}{Classical exception: BLS Macro MASE}
+  \vspace{-0.02cm}
+  \begin{center}
+    \includegraphics[width=0.94\linewidth]{bls-mase-classical-win.png}
+  \end{center}
+
+  \vspace{-0.04cm}
+  \begin{center}\small
+    \tagbox{GoldLight}{\textbf{18.8\% lower aggregate MASE}}
+    \hspace{0.15cm}
+    Auto-ARIMA follows the decline; TimesFM extrapolates upward.
+  \end{center}
 \end{frame}
 
 % -----------------------------------------------------------------------------
@@ -916,67 +1010,110 @@
 \end{frame}
 
 % -----------------------------------------------------------------------------
-\begin{frame}{Conclusion: leadership is broad, certainty is concentrated}
-  \vspace{0.05cm}
-  \begin{columns}[T,totalwidth=0.96\linewidth]
-    \begin{column}{0.23\linewidth}
+\begin{frame}{Conclusion: what the empirical results show}
+  \vspace{0.08cm}
+  \begin{columns}[T,totalwidth=0.94\linewidth]
+    \begin{column}{0.29\linewidth}
       \colorbox{PurpleLight}{\parbox{0.88\linewidth}{\centering
-        \fontsize{16}{18}\selectfont\bfseries 33/36\par
-        \scriptsize foundation-model wins}}
+        \fontsize{16}{18}\selectfont\bfseries 33 of 36\par
+        \scriptsize foundation model ranks first}}
     \end{column}
-    \begin{column}{0.23\linewidth}
+    \begin{column}{0.29\linewidth}
       \colorbox{TealLight}{\parbox{0.88\linewidth}{\centering
-        \fontsize{16}{18}\selectfont\bfseries 16/36\par
-        \scriptsize family-dominance cells}}
+        \fontsize{16}{18}\selectfont\bfseries 16\par
+        \scriptsize strict foundation dominance}}
     \end{column}
-    \begin{column}{0.23\linewidth}
+    \begin{column}{0.29\linewidth}
       \colorbox{GoldLight}{\parbox{0.88\linewidth}{\centering
-        \fontsize{16}{18}\selectfont\bfseries 3/36\par
-        \scriptsize classical-model wins}}
-    \end{column}
-    \begin{column}{0.23\linewidth}
-      \colorbox{GreenLight}{\parbox{0.88\linewidth}{\centering
-        \fontsize{16}{18}\selectfont\bfseries 4/36\par
-        \scriptsize strictly separated wins}}
+        \fontsize{16}{18}\selectfont\bfseries 3\par
+        \scriptsize classical model ranks first}}
     \end{column}
   \end{columns}
 
-  \vspace{0.25cm}
+  \vspace{0.22cm}
   \begin{center}
-    \large\bfseries
-    Foundation models lead---but the advantage is
-    \color{Teal}dataset-, metric-, and evidence-dependent.\color{Ink}
+    \normalsize\bfseries
+    Foundation models usually achieve the lowest aggregate loss,
+    \color{Teal}but the pattern is not uniform.\color{Ink}
   \end{center}
 
-  \vspace{0.24cm}
+  \vspace{0.18cm}
   \begin{columns}[T,totalwidth=0.92\linewidth]
-    \begin{column}{0.40\linewidth}
-      \tagbox{TealLight}{\textbf{What the benchmark supports}}
-      \vspace{0.12cm}
+    \begin{column}{0.43\linewidth}
+      \tagbox{PurpleLight}{\textbf{The general pattern}}
+      \vspace{0.10cm}
 
-      \fontsize{8.6}{10.2}\selectfont
-      \begin{itemize}\setlength{\itemsep}{0.13cm}
-        \item TimesFM has the broadest empirical coverage; Moirai and Chronos
-          lead in distinct domains.
-        \item Clean separation appears for all three NN5 losses and Weather
-          CRPS.
+      \fontsize{8.4}{9.8}\selectfont
+      \begin{itemize}\setlength{\itemsep}{0.10cm}
+        \item TimesFM records the most empirical wins.
+        \item Chronos and Moirai lead on several datasets where the separation
+          from classical methods is substantial.
       \end{itemize}
     \end{column}
 
-    \begin{column}{0.40\linewidth}
-      \tagbox{GoldLight}{\textbf{What limits the claim}}
-      \vspace{0.12cm}
+    \begin{column}{0.43\linewidth}
+      \tagbox{GoldLight}{\textbf{The important exceptions}}
+      \vspace{0.10cm}
 
-      \fontsize{8.6}{10.2}\selectfont
-      \begin{itemize}\setlength{\itemsep}{0.13cm}
-        \item Classical models lead M1 WQL/CRPS and BLS MASE; most other winners
-          share their MCS with alternatives.
-        \item Low-power datasets and exploratory DM results cannot support
-          universal superiority claims.
+      \fontsize{8.4}{9.8}\selectfont
+      \begin{itemize}\setlength{\itemsep}{0.10cm}
+        \item ARIMA has the lowest WQL and CRPS on M1 Yearly.
+        \item Auto ARIMA has the lowest MASE on BLS Macro.
+        \item Some foundation model wins are very close, as seen for M1 and
+          USGS MASE.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}{Conclusion: what the statistical analysis adds}
+  \vspace{0.05cm}
+  \begin{center}
+    \colorbox{GreenLight}{\parbox{0.88\linewidth}{\centering
+      \fontsize{14}{16}\selectfont\bfseries 4 comparisons show complete statistical separation\par
+      \vspace{0.05cm}
+      \scriptsize NN5 MASE, NN5 WQL, NN5 CRPS, and Weather CRPS}}
+  \end{center}
+
+  \vspace{0.18cm}
+  \begin{columns}[T,totalwidth=0.92\linewidth]
+    \begin{column}{0.43\linewidth}
+      \tagbox{TealLight}{\textbf{What is well supported}}
+      \vspace{0.10cm}
+
+      \fontsize{8.4}{9.8}\selectfont
+      \begin{itemize}\setlength{\itemsep}{0.10cm}
+        \item NN5 provides the clearest evidence. TimesFM separates from every
+          alternative for all three losses.
+        \item Moirai also separates from every alternative for Weather CRPS.
+        \item These conclusions agree across adjusted SPA tests and the model
+          confidence set.
+      \end{itemize}
+    \end{column}
+
+    \begin{column}{0.43\linewidth}
+      \tagbox{GoldLight}{\textbf{What remains uncertain}}
+      \vspace{0.10cm}
+
+      \fontsize{8.4}{9.8}\selectfont
+      \begin{itemize}\setlength{\itemsep}{0.10cm}
+        \item Most empirical winners remain statistically tied with at least
+          one alternative.
+        \item Several datasets contain too few paired tasks for a strong claim.
+        \item A broad win count therefore says more about coverage than about
+          certainty.
       \end{itemize}
     \end{column}
   \end{columns}
 
+  \vspace{0.16cm}
+  \begin{center}
+    \colorbox{TealLight}{\parbox{0.86\linewidth}{\centering\scriptsize
+      \textbf{Overall:} Foundation models are strong defaults when no retraining
+      is available. Classical models still matter, and each claimed improvement
+      should be checked for the dataset, the loss, and the available evidence.}}
+  \end{center}
 \end{frame}
 
 \end{document}
