@@ -323,29 +323,29 @@
 % -----------------------------------------------------------------------------
 \begin{frame}{Twelve datasets I: competition and archive panels}
   \vspace{0.14cm}
-  \fontsize{7.4}{8.7}\selectfont
-  \renewcommand{\arraystretch}{1.38}
-  \setlength{\tabcolsep}{2.3pt}
-  \begin{tabularx}{\linewidth}{L{1.55cm} L{1.42cm} L{1.72cm} C{1.00cm} C{1.10cm} L{1.48cm} Y}
+  \fontsize{8.3}{9.6}\selectfont
+  \renewcommand{\arraystretch}{1.45}
+  \setlength{\tabcolsep}{3.1pt}
+  \begin{tabularx}{\linewidth}{L{2.15cm} L{2.45cm} C{1.75cm} Y}
     \toprule
-    \textbf{Dataset} & \textbf{Domain} & \textbf{Full dataset} & \textbf{Series used} &
-      \textbf{Freq. / H} & \textbf{Observations} & \textbf{Statistical characteristics} \\
+    \textbf{Dataset} & \textbf{Domain} & \textbf{Series used} &
+      \textbf{Main patterns} \\
     \midrule
     \rowcolor{TealLight}
-    M1 Yearly & Business / economic & 181 univariate series & 20 & Y / 6 &
-      15--58 & Trends, level shifts, weak or absent seasonality \\
-    M3 Quarterly & Business / economic & 756 univariate series & 20 & Q / 8 &
-      24--72 points & Quarterly cycles, trend, nonstationarity \\
+    M1 Yearly & Business / economic & 20 &
+      Trends and changes in level \\
+    M3 Quarterly & Business / economic & 20 &
+      Trends and quarterly cycles \\
     \rowcolor{TealLight}
-    M4 Hourly & Mixed competition & 414 univariate series & 20 & h / 48 &
-      748--1,008 points & High frequency, daily seasonality, noise \\
-    Weather (rain) & Environment & Rain subset of 3,010 series & 20 & D / 30 &
-      1,332--65,981 & Zero inflation, intermittency, seasonal weather \\
+    M4 Hourly & Mixed competition & 20 &
+      Daily cycles and noise \\
+    Weather (rain) & Environment & 20 &
+      Many zeros and seasonal rain patterns \\
     \rowcolor{TealLight}
-    Car Parts & Retail / inventory & 2,674 univariate series & 20 & M / 12 &
-      51 each & Sparse intermittent demand, many zeros \\
-    NN5 Weekly & Banking / ATM & 111 univariate series & 20 & W / 8 &
-      about 113 & Annual seasonality, holidays, demand volatility \\
+    Car Parts & Retail / inventory & 20 &
+      Sparse demand with many zeros \\
+    NN5 Weekly & Banking / ATM & 20 &
+      Yearly patterns, holidays, changing demand \\
     \bottomrule
   \end{tabularx}
 \end{frame}
@@ -353,29 +353,29 @@
 % -----------------------------------------------------------------------------
 \begin{frame}{Twelve datasets II: health, infrastructure, and macroeconomics}
   \vspace{0.14cm}
-  \fontsize{7.25}{8.55}\selectfont
-  \renewcommand{\arraystretch}{1.33}
-  \setlength{\tabcolsep}{2.3pt}
-  \begin{tabularx}{\linewidth}{L{1.55cm} L{1.42cm} L{1.72cm} C{1.00cm} C{1.10cm} L{1.48cm} Y}
+  \fontsize{8.15}{9.45}\selectfont
+  \renewcommand{\arraystretch}{1.40}
+  \setlength{\tabcolsep}{3.0pt}
+  \begin{tabularx}{\linewidth}{L{2.25cm} L{2.55cm} C{1.75cm} Y}
     \toprule
-    \textbf{Dataset} & \textbf{Domain} & \textbf{Full dataset} & \textbf{Series used} &
-      \textbf{Freq. / H} & \textbf{Observations} & \textbf{Statistical characteristics} \\
+    \textbf{Dataset} & \textbf{Domain} & \textbf{Series used} &
+      \textbf{Main patterns} \\
     \midrule
     \rowcolor{GoldLight}
-    National Illness & Public health & 1 series, 7 variables & 1 target & W / 24 &
-      966 weeks & Epidemic peaks, annual cycle, regime change \\
-    Traffic & Transport & 1 series, 862 sensors & 5 targets & h / 24 &
-      17,544 hours & Strong daily/weekly cycles, correlated sensors \\
+    National Illness & Public health & 1 &
+      Yearly flu cycle and sudden peaks \\
+    Traffic & Transport & 5 &
+      Strong daily and weekly traffic cycles \\
     \rowcolor{GoldLight}
-    PSM & Server telemetry & 1 series, 25 variables & 5 targets & h / 24 &
-      132,481 min. rows, resampled h & Anomalies, abrupt shifts, high-frequency noise \\
-    Elexon Demand & Energy & 1 national demand series & 1 & D / 30 &
-      2024--2026 (730 days) & Weekly cycle, weather/calendar effects, nonstationarity \\
+    PSM & Server telemetry & 5 &
+      Sudden anomalies and noisy sensor data \\
+    Elexon Demand & Energy & 1 &
+      Weekly demand cycle and weather effects \\
     \rowcolor{GoldLight}
-    USGS Streamflow & Hydrology & 5 gauge series & 5 & D / 30 &
-      2015--2026 ($\sim$4,230 days) & Annual hydrology, skew, floods/droughts, gaps \\
-    BLS Macro & Macro & 3 indicator series & 3 & M / 6 &
-      2010--2026 ($\sim$199 months) & Trends, structural breaks, heterogeneous scales \\
+    USGS Streamflow & Hydrology & 5 &
+      Yearly water cycle, floods, droughts, gaps \\
+    BLS Macro & Macroeconomics & 3 &
+      Long trends and structural changes \\
     \bottomrule
   \end{tabularx}
 \end{frame}
@@ -458,83 +458,6 @@
   quantile and distributional quality; lower is better.}\end{center}
 \end{frame}
 
-% -----------------------------------------------------------------------------
-\begin{frame}{Statistical inference for forecast comparisons}
-  \vspace{0.10cm}
-  \begin{columns}[T,totalwidth=0.97\linewidth]
-    \begin{column}{0.31\linewidth}
-      \tagbox{TealLight}{\normalsize\textbf{Diebold--Mariano}}
-      \vspace{0.10cm}
-
-      \centering\small\textbf{Which of two models is better?}
-
-      \vspace{0.08cm}
-      \scriptsize
-      \[
-        d_t=L_t(A)-L_t(B),
-        \qquad H_0:\mathbb{E}[d_t]=0
-      \]
-      \raggedright
-      \textbf{Use:} compare A and B on the same forecast origins. The variance
-      estimate accounts for serial dependence in $d_t$.
-
-      \vspace{0.12cm}
-      \colorbox{TealLight}{\parbox{0.90\linewidth}{\centering\scriptsize
-        \textbf{Decision}\par
-        $p<\alpha$ and $\bar d<0$: A has significantly lower expected loss.}}
-    \end{column}
-
-    \begin{column}{0.31\linewidth}
-      \tagbox{GoldLight}{\normalsize\textbf{SPA}}
-      \vspace{0.10cm}
-
-      \centering\small\textbf{Does any alternative beat a benchmark?}
-
-      \vspace{0.08cm}
-      \scriptsize
-      \[
-        d_{k,t}=L_t(B)-L_t(k)
-      \]
-      \vspace{-0.16cm}
-      \[
-        H_0:\max_k\mathbb{E}[d_{k,t}]\leq0
-      \]
-      \raggedright
-      \textbf{Use:} compare benchmark B with many challengers at once. The
-      bootstrap corrects for searching over multiple models.
-
-      \vspace{0.12cm}
-      \colorbox{GoldLight}{\parbox{0.90\linewidth}{\centering\scriptsize
-        \textbf{Decision}\par
-        Reject $H_0$: at least one challenger has lower expected loss than B.}}
-    \end{column}
-
-    \begin{column}{0.31\linewidth}
-      \tagbox{PurpleLight}{\normalsize\textbf{Model Confidence Set}}
-      \vspace{0.10cm}
-
-      \centering\small\textbf{Which models remain plausible best models?}
-
-      \vspace{0.08cm}
-      \scriptsize
-      \[
-        \mathcal{M}_0\supset\cdots\supset
-        \widehat{\mathcal{M}}_{1-\alpha}
-      \]
-      \raggedright
-      \textbf{Use:} begin with every model. Repeatedly test equal predictive
-      ability and remove the worst-supported model.
-
-      \vspace{0.12cm}
-      \colorbox{PurpleLight}{\parbox{0.90\linewidth}{\centering\scriptsize
-        \textbf{Output}\par
-        $\widehat{\mathcal M}_{1-\alpha}$ is a set of models that cannot be
-        distinguished from the best at level $\alpha$.}}
-    \end{column}
-  \end{columns}
-\end{frame}
-
-% -----------------------------------------------------------------------------
 \begin{frame}{Empirical winners across the three core losses}
   \vspace{0.04cm}
   \begin{center}
@@ -642,11 +565,11 @@
       \textbf{Dataset} & \textbf{MASE} & \textbf{WQL} & \textbf{CRPS} \\
       \midrule
       \rowcolor{GreenLight} M4 Hourly & $\checkmark$ Chronos Base & $\checkmark$ Chronos Base & $\checkmark$ Chronos Base \\
-      PSM\textsuperscript{\(\dagger\)} & $\checkmark$ Chronos Small & $\checkmark$ Chronos Small & $\checkmark$ Chronos Small \\
-      \rowcolor{Paper} Elexon Demand\textsuperscript{\(\dagger\)} & $\checkmark$ TimesFM & $\checkmark$ TimesFM & $\checkmark$ TimesFM \\
-      USGS Streamflow\textsuperscript{\(\dagger\)} & $\checkmark$ Moirai & $\checkmark$ TimesFM & $\checkmark$ TimesFM \\
+      PSM & $\checkmark$ Chronos Small & $\checkmark$ Chronos Small & $\checkmark$ Chronos Small \\
+      \rowcolor{Paper} Elexon Demand & $\checkmark$ TimesFM & $\checkmark$ TimesFM & $\checkmark$ TimesFM \\
+      USGS Streamflow & $\checkmark$ Moirai & $\checkmark$ TimesFM & $\checkmark$ TimesFM \\
       \rowcolor{Paper} Car Parts & \cellcolor{CoralLight}\textit{not strict} & $\checkmark$ Moirai & $\checkmark$ Moirai \\
-      Traffic\textsuperscript{\(\dagger\)} & \cellcolor{CoralLight}\textit{not strict} & $\checkmark$ Moirai & $\checkmark$ Moirai \\
+      Traffic & \cellcolor{CoralLight}\textit{not strict} & $\checkmark$ Moirai & $\checkmark$ Moirai \\
       \bottomrule
     \end{tabular}
   \end{center}
@@ -659,10 +582,6 @@
     and Traffic satisfy it for WQL and CRPS.
   \end{center}
 
-  \vspace{0.12cm}
-  \scriptsize\color{Muted}
-  \textsuperscript{\(\dagger\)}Descriptive low-power case; among the four
-  complete-dominance datasets, only M4 Hourly has at least 20 paired tasks.
 \end{frame}
 
 % -----------------------------------------------------------------------------
@@ -720,9 +639,9 @@
       M3 Quarterly & \cellcolor{PurpleLight}\textbf{TimesFM} & \cellcolor{PurpleLight}\textbf{TimesFM} & \cellcolor{PurpleLight}\textbf{TimesFM} \\
       \rowcolor{Paper} NN5 Weekly & \cellcolor{PurpleLight}\textbf{TimesFM} & \cellcolor{PurpleLight}\textbf{TimesFM} & \cellcolor{PurpleLight}\textbf{TimesFM} \\
       Weather & \cellcolor{PurpleLight}\textbf{Chronos Base} & \cellcolor{PurpleLight}\textbf{Moirai} & \cellcolor{PurpleLight}\textbf{Moirai} \\
-      \rowcolor{Paper} National Illness\textsuperscript{\(\dagger\)} & \cellcolor{PurpleLight}\textbf{TimesFM} & \cellcolor{PurpleLight}\textbf{TimesFM} & \cellcolor{PurpleLight}\textbf{TimesFM} \\
-      Traffic\textsuperscript{\(\dagger\)} & \cellcolor{PurpleLight}\textbf{Moirai} & \cellcolor{TealLight}\textit{strict FM} & \cellcolor{TealLight}\textit{strict FM} \\
-      \rowcolor{Paper} BLS Macro\textsuperscript{\(\dagger\)} & \cellcolor{GoldLight}\textit{classical first} & \cellcolor{PurpleLight}\textbf{TimesFM} & \cellcolor{PurpleLight}\textbf{TimesFM} \\
+      \rowcolor{Paper} National Illness & \cellcolor{PurpleLight}\textbf{TimesFM} & \cellcolor{PurpleLight}\textbf{TimesFM} & \cellcolor{PurpleLight}\textbf{TimesFM} \\
+      Traffic & \cellcolor{PurpleLight}\textbf{Moirai} & \cellcolor{TealLight}\textit{strict FM} & \cellcolor{TealLight}\textit{strict FM} \\
+      \rowcolor{Paper} BLS Macro & \cellcolor{GoldLight}\textit{classical first} & \cellcolor{PurpleLight}\textbf{TimesFM} & \cellcolor{PurpleLight}\textbf{TimesFM} \\
       \bottomrule
     \end{tabular}
   \end{center}
@@ -739,7 +658,6 @@
   \vspace{0.08cm}
   \scriptsize\color{Muted}
   Purple cells name the empirical foundation-model leader.
-  \textsuperscript{\(\dagger\)}Descriptive low-power dataset.
 \end{frame}
 
 % -----------------------------------------------------------------------------
@@ -791,7 +709,7 @@
       \midrule
       M1 Yearly & WQL & ARIMA \; 0.0827 & Chronos Tiny \; 0.0944 & \textbf{12.4\%} \\
       \rowcolor{GoldLight} M1 Yearly & CRPS & ARIMA \; 202,882 & Chronos Tiny \; 231,712 & \textbf{12.4\%} \\
-      BLS Macro\textsuperscript{\(\dagger\)} & MASE & Auto-ARIMA \; 0.141 & TimesFM \; 0.174 & \textbf{18.8\%} \\
+      BLS Macro & MASE & Auto-ARIMA \; 0.141 & TimesFM \; 0.174 & \textbf{18.8\%} \\
       \bottomrule
     \end{tabular}
   \end{center}
@@ -847,60 +765,75 @@
 \end{frame}
 
 % -----------------------------------------------------------------------------
-\begin{frame}{How to read the repetition results}
-  \vspace{0.01cm}
-  \begin{center}
-    \small
-    \textbf{$p_{\mathrm{Holm}}$ is a corrected p-value.}
-    Holm correction accounts for testing several dataset and metric combinations
-    at the same time.
-  \end{center}
-
-  \vspace{0.06cm}
-  \begin{columns}[T,totalwidth=0.94\linewidth]
-    \begin{column}{0.29\linewidth}
-      \colorbox{GreenLight}{\parbox{0.88\linewidth}{\centering
-        \large\bfseries $p_{\mathrm{Holm}}<0.05$\par
-        \vspace{0.04cm}
-        \fontsize{7.7}{8.8}\selectfont
-        The observed lead is large relative to seed variation in the three runs.}}
-    \end{column}
-    \begin{column}{0.29\linewidth}
-      \colorbox{PurpleLight}{\parbox{0.88\linewidth}{\centering
-        \large\bfseries SI\par
-        \vspace{0.04cm}
-        \fontsize{7.7}{8.8}\selectfont
-        The same positive gap occurs in every run; a finite p-value is undefined.}}
-    \end{column}
-    \begin{column}{0.29\linewidth}
-      \colorbox{GoldLight}{\parbox{0.88\linewidth}{\centering
-        \large\bfseries $p_{\mathrm{Holm}}\geq0.05$\par
-        \vspace{0.04cm}
-        \fontsize{7.7}{8.8}\selectfont
-        Three repetitions do not distinguish the lead from seed variation.}}
-    \end{column}
-  \end{columns}
-
-  \vspace{0.10cm}
-  \begin{center}
-    \fontsize{8.0}{9.2}\selectfont
-    \renewcommand{\arraystretch}{1.20}
-    \setlength{\tabcolsep}{5.5pt}
-    \begin{tabular}{L{2.70cm} C{2.40cm} L{6.50cm}}
-      \toprule
-      \textbf{Example} & \textbf{Reported value} & \textbf{Interpretation} \\
-      \midrule
-      M4 Hourly CRPS & \cellcolor{GreenLight}\textbf{$p=0.010$} & The lead remains clear after correcting for multiple tests. \\
-      \rowcolor{Paper} M1 Yearly WQL & \cellcolor{GoldLight}\textbf{$p=0.068$} & The observed lead is not resolved by three repetitions. \\
-      BLS Macro MASE & \cellcolor{PurpleLight}\textbf{SI} & The same positive gap is recorded in every repetition. \\
-      \bottomrule
-    \end{tabular}
-  \end{center}
-
+\begin{frame}{How to interpret the repetition test}
   \vspace{0.02cm}
   \begin{center}
-    \colorbox{TealLight}{\parbox{0.84\linewidth}{\centering\scriptsize
-      These results describe repeatability across the three random seeds.}}
+    \colorbox{Paper}{\parbox{0.91\linewidth}{\centering
+      \small\bfseries Why are 22 \(p\)-values adjusted?\par
+      \vspace{0.07cm}
+      \begin{tabular}{C{3.15cm} c C{3.15cm} c C{3.15cm}}
+        \shortstack{\color{Teal}\fontsize{17}{18}\selectfont\bfseries 36\\[-1pt]
+          \color{Ink}\fontsize{7.2}{8.0}\selectfont comparisons\\
+          \color{Muted}\fontsize{6.4}{7.1}\selectfont 12 datasets \(\times\) 3 losses}
+        & \(\boldsymbol{-}\) &
+        \shortstack{\color{Purple}\fontsize{17}{18}\selectfont\bfseries 14\\[-1pt]
+          \color{Ink}\fontsize{7.2}{8.0}\selectfont SI cases\\
+          \color{Muted}\fontsize{6.4}{7.1}\selectfont no numerical \(p\)-value}
+        & \(\boldsymbol{=}\) &
+        \shortstack{\color{Teal}\fontsize{17}{18}\selectfont\bfseries 22\\[-1pt]
+          \color{Ink}\fontsize{7.2}{8.0}\selectfont numerical \(p\)-values\\
+          \color{Muted}\fontsize{6.4}{7.1}\selectfont adjusted together}
+      \end{tabular}}}
+  \end{center}
+
+  \vspace{0.11cm}
+  \begin{center}\fontsize{8.5}{9.8}\selectfont
+    Holm correction treats the 22 values as one family, limiting false positives
+    caused by testing many comparisons.
+  \end{center}
+
+  \vspace{0.14cm}
+  \begin{center}
+    \begin{tikzpicture}[
+      resultcard/.style={
+        rounded corners=3pt,
+        text width=3.55cm,
+        minimum height=2.45cm,
+        inner sep=7pt,
+        align=center
+      }
+    ]
+      \node[resultcard,fill=GreenLight] (supported) {
+        {\large\bfseries Supported}\par
+        \vspace{0.09cm}
+        {\color{Green}\fontsize{12.5}{15}\selectfont\bfseries adjusted \(p<.05\)}\par
+        \vspace{0.12cm}
+        {\fontsize{8.1}{9.4}\selectfont
+          The lead remains distinguishable from seed variation after correction.}
+      };
+      \node[resultcard,fill=PurpleLight,right=0.42cm of supported] (invariant) {
+        {\large\bfseries Seed-invariant}\par
+        \vspace{0.09cm}
+        {\color{Purple}\fontsize{12.5}{15}\selectfont\bfseries SI: no \(p\)-value}\par
+        \vspace{0.12cm}
+        {\fontsize{8.1}{9.4}\selectfont
+          The same positive gap occurs in all three runs; its standard deviation is zero.}
+      };
+      \node[resultcard,fill=GoldLight,right=0.42cm of invariant] (unresolved) {
+        {\large\bfseries Unresolved}\par
+        \vspace{0.09cm}
+        {\color{Gold}\fontsize{12.5}{15}\selectfont\bfseries adjusted \(p\geq.05\)}\par
+        \vspace{0.12cm}
+        {\fontsize{8.1}{9.4}\selectfont
+          Three runs do not distinguish the observed lead from seed variation.}
+      };
+    \end{tikzpicture}
+  \end{center}
+
+  \vspace{0.20cm}
+  \begin{center}
+    \colorbox{TealLight}{\parbox{0.76\linewidth}{\centering\fontsize{7.8}{9.0}\selectfont
+      \textbf{Scope:} repeatability across three random seeds.}}
   \end{center}
 \end{frame}
 
@@ -955,272 +888,695 @@
   The table measures repeatability across the three random seeds only.
 \end{frame}
 
-\begin{frame}{Is the empirical benchmark narrative enough?}
-  \vspace{0.01cm}
+\begin{frame}[t]{95\% Model Confidence Set: method and results}
   \begin{center}
-    \fontsize{16}{19}\selectfont\bfseries
-    Are the observed winners \color{Teal}meaningfully\color{Ink}\ winning?
+    \tagbox{Paper}{\scriptsize\textbf{11 candidate models}}
+    \quad\(\longrightarrow\)\quad
+    \tagbox{TealLight}{\scriptsize\textbf{test equality, remove the weakest, repeat}}
+    \quad\(\longrightarrow\)\quad
+    \tagbox{PurpleLight}{\scriptsize\textbf{95\% MCS}}
   \end{center}
 
-  \vspace{0.18cm}
-  \begin{columns}[T,totalwidth=0.92\linewidth]
-    \begin{column}{0.43\linewidth}
-      \tagbox{TealLight}{\large\textbf{Empirical narrative}}
-      \vspace{0.18cm}
+  \vspace{0cm}
+  \begin{center}\fontsize{6.5}{7.2}\selectfont
+    MCS starts with all 11 models, tests equal predictive ability on paired
+    losses, and removes the weakest after a rejection. The final 95\% set
+    contains models not distinguished from the best.
+    Each cell is \textbf{MCS size / opposite-family flag}: 1 means the best
+    opposite-family model is excluded; 0 means it remains.
+  \end{center}
 
-      \small
-      \begin{itemize}\setlength{\itemsep}{0.11cm}
-        \item Lowest aggregate metric values
-        \item Average ranks and winner counts
-        \item Breadth across datasets and domains
-        \item Point, quantile, and distributional losses
+  \vspace{0cm}
+  \begin{center}
+    \fontsize{7.2}{7.8}\selectfont
+    \renewcommand{\arraystretch}{0.85}
+    \setlength{\tabcolsep}{6.2pt}
+    \begin{tabular}{L{3.45cm} C{2.58cm} C{2.58cm} C{2.58cm}}
+      \toprule
+      \textbf{Dataset} & \textbf{MASE} & \textbf{WQL} & \textbf{CRPS} \\
+      \midrule
+      M1 Yearly & \cellcolor{CoralLight}\textbf{9/0} & \cellcolor{CoralLight}\textbf{11/0} & \cellcolor{CoralLight}\textbf{11/0} \\
+      \rowcolor{Paper} M4 Hourly & \cellcolor{GoldLight}\textbf{6/1} & \cellcolor{CoralLight}\textbf{11/0} & \cellcolor{CoralLight}\textbf{11/0} \\
+      Weather & \cellcolor{CoralLight}\textbf{8/0} & \cellcolor{PurpleLight}\textbf{2/1} & \cellcolor{GreenLight}\textbf{1/1} \\
+      \rowcolor{Paper} M3 Quarterly & \cellcolor{GoldLight}\textbf{4/0} & \cellcolor{PurpleLight}\textbf{2/1} & \cellcolor{GoldLight}\textbf{5/0} \\
+      Car Parts & \cellcolor{GoldLight}\textbf{7/0} & \cellcolor{GoldLight}\textbf{7/1} & \cellcolor{GoldLight}\textbf{7/1} \\
+      \rowcolor{Paper} NN5 Weekly & \cellcolor{GreenLight}\textbf{1/1} & \cellcolor{GreenLight}\textbf{1/1} & \cellcolor{GreenLight}\textbf{1/1} \\
+      National Illness & \cellcolor{GoldLight}\textbf{7/0} & \cellcolor{GoldLight}\textbf{5/1} & \cellcolor{GoldLight}\textbf{5/1} \\
+      \rowcolor{Paper} Traffic & \cellcolor{GoldLight}\textbf{6/0} & \cellcolor{GoldLight}\textbf{5/1} & \cellcolor{GoldLight}\textbf{5/1} \\
+      PSM & \cellcolor{GoldLight}\textbf{7/1} & \cellcolor{GoldLight}\textbf{7/1} & \cellcolor{GoldLight}\textbf{7/1} \\
+      \rowcolor{Paper} Elexon Demand & \cellcolor{PurpleLight}\textbf{3/1} & \cellcolor{PurpleLight}\textbf{2/1} & \cellcolor{PurpleLight}\textbf{2/1} \\
+      USGS Streamflow & \cellcolor{CoralLight}\textbf{8/0} & \cellcolor{CoralLight}\textbf{11/0} & \cellcolor{CoralLight}\textbf{11/0} \\
+      \rowcolor{Paper} BLS Macro & \cellcolor{GoldLight}\textbf{5/0} & \cellcolor{CoralLight}\textbf{11/0} & \cellcolor{CoralLight}\textbf{11/0} \\
+      \bottomrule
+    \end{tabular}
+  \end{center}
+
+  \vspace{-0.17cm}
+  \begin{center}
+    \tagbox{GreenLight}{\fontsize{6.4}{7.1}\selectfont\textbf{1: unique}}
+    \hspace{0.08cm}
+    \tagbox{PurpleLight}{\fontsize{6.4}{7.1}\selectfont\textbf{2--3: narrow}}
+    \hspace{0.08cm}
+    \tagbox{GoldLight}{\fontsize{6.4}{7.1}\selectfont\textbf{4--7: competitive}}
+    \hspace{0.08cm}
+    \tagbox{CoralLight}{\fontsize{6.4}{7.1}\selectfont\textbf{8--11: broad}}
+  \end{center}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}{NN5 Weekly: CRPS leaves one model in the MCS}
+  \vspace{-0.03cm}
+  \begin{columns}[T,totalwidth=0.98\linewidth]
+    \begin{column}{0.59\linewidth}
+      \centering
+      \includegraphics[width=\linewidth,height=4.85cm,keepaspectratio]{nn5-crps-mcs-forecast.png}
+    \end{column}
+    \begin{column}{0.39\linewidth}
+      \centering
+      \includegraphics[width=\linewidth,height=4.85cm,keepaspectratio]{nn5-crps-mcs-mcs.png}
+    \end{column}
+  \end{columns}
+
+  \vspace{0.03cm}
+  \begin{center}
+    \fontsize{7.6}{8.6}\selectfont
+    TimesFM has the lowest CRPS and is the only model retained. In this task,
+    its predictive interval covers most of the realized path, although the
+    central forecast misses the early spike.
+  \end{center}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}{M1 Yearly: WQL leaves all models in the MCS}
+  \vspace{-0.03cm}
+  \begin{columns}[T,totalwidth=0.98\linewidth]
+    \begin{column}{0.59\linewidth}
+      \centering
+      \includegraphics[width=\linewidth,height=4.85cm,keepaspectratio]{m1-wql-mcs-forecast.png}
+    \end{column}
+    \begin{column}{0.39\linewidth}
+      \centering
+      \includegraphics[width=\linewidth,height=4.85cm,keepaspectratio]{m1-wql-mcs-mcs.png}
+    \end{column}
+  \end{columns}
+
+  \vspace{0.03cm}
+  \begin{center}
+    \fontsize{7.6}{8.6}\selectfont
+    ARIMA records the lowest aggregate WQL, but the MCS cannot eliminate any
+    alternative. A first-place empirical rank is therefore not a uniquely
+    supported winner on this dataset.
+  \end{center}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}{Elexon Demand: WQL narrows the MCS to two models}
+  \vspace{-0.03cm}
+  \begin{columns}[T,totalwidth=0.98\linewidth]
+    \begin{column}{0.59\linewidth}
+      \centering
+      \includegraphics[width=\linewidth,height=4.85cm,keepaspectratio]{elexon-wql-mcs-forecast.png}
+    \end{column}
+    \begin{column}{0.39\linewidth}
+      \centering
+      \includegraphics[width=\linewidth,height=4.85cm,keepaspectratio]{elexon-wql-mcs-mcs.png}
+    \end{column}
+  \end{columns}
+
+  \vspace{0.03cm}
+  \begin{center}
+    \fontsize{7.6}{8.6}\selectfont
+    TimesFM and Chronos Base remain in the set. Because Elexon contributes only
+    three paired tasks, this narrow MCS should be treated as exploratory rather
+    than as broad evidence of separation.
+  \end{center}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}{Traffic: MASE leaves a competitive set of six}
+  \vspace{-0.03cm}
+  \begin{columns}[T,totalwidth=0.98\linewidth]
+    \begin{column}{0.59\linewidth}
+      \centering
+      \includegraphics[width=\linewidth,height=4.85cm,keepaspectratio]{traffic-mase-mcs-forecast.png}
+    \end{column}
+    \begin{column}{0.39\linewidth}
+      \centering
+      \includegraphics[width=\linewidth,height=4.85cm,keepaspectratio]{traffic-mase-mcs-mcs.png}
+    \end{column}
+  \end{columns}
+
+  \vspace{0.03cm}
+  \begin{center}
+    \fontsize{7.6}{8.6}\selectfont
+    Moirai has the lowest aggregate MASE, while six models remain. MCS
+    membership is determined by paired loss differences, so it need not follow
+    the aggregate ranking exactly.
+  \end{center}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}{Conclusion: empirical results}
+  \vspace{0.04cm}
+  \begin{columns}[T,totalwidth=0.92\linewidth]
+    \begin{column}{0.28\linewidth}
+      \colorbox{TealLight}{\parbox{0.90\linewidth}{\centering
+        \fontsize{15}{17}\selectfont\bfseries 11 of 12\par
+        \scriptsize foundation winner for MASE}}
+    \end{column}
+    \begin{column}{0.28\linewidth}
+      \colorbox{PurpleLight}{\parbox{0.90\linewidth}{\centering
+        \fontsize{15}{17}\selectfont\bfseries 11 of 12\par
+        \scriptsize foundation winner for WQL}}
+    \end{column}
+    \begin{column}{0.28\linewidth}
+      \colorbox{GreenLight}{\parbox{0.90\linewidth}{\centering
+        \fontsize{15}{17}\selectfont\bfseries 11 of 12\par
+        \scriptsize foundation winner for CRPS}}
+    \end{column}
+  \end{columns}
+
+  \vspace{0.20cm}
+  \begin{columns}[T,totalwidth=0.93\linewidth]
+    \begin{column}{0.46\linewidth}
+      \tagbox{PurpleLight}{\textbf{Main pattern}}
+      \vspace{0.10cm}
+
+      \fontsize{8.4}{9.8}\selectfont
+      \begin{itemize}\setlength{\itemsep}{0.10cm}
+        \item A foundation model has the lowest loss in 33 of the 36
+          dataset and metric comparisons.
+        \item Foundation models win all three metrics on 10 of the 12
+          datasets.
+        \item They lead on seasonal and higher-frequency data such as M4
+          Hourly, NN5 Weekly, Traffic, and Elexon Demand.
+        \item TimesFM wins 17 comparisons and Moirai wins 9.
       \end{itemize}
     \end{column}
 
-    \begin{column}{0.43\linewidth}
-      \tagbox{CoralLight}{\large\textbf{Unanswered questions}}
-      \vspace{0.18cm}
+    \begin{column}{0.40\linewidth}
+      \tagbox{GoldLight}{\textbf{The three classical wins}}
+      \vspace{0.12cm}
 
-      \small
-      \begin{itemize}\setlength{\itemsep}{0.11cm}
-        \item Is the observed gap distinguishable from sampling variation?
-        \item Does the claim survive comparison with ten alternatives?
-        \item Which models remain statistically plausible winners?
-        \item Are small-sample results sufficiently powered?
+      \fontsize{8.1}{9.3}\selectfont
+      \renewcommand{\arraystretch}{1.28}
+      \setlength{\tabcolsep}{2.5pt}
+      \begin{tabular}{L{1.95cm} C{0.85cm} L{2.00cm}}
+        \toprule
+        \textbf{Dataset} & \textbf{Metric} & \textbf{Winner} \\
+        \midrule
+        M1 Yearly & WQL & ARIMA \\
+        \rowcolor{Paper} M1 Yearly & CRPS & ARIMA \\
+        BLS Macro & MASE & Auto-ARIMA \\
+        \bottomrule
+      \end{tabular}
+
+      \vspace{0.18cm}
+      \fontsize{8.2}{9.5}\selectfont
+      Classical methods are most competitive on the economic datasets with
+      long trends and changes in level.
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}{Conclusion: Model Confidence Set results}
+  \vspace{0.04cm}
+  \begin{columns}[T,totalwidth=0.92\linewidth]
+    \begin{column}{0.28\linewidth}
+      \colorbox{TealLight}{\parbox{0.90\linewidth}{\centering
+        \fontsize{15}{17}\selectfont\bfseries 4 of 12\par
+        \scriptsize meaningful comparison for MASE}}
+    \end{column}
+    \begin{column}{0.28\linewidth}
+      \colorbox{PurpleLight}{\parbox{0.90\linewidth}{\centering
+        \fontsize{15}{17}\selectfont\bfseries 8 of 12\par
+        \scriptsize meaningful comparison for WQL}}
+    \end{column}
+    \begin{column}{0.28\linewidth}
+      \colorbox{GreenLight}{\parbox{0.90\linewidth}{\centering
+        \fontsize{15}{17}\selectfont\bfseries 7 of 12\par
+        \scriptsize meaningful comparison for CRPS}}
+    \end{column}
+  \end{columns}
+
+  \vspace{0.20cm}
+  \begin{columns}[T,totalwidth=0.93\linewidth]
+    \begin{column}{0.46\linewidth}
+      \tagbox{PurpleLight}{\textbf{Main pattern}}
+      \vspace{0.10cm}
+
+      \fontsize{8.2}{9.5}\selectfont
+      \begin{itemize}\setlength{\itemsep}{0.10cm}
+        \item The best model from the other family is excluded in 19 of the 36
+          comparisons.
+        \item WQL and CRPS account for 15 of these 19 results. MASE accounts
+          for only 4.
+        \item The strongest pattern appears on recurring demand and on sparse
+          or noisy series.
+        \item Only four comparisons leave one model: all three NN5 losses and
+          Weather CRPS.
       \end{itemize}
+    \end{column}
+
+    \begin{column}{0.40\linewidth}
+      \tagbox{GreenLight}{\textbf{Meaningful on all three losses}}
+      \vspace{0.12cm}
+
+      \fontsize{8.1}{9.3}\selectfont
+      \renewcommand{\arraystretch}{1.24}
+      \setlength{\tabcolsep}{3.5pt}
+      \begin{tabular}{L{1.90cm} C{0.85cm} C{0.85cm} C{0.85cm}}
+        \toprule
+        \textbf{Dataset} & \textbf{MASE} & \textbf{WQL} & \textbf{CRPS} \\
+        \midrule
+        NN5 Weekly & 1 & 1 & 1 \\
+        \rowcolor{Paper} PSM & 7 & 7 & 7 \\
+        Elexon Demand & 3 & 2 & 2 \\
+        \bottomrule
+      \end{tabular}
+
+      \vspace{0.13cm}
+      \fontsize{7.9}{9.1}\selectfont
+      The table reports the full MCS size. M1 Yearly, BLS Macro, and USGS
+      Streamflow do not exclude the other-family winner for any loss.
     \end{column}
   \end{columns}
 
   \vspace{0.10cm}
-  \begin{center}
-    \tagbox{TealLight}{\scriptsize\textbf{empirical winner}}
-    \quad$\longrightarrow$\quad
-    \tagbox{GoldLight}{\scriptsize\textbf{SPA + DM}}
-    \quad$\longrightarrow$\quad
-    \tagbox{PurpleLight}{\scriptsize\textbf{95\% MCS}}
-    \quad$\longrightarrow$\quad
-    \tagbox{GreenLight}{\scriptsize\textbf{defensible claim}}
+  \begin{center}\small\bfseries
+    MCS evidence is stronger for WQL and CRPS than for MASE, especially on
+    recurring demand and sparse or noisy series.
   \end{center}
 \end{frame}
 
 % -----------------------------------------------------------------------------
-\begin{frame}{MASE: statistical evidence behind the empirical winner}
-  \vspace{0.06cm}
-  \begin{center}
-    \fontsize{7.5}{8.6}\selectfont
-    \renewcommand{\arraystretch}{1.18}
-    \setlength{\tabcolsep}{4.2pt}
-    \begin{tabular}{L{3.10cm} L{2.75cm} C{1.55cm} C{1.55cm} C{1.45cm}}
-      \toprule
-      \textbf{Dataset} & \textbf{Empirical winner} & \textbf{SPA} &
-        \textbf{DM\textsuperscript{*}} & \textbf{MCS size} \\
-      \midrule
-      M1 Yearly & TimesFM & 3/10 & 1/10 & 9 \\
-      M4 Hourly & Chronos Base & 5/10 & 10/10 & 6 \\
-      Weather & Chronos Base & 4/10 & 6/10 & 8 \\
-      M3 Quarterly & TimesFM & 9/10 & 4/10 & 4 \\
-      Car Parts & Moirai & 4/10 & 4/10 & 7 \\
-      \rowcolor{GreenLight} NN5 Weekly & \textbf{TimesFM} & \textbf{10/10} & \textbf{10/10} & \textbf{1} \\
-      National Illness\textsuperscript{\(\dagger\)} & TimesFM & 1/10 & --- & 7 \\
-      Traffic\textsuperscript{\(\dagger\)} & Moirai & 5/10 & 3/10 & 6 \\
-      PSM\textsuperscript{\(\dagger\)} & Chronos Small & 4/10 & 4/10 & 7 \\
-      Elexon Demand\textsuperscript{\(\dagger\)} & TimesFM & 9/10 & --- & 3 \\
-      USGS Streamflow\textsuperscript{\(\dagger\)} & Moirai & 3/10 & 1/10 & 8 \\
-      BLS Macro\textsuperscript{\(\dagger\)} & Auto-ARIMA & 5/10 & --- & 5 \\
-      \bottomrule
-    \end{tabular}
-  \end{center}
-
-  \vspace{0.08cm}
-  \fontsize{6.8}{7.6}\selectfont
-  SPA/DM = Holm-adjusted significant wins out of 10; MCS = models retained in
-  the 95\% set. \textsuperscript{*}DM is exploratory; --- = not run ($<8$
-  ordered tasks). \textsuperscript{\(\dagger\)}Low power ($<20$ paired tasks).\par
-  \vspace{0.04cm}\scriptsize
-  \good{Strict separation occurs only on NN5 Weekly: TimesFM beats all ten
-  alternatives by SPA and is the sole MCS member.}
-\end{frame}
-
-% -----------------------------------------------------------------------------
-\begin{frame}{WQL: statistical evidence behind the empirical winner}
-  \vspace{0.06cm}
-  \begin{center}
-    \fontsize{7.5}{8.6}\selectfont
-    \renewcommand{\arraystretch}{1.18}
-    \setlength{\tabcolsep}{4.2pt}
-    \begin{tabular}{L{3.10cm} L{2.75cm} C{1.55cm} C{1.55cm} C{1.45cm}}
-      \toprule
-      \textbf{Dataset} & \textbf{Empirical winner} & \textbf{SPA} &
-        \textbf{DM\textsuperscript{*}} & \textbf{MCS size} \\
-      \midrule
-      M1 Yearly & ARIMA & 0/10 & 0/10 & 11 \\
-      M4 Hourly & Chronos Base & 0/10 & 0/10 & 11 \\
-      Weather & Moirai & 9/10 & 9/10 & 2 \\
-      M3 Quarterly & TimesFM & 9/10 & 7/10 & 2 \\
-      Car Parts & Moirai & 4/10 & 5/10 & 7 \\
-      \rowcolor{GreenLight} NN5 Weekly & \textbf{TimesFM} & \textbf{10/10} & \textbf{10/10} & \textbf{1} \\
-      National Illness\textsuperscript{\(\dagger\)} & TimesFM & 1/10 & --- & 5 \\
-      Traffic\textsuperscript{\(\dagger\)} & Moirai & 6/10 & 3/10 & 5 \\
-      PSM\textsuperscript{\(\dagger\)} & Chronos Small & 4/10 & 3/10 & 7 \\
-      Elexon Demand\textsuperscript{\(\dagger\)} & TimesFM & 9/10 & --- & 2 \\
-      USGS Streamflow\textsuperscript{\(\dagger\)} & TimesFM & 0/10 & 0/10 & 11 \\
-      BLS Macro\textsuperscript{\(\dagger\)} & TimesFM & 0/10 & --- & 11 \\
-      \bottomrule
-    \end{tabular}
-  \end{center}
-
-  \vspace{0.08cm}
-  \fontsize{6.8}{7.6}\selectfont
-  SPA/DM = Holm-adjusted significant wins out of 10; MCS = models retained in
-  the 95\% set. \textsuperscript{*}DM is exploratory; --- = not run ($<8$
-  ordered tasks). \textsuperscript{\(\dagger\)}Low power ($<20$ paired tasks).\par
-  \vspace{0.04cm}\scriptsize
-  \good{Strict separation occurs only on NN5 Weekly; Weather and M3 show strong
-  but not unique leadership.}
-\end{frame}
-
-% -----------------------------------------------------------------------------
-\begin{frame}{CRPS: statistical evidence behind the empirical winner}
-  \vspace{0.06cm}
-  \begin{center}
-    \fontsize{7.5}{8.6}\selectfont
-    \renewcommand{\arraystretch}{1.18}
-    \setlength{\tabcolsep}{4.2pt}
-    \begin{tabular}{L{3.10cm} L{2.75cm} C{1.55cm} C{1.55cm} C{1.45cm}}
-      \toprule
-      \textbf{Dataset} & \textbf{Empirical winner} & \textbf{SPA} &
-        \textbf{DM\textsuperscript{*}} & \textbf{MCS size} \\
-      \midrule
-      M1 Yearly & ARIMA & 0/10 & 0/10 & 11 \\
-      M4 Hourly & Chronos Base & 0/10 & 0/10 & 11 \\
-      \rowcolor{GreenLight} Weather & \textbf{Moirai} & \textbf{10/10} & \textbf{10/10} & \textbf{1} \\
-      M3 Quarterly & TimesFM & 9/10 & 7/10 & 5 \\
-      Car Parts & Moirai & 4/10 & 10/10 & 7 \\
-      \rowcolor{GreenLight} NN5 Weekly & \textbf{TimesFM} & \textbf{10/10} & \textbf{10/10} & \textbf{1} \\
-      National Illness\textsuperscript{\(\dagger\)} & TimesFM & 1/10 & --- & 5 \\
-      Traffic\textsuperscript{\(\dagger\)} & Moirai & 6/10 & 3/10 & 5 \\
-      PSM\textsuperscript{\(\dagger\)} & Chronos Small & 4/10 & 3/10 & 7 \\
-      Elexon Demand\textsuperscript{\(\dagger\)} & TimesFM & 9/10 & --- & 2 \\
-      USGS Streamflow\textsuperscript{\(\dagger\)} & TimesFM & 0/10 & 0/10 & 11 \\
-      BLS Macro\textsuperscript{\(\dagger\)} & TimesFM & 1/10 & --- & 11 \\
-      \bottomrule
-    \end{tabular}
-  \end{center}
-
-  \vspace{0.08cm}
-  \fontsize{6.8}{7.6}\selectfont
-  SPA/DM = Holm-adjusted significant wins out of 10; MCS = models retained in
-  the 95\% set. \textsuperscript{*}DM is exploratory; --- = not run ($<8$
-  ordered tasks). \textsuperscript{\(\dagger\)}Low power ($<20$ paired tasks).\par
-  \vspace{0.04cm}\scriptsize
-  \good{Weather (Moirai) and NN5 Weekly (TimesFM) are the two clean CRPS
-  results: 10/10 SPA wins and singleton confidence sets.}
-\end{frame}
-
-% -----------------------------------------------------------------------------
-\begin{frame}{Conclusion: what the empirical results show}
-  \vspace{0.08cm}
+\begin{frame}{Future work}
+  \vspace{0.02cm}
   \begin{columns}[T,totalwidth=0.94\linewidth]
-    \begin{column}{0.29\linewidth}
-      \colorbox{PurpleLight}{\parbox{0.88\linewidth}{\centering
-        \fontsize{16}{18}\selectfont\bfseries 33 of 36\par
-        \scriptsize foundation model ranks first}}
+    \begin{column}{0.44\linewidth}
+      \colorbox{TealLight}{\parbox{0.92\linewidth}{
+        \textbf{Use more datasets}\par\vspace{0.06cm}
+        \fontsize{8.1}{9.4}\selectfont
+        Add more datasets for each frequency and domain. This would let us test
+        whether model families behave differently on seasonal, sparse,
+        high-frequency, or trend-dominated data.}}
+
+      \vspace{0.18cm}
+      \colorbox{GoldLight}{\parbox{0.92\linewidth}{
+        \textbf{Build stronger classical and hybrid models}\par\vspace{0.06cm}
+        \fontsize{8.1}{9.4}\selectfont
+        Remove trend or seasonality first, forecast the residual with another
+        model, and then add the components back. Compare STL with ARIMA or ETS,
+        model ensembles, and classical plus foundation-model hybrids.}}
     \end{column}
-    \begin{column}{0.29\linewidth}
-      \colorbox{TealLight}{\parbox{0.88\linewidth}{\centering
-        \fontsize{16}{18}\selectfont\bfseries 16\par
-        \scriptsize strict foundation dominance}}
+
+    \begin{column}{0.44\linewidth}
+      \colorbox{PurpleLight}{\parbox{0.92\linewidth}{
+        \textbf{Measure the data characteristics}\par\vspace{0.06cm}
+        \fontsize{8.1}{9.4}\selectfont
+        Use the Pettitt test for level changes, trend tests, seasonality
+        strength, autocorrelation, and the share of zero values. Relate these
+        measurements to the loss differences between model families.}}
+
+      \vspace{0.18cm}
+      \colorbox{GreenLight}{\parbox{0.92\linewidth}{
+        \textbf{Strengthen the statistical analysis}\par\vspace{0.06cm}
+        \fontsize{8.1}{9.4}\selectfont
+        Add more rolling forecast origins. Use hierarchical models across
+        datasets and series, and check how the MCS changes with different
+        bootstrap blocks and significance levels.}}
     \end{column}
-    \begin{column}{0.29\linewidth}
-      \colorbox{GoldLight}{\parbox{0.88\linewidth}{\centering
-        \fontsize{16}{18}\selectfont\bfseries 3\par
-        \scriptsize classical model ranks first}}
+  \end{columns}
+
+  \vspace{0.19cm}
+  \begin{center}
+    \tagbox{Paper}{\small\textbf{Goal: choose methods from measurable properties
+    of the series, not from one overall ranking.}}
+  \end{center}
+\end{frame}
+
+% =============================================================================
+% Appendix frames do not increment the main presentation slide count.
+\appendix
+\setbeamertemplate{footline}{%
+  \leavevmode
+  \hbox to \paperwidth{%
+    \hspace{0.68cm}%
+    {\usebeamerfont{footline}\color{Muted}Amirhossein Bagheri}%
+    \hfill
+    {\usebeamerfont{footline}\color{Muted}Forecasting benchmark \quad Appendix}%
+    \hspace{0.40cm}%
+  }
+  \vspace{0.16cm}
+}
+
+% -----------------------------------------------------------------------------
+\begin{frame}[noframenumbering]{Appendix: how large is the family-level advantage?}
+  \vspace{0.01cm}
+  \begin{center}
+    \includegraphics[width=0.96\linewidth,height=5.25cm,keepaspectratio]{appendix-family-loss-gap.png}
+
+    \vspace{0.08cm}
+    \colorbox{TealLight}{\parbox{0.90\linewidth}{\centering\scriptsize
+      Foundation models lead in 33 of 36 comparisons, but the margin varies
+      sharply. The three baseline wins are M1 Yearly WQL and CRPS, and BLS
+      Macro MASE.}}
+  \end{center}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}[noframenumbering]{Appendix: rank consistency across datasets and losses}
+  \vspace{0.01cm}
+  \begin{center}
+    \includegraphics[width=0.96\linewidth,height=5.25cm,keepaspectratio]{appendix-rank-distribution.png}
+
+    \vspace{0.08cm}
+    \colorbox{PurpleLight}{\parbox{0.90\linewidth}{\centering\scriptsize
+      TimesFM has the best mean rank and the most consistently strong placement.
+      The other foundation-model variants move more across datasets.}}
+  \end{center}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}[noframenumbering]{Appendix: where is the 95\% MCS selective?}
+  \vspace{0.01cm}
+  \begin{center}
+    \includegraphics[width=0.82\linewidth,height=5.30cm,keepaspectratio]{appendix-mcs-size-heatmap.png}
+
+    \vspace{0.05cm}
+    \colorbox{GreenLight}{\parbox{0.90\linewidth}{\centering\scriptsize
+      NN5 produces a one-model set for every loss. Several datasets retain many
+      models even when their empirical winner is a foundation model.}}
+  \end{center}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}[noframenumbering]{Appendix: calibration of the 80\% prediction interval}
+  \vspace{0.01cm}
+  \begin{center}
+    \includegraphics[width=0.96\linewidth,height=5.25cm,keepaspectratio]{appendix-calibration-distribution.png}
+
+    \vspace{0.08cm}
+    \colorbox{GoldLight}{\parbox{0.90\linewidth}{\centering\scriptsize
+      TimesFM has the smallest median coverage error across datasets. Coverage
+      alone is not enough: WQL and CRPS also reward narrower, sharper forecasts.}}
+  \end{center}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}[noframenumbering]{Appendix: recorded runtime versus empirical rank}
+  \vspace{0.01cm}
+  \begin{center}
+    \includegraphics[width=0.96\linewidth,height=5.25cm,keepaspectratio]{appendix-speed-accuracy.png}
+
+    \vspace{0.08cm}
+    \colorbox{Paper}{\parbox{0.90\linewidth}{\centering\scriptsize
+      TimesFM has the best mean rank; Moirai combines a top-five mean rank with
+      low recorded task time. Runtime values are specific to this benchmark setup.}}
+  \end{center}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}[noframenumbering]{Appendix: paired forecast tasks used by the MCS}
+  \vspace{0.03cm}
+  \begin{center}
+    \fontsize{6.6}{7.4}\selectfont
+    \renewcommand{\arraystretch}{1.08}
+    \setlength{\tabcolsep}{3.2pt}
+    \begin{tabular}{L{2.40cm} L{4.15cm} C{0.80cm} C{1.08cm} C{1.08cm} C{1.08cm} C{1.25cm}}
+      \toprule
+      \textbf{Dataset} & \textbf{Main pattern} & \textbf{Series} &
+      \textbf{MASE} & \textbf{WQL} & \textbf{CRPS} & \textbf{Evidence} \\
+      \midrule
+      Car Parts & Sparse demand, many zeros & 20 & 39 & 31 & 40 & adequate \\
+      \rowcolor{Paper} M1 Yearly & Annual trends and level changes & 20 & 60 & 60 & 60 & adequate \\
+      M3 Quarterly & Trend and quarterly cycles & 20 & 60 & 60 & 60 & adequate \\
+      \rowcolor{Paper} M4 Hourly & Daily cycles and noise & 20 & 60 & 60 & 60 & adequate \\
+      NN5 Weekly & Annual pattern, holidays, demand shifts & 20 & 60 & 60 & 60 & adequate \\
+      \rowcolor{Paper} Weather & Zeros and seasonal rainfall & 20 & 60 & 46 & 60 & adequate \\
+      National Illness & Annual cycle and sudden peaks & 1 & 3 & 3 & 3 & very low \\
+      \rowcolor{Paper} PSM & Anomalies and noisy sensors & 5 & 15 & 15 & 15 & low \\
+      Traffic & Daily and weekly cycles & 5 & 15 & 15 & 15 & low \\
+      \rowcolor{Paper} BLS Macro & Long trends and structural changes & 3 & 7 & 7 & 7 & very low \\
+      Elexon Demand & Weekly cycle and weather effects & 1 & 3 & 3 & 3 & very low \\
+      \rowcolor{Paper} USGS Streamflow & Seasonality, extremes, and gaps & 5 & 13 & 13 & 13 & low \\
+      \bottomrule
+    \end{tabular}
+  \end{center}
+
+  \vspace{0.08cm}
+  \begin{center}\fontsize{6.5}{7.3}\selectfont\color{Muted}
+    A paired task is one series at one forecast origin after averaging the three
+    model repetitions. Missing or undefined losses reduce some task counts.
+  \end{center}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}[noframenumbering]{Appendix: lowest loss and MCS size}
+  \vspace{0.02cm}
+  \begin{center}
+    \fontsize{6.8}{7.6}\selectfont
+    \renewcommand{\arraystretch}{1.05}
+    \setlength{\tabcolsep}{4.2pt}
+    \begin{tabular}{L{2.65cm} C{3.30cm} C{3.30cm} C{3.30cm}}
+      \toprule
+      \textbf{Dataset} & \textbf{MASE} & \textbf{WQL} & \textbf{CRPS} \\
+      \midrule
+      Car Parts & \foundationwinner{Moirai (7)} & \foundationwinner{Moirai (7)} & \foundationwinner{Moirai (7)} \\
+      \rowcolor{Paper} M1 Yearly & \foundationwinner{TimesFM (9)} & \classicalwinner{ARIMA (11)} & \classicalwinner{ARIMA (11)} \\
+      M3 Quarterly & \foundationwinner{TimesFM (4)} & \foundationwinner{TimesFM (2)} & \foundationwinner{TimesFM (5)} \\
+      \rowcolor{Paper} M4 Hourly & \foundationwinner{Chronos Base (6)} & \foundationwinner{Chronos Base (11)} & \foundationwinner{Chronos Base (11)} \\
+      NN5 Weekly & \foundationwinner{TimesFM (1)} & \foundationwinner{TimesFM (1)} & \foundationwinner{TimesFM (1)} \\
+      \rowcolor{Paper} Weather & \foundationwinner{Chronos Base (8)} & \foundationwinner{Moirai (2)} & \foundationwinner{Moirai (1)} \\
+      National Illness & \foundationwinner{TimesFM (7)} & \foundationwinner{TimesFM (5)} & \foundationwinner{TimesFM (5)} \\
+      \rowcolor{Paper} PSM & \foundationwinner{Chronos Small (7)} & \foundationwinner{Chronos Small (7)} & \foundationwinner{Chronos Small (7)} \\
+      Traffic & \foundationwinner{Moirai (6)} & \foundationwinner{Moirai (5)} & \foundationwinner{Moirai (5)} \\
+      \rowcolor{Paper} BLS Macro & \classicalwinner{Auto-ARIMA (5)} & \foundationwinner{TimesFM (11)} & \foundationwinner{TimesFM (11)} \\
+      Elexon Demand & \foundationwinner{TimesFM (3)} & \foundationwinner{TimesFM (2)} & \foundationwinner{TimesFM (2)} \\
+      \rowcolor{Paper} USGS Streamflow & \foundationwinner{Moirai (8)} & \foundationwinner{TimesFM (11)} & \foundationwinner{TimesFM (11)} \\
+      \bottomrule
+    \end{tabular}
+  \end{center}
+
+  \vspace{0.10cm}
+  \begin{center}\scriptsize
+    Each entry is \textbf{empirical winner (number of models in the 95\% MCS)}.
+    \quad \tagbox{PurpleLight}{foundation winner}
+    \quad \tagbox{GoldLight}{nonfoundation winner}
+  \end{center}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}[noframenumbering]{Appendix: who remains in each confidence set?}
+  \vspace{0.02cm}
+  \begin{center}
+    \fontsize{7.0}{7.8}\selectfont
+    \renewcommand{\arraystretch}{1.08}
+    \setlength{\tabcolsep}{5.4pt}
+    \begin{tabular}{L{3.20cm} C{2.95cm} C{2.95cm} C{2.95cm}}
+      \toprule
+      \textbf{Dataset} & \textbf{MASE} & \textbf{WQL} & \textbf{CRPS} \\
+      \midrule
+      Car Parts & 6 F + 1 B & 6 F + 1 B & 6 F + 1 B \\
+      \rowcolor{Paper} M1 Yearly & 4 F + 5 B & \cellcolor{CoralLight}6 F + 5 B & \cellcolor{CoralLight}6 F + 5 B \\
+      M3 Quarterly & 2 F + 2 B & \cellcolor{GreenLight}\textbf{2 F + 0 B} & 3 F + 2 B \\
+      \rowcolor{Paper} M4 Hourly & 5 F + 1 B & \cellcolor{CoralLight}6 F + 5 B & \cellcolor{CoralLight}6 F + 5 B \\
+      NN5 Weekly & \cellcolor{GreenLight}\textbf{1 F + 0 B} & \cellcolor{GreenLight}\textbf{1 F + 0 B} & \cellcolor{GreenLight}\textbf{1 F + 0 B} \\
+      \rowcolor{Paper} Weather & 6 F + 2 B & \cellcolor{GreenLight}\textbf{2 F + 0 B} & \cellcolor{GreenLight}\textbf{1 F + 0 B} \\
+      National Illness & 5 F + 2 B & 4 F + 1 B & 4 F + 1 B \\
+      \rowcolor{Paper} PSM & 6 F + 1 B & 6 F + 1 B & 6 F + 1 B \\
+      Traffic & 5 F + 1 B & \cellcolor{GreenLight}\textbf{5 F + 0 B} & \cellcolor{GreenLight}\textbf{5 F + 0 B} \\
+      \rowcolor{Paper} BLS Macro & 2 F + 3 B & \cellcolor{CoralLight}6 F + 5 B & \cellcolor{CoralLight}6 F + 5 B \\
+      Elexon Demand & \cellcolor{GreenLight}\textbf{3 F + 0 B} & \cellcolor{GreenLight}\textbf{2 F + 0 B} & \cellcolor{GreenLight}\textbf{2 F + 0 B} \\
+      \rowcolor{Paper} USGS Streamflow & 5 F + 3 B & \cellcolor{CoralLight}6 F + 5 B & \cellcolor{CoralLight}6 F + 5 B \\
+      \bottomrule
+    \end{tabular}
+  \end{center}
+
+  \vspace{0.09cm}
+  \begin{center}\scriptsize
+    F = foundation-model variant; B = nonfoundation baseline.
+    Green cells exclude every baseline. Coral cells retain all 11 candidates.
+  \end{center}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}[noframenumbering]{Appendix: empirical wins by model and loss}
+  \vspace{0.05cm}
+  \begin{columns}[T,totalwidth=0.92\linewidth]
+    \begin{column}{0.53\linewidth}
+      \fontsize{8.0}{9.0}\selectfont
+      \renewcommand{\arraystretch}{1.18}
+      \setlength{\tabcolsep}{5.0pt}
+      \begin{tabular}{L{2.30cm} C{0.85cm} C{0.85cm} C{0.85cm} C{0.85cm}}
+        \toprule
+        \textbf{Model} & \textbf{MASE} & \textbf{WQL} & \textbf{CRPS} & \textbf{Total} \\
+        \midrule
+        \rowcolor{TealLight} TimesFM & 5 & 6 & 6 & \textbf{17} \\
+        Moirai & 3 & 3 & 3 & \textbf{9} \\
+        \rowcolor{Paper} Chronos Base & 2 & 1 & 1 & \textbf{4} \\
+        Chronos Small & 1 & 1 & 1 & \textbf{3} \\
+        \rowcolor{GoldLight} ARIMA(2,1,2) & 0 & 1 & 1 & \textbf{2} \\
+        Auto-ARIMA & 1 & 0 & 0 & \textbf{1} \\
+        \rowcolor{Paper} Other five models & 0 & 0 & 0 & \textbf{0} \\
+        \bottomrule
+      \end{tabular}
+    \end{column}
+
+    \begin{column}{0.34\linewidth}
+      \tagbox{PurpleLight}{\large\textbf{33 foundation wins}}
+      \vspace{0.17cm}
+
+      \tagbox{GoldLight}{\large\textbf{3 baseline wins}}
+      \vspace{0.25cm}
+
+      \fontsize{8.3}{9.6}\selectfont
+      TimesFM accounts for just over half of all cells. Moirai is the only model
+      to win three or more cells under every loss.
+
+      \vspace{0.18cm}
+      Models with no empirical wins can still remain in broad confidence sets.
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}[noframenumbering]{Appendix: family dominance is not MCS separation}
+  \vspace{0.03cm}
+  \begin{center}
+    \fontsize{7.2}{8.1}\selectfont
+    \renewcommand{\arraystretch}{1.14}
+    \setlength{\tabcolsep}{5.2pt}
+    \begin{tabular}{L{3.10cm} C{2.35cm} C{3.85cm} C{2.40cm}}
+      \toprule
+      \textbf{Dataset} & \textbf{Strict foundation dominance} &
+      \textbf{MCS sizes: MASE / WQL / CRPS} & \textbf{Paired tasks} \\
+      \midrule
+      NN5 Weekly & 0 of 3 & \cellcolor{GreenLight}\textbf{1 / 1 / 1} & 60 / 60 / 60 \\
+      \rowcolor{Paper} M4 Hourly & \textbf{3 of 3} & 6 / 11 / 11 & 60 / 60 / 60 \\
+      PSM & \textbf{3 of 3} & 7 / 7 / 7 & 15 / 15 / 15 \\
+      \rowcolor{Paper} Traffic & 2 of 3 & 6 / 5 / 5 & 15 / 15 / 15 \\
+      Elexon Demand & \textbf{3 of 3} & \cellcolor{PurpleLight}\textbf{3 / 2 / 2} & 3 / 3 / 3 \\
+      \rowcolor{Paper} USGS Streamflow & \textbf{3 of 3} & 8 / 11 / 11 & 13 / 13 / 13 \\
+      Car Parts & 2 of 3 & 7 / 7 / 7 & 39 / 31 / 40 \\
+      \bottomrule
+    \end{tabular}
+  \end{center}
+
+  \vspace{0.16cm}
+  \begin{columns}[T,totalwidth=0.90\linewidth]
+    \begin{column}{0.43\linewidth}
+      \fontsize{7.8}{9.0}\selectfont
+      \textbf{Strict dominance} means the worst foundation model has lower
+      aggregate loss than the best nonfoundation baseline.
+    \end{column}
+    \begin{column}{0.43\linewidth}
+      \fontsize{7.8}{9.0}\selectfont
+      \textbf{MCS separation} depends on paired task-level loss differences.
+      It can be narrow without family dominance, as NN5 shows.
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}[noframenumbering]{Appendix: how the 95\% MCS was constructed}
+  \vspace{0.03cm}
+  \begin{columns}[T,totalwidth=0.94\linewidth]
+    \begin{column}{0.45\linewidth}
+      \tagbox{PurpleLight}{\textbf{Sequential procedure}}
+      \vspace{0.10cm}
+
+      \fontsize{8.0}{9.3}\selectfont
+      \begin{enumerate}\setlength{\itemsep}{0.09cm}
+        \item Form the task-by-model loss matrix
+          $\mathbf L=(L_{i,m})$ for one dataset and loss.
+        \item Start with all 11 candidates, $\mathcal M_0$.
+        \item Test equal predictive ability within the current set using the
+          range statistic and a stationary bootstrap.
+        \item After a rejection, remove the weakest model and repeat. Stop when
+          equality is no longer rejected.
+      \end{enumerate}
+    \end{column}
+
+    \begin{column}{0.43\linewidth}
+      \tagbox{TealLight}{\textbf{Implementation choices}}
+      \vspace{0.10cm}
+
+      \fontsize{8.0}{9.3}\selectfont
+      \begin{itemize}\setlength{\itemsep}{0.09cm}
+        \item Confidence level: 95\%.
+        \item Bootstrap replications: 5,000.
+        \item Block length: $\lceil\sqrt{n_{\mathrm{tasks}}}\rceil$.
+        \item Three repetitions are averaged inside each series-origin task
+          before comparison.
+      \end{itemize}
+
+      \vspace{0.09cm}
+      \colorbox{Paper}{\parbox{0.92\linewidth}{\centering\scriptsize
+        Output: a set of models whose predictive ability is not separated from
+        the best at the 5\% level.}}
+    \end{column}
+  \end{columns}
+
+  \vspace{0.18cm}
+  \begin{center}
+    \fontsize{7.2}{8.2}\selectfont
+    \textbf{Traffic MASE example:}
+    \tagbox{GreenLight}{1 Moirai}
+    \enspace \tagbox{GreenLight}{2 Chronos Base}
+    \enspace \tagbox{GreenLight}{3 Chronos Tiny}
+    \enspace \tagbox{GreenLight}{4 Chronos Small}
+    \enspace \tagbox{CoralLight}{5 TimesFM}
+    \enspace \tagbox{GreenLight}{6 Seasonal Naive}
+
+    \vspace{0.06cm}
+    \color{Muted}TimesFM is eliminated while the sixth-ranked model remains:
+    membership depends on paired differences, not aggregate rank alone.
+  \end{center}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}[noframenumbering]{Appendix: limits of the evidence}
+  \vspace{0.05cm}
+  \begin{columns}[T,totalwidth=0.94\linewidth]
+    \begin{column}{0.44\linewidth}
+      \colorbox{TealLight}{\parbox{0.92\linewidth}{
+        \textbf{What the MCS supports}\par\vspace{0.06cm}
+        \fontsize{8.0}{9.2}\selectfont
+        Within one dataset and loss, it identifies the candidates that cannot
+        be separated from the best under the chosen bootstrap design.}}
+
+      \vspace{0.18cm}
+      \colorbox{GoldLight}{\parbox{0.92\linewidth}{
+        \textbf{Small panels}\par\vspace{0.06cm}
+        \fontsize{8.0}{9.2}\selectfont
+        National Illness and Elexon contribute three paired tasks; BLS Macro
+        contributes seven. Their sets are descriptive and low powered.}}
+    \end{column}
+
+    \begin{column}{0.44\linewidth}
+      \colorbox{PurpleLight}{\parbox{0.92\linewidth}{
+        \textbf{What it does not support}\par\vspace{0.06cm}
+        \fontsize{8.0}{9.2}\selectfont
+        It does not establish a universal model hierarchy or prove that a
+        retained model is equally good on every individual series.}}
+
+      \vspace{0.18cm}
+      \colorbox{CoralLight}{\parbox{0.92\linewidth}{
+        \textbf{Dependence and scope}\par\vspace{0.06cm}
+        \fontsize{8.0}{9.2}\selectfont
+        Series and origins are not fully independent. The stationary bootstrap
+        mitigates this, but conclusions remain specific to these 12 datasets,
+        11 model variants, and three losses.}}
     \end{column}
   \end{columns}
 
   \vspace{0.22cm}
   \begin{center}
-    \normalsize\bfseries
-    Foundation models usually achieve the lowest aggregate loss,
-    \color{Teal}but the pattern is not uniform.\color{Ink}
-  \end{center}
-
-  \vspace{0.18cm}
-  \begin{columns}[T,totalwidth=0.92\linewidth]
-    \begin{column}{0.43\linewidth}
-      \tagbox{PurpleLight}{\textbf{The general pattern}}
-      \vspace{0.10cm}
-
-      \fontsize{8.4}{9.8}\selectfont
-      \begin{itemize}\setlength{\itemsep}{0.10cm}
-        \item TimesFM records the most empirical wins.
-        \item Chronos and Moirai lead on several datasets where the separation
-          from classical methods is substantial.
-      \end{itemize}
-    \end{column}
-
-    \begin{column}{0.43\linewidth}
-      \tagbox{GoldLight}{\textbf{The important exceptions}}
-      \vspace{0.10cm}
-
-      \fontsize{8.4}{9.8}\selectfont
-      \begin{itemize}\setlength{\itemsep}{0.10cm}
-        \item ARIMA has the lowest WQL and CRPS on M1 Yearly.
-        \item Auto ARIMA has the lowest MASE on BLS Macro.
-        \item Some foundation model wins are relatively close, as seen for M1
-          MASE and M3 WQL.
-      \end{itemize}
-    \end{column}
-  \end{columns}
-\end{frame}
-
-% -----------------------------------------------------------------------------
-\begin{frame}{Conclusion: what the statistical analysis adds}
-  \vspace{0.05cm}
-  \begin{center}
-    \colorbox{GreenLight}{\parbox{0.88\linewidth}{\centering
-      \fontsize{14}{16}\selectfont\bfseries 4 comparisons show complete statistical separation\par
-      \vspace{0.05cm}
-      \scriptsize NN5 MASE, NN5 WQL, NN5 CRPS, and Weather CRPS}}
-  \end{center}
-
-  \vspace{0.18cm}
-  \begin{columns}[T,totalwidth=0.92\linewidth]
-    \begin{column}{0.43\linewidth}
-      \tagbox{TealLight}{\textbf{What is well supported}}
-      \vspace{0.10cm}
-
-      \fontsize{8.4}{9.8}\selectfont
-      \begin{itemize}\setlength{\itemsep}{0.10cm}
-        \item NN5 provides the clearest evidence. TimesFM separates from every
-          alternative for all three losses.
-        \item Moirai also separates from every alternative for Weather CRPS.
-        \item These conclusions agree across adjusted SPA tests and the model
-          confidence set.
-      \end{itemize}
-    \end{column}
-
-    \begin{column}{0.43\linewidth}
-      \tagbox{GoldLight}{\textbf{What remains uncertain}}
-      \vspace{0.10cm}
-
-      \fontsize{8.4}{9.8}\selectfont
-      \begin{itemize}\setlength{\itemsep}{0.10cm}
-        \item Most empirical winners remain statistically tied with at least
-          one alternative.
-        \item Several datasets contain too few paired tasks for a strong claim.
-        \item A broad win count therefore says more about coverage than about
-          certainty.
-      \end{itemize}
-    \end{column}
-  \end{columns}
-
-  \vspace{0.16cm}
-  \begin{center}
-    \colorbox{TealLight}{\parbox{0.86\linewidth}{\centering\scriptsize
-      \textbf{Overall:} Foundation models are strong defaults when no retraining
-      is available. Classical models still matter, and each claimed improvement
-      should be checked for the dataset, the loss, and the available evidence.}}
+    \colorbox{Paper}{\parbox{0.86\linewidth}{\centering\scriptsize
+      WQL and CRPS are computed from the saved q10--q90 forecasts; CRPS is a
+      finite-quantile approximation rather than a score from a continuous CDF.}}
   \end{center}
 \end{frame}
 
